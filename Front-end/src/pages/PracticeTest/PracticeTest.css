@@ -1,0 +1,203 @@
+/* -------------------- GLOBAL -------------------- */
+.practice-page {
+  background-color: #eaf3ff;
+  min-height: 100vh;
+}
+
+.practice-container {
+  padding: 40px;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+/* -------------------- SKILL SELECTION -------------------- */
+.practice-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #1e3a8a;
+}
+
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.skill-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.skill-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.skill-img {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  border-radius: 50%;    /* Ảnh tròn */
+  object-fit: cover;     /* Giữ tỉ lệ */
+  border: 2px solid #ccc;
+  transition: transform 0.3s ease;
+}
+
+.skill-img:hover {
+  transform: scale(1.1); /* Phóng to khi hover */
+  cursor: pointer;
+}
+
+/* -------------------- BUTTONS -------------------- */
+.view-btn,
+.start-btn,
+.back-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  background-color: #4E74A8;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.view-btn:hover,
+.start-btn:hover,
+.back-btn:hover {
+  background-color: #004a99;
+  transform: scale(1.1);
+}
+
+/* -------------------- TEST LIST -------------------- */
+.skill-header {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1e3a8a;
+  font-weight: bold;
+}
+
+/* Grid layout cố định 3 cột */
+.test-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  justify-items: center;
+  margin-top: 20px;
+}
+
+.test-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 300px;
+}
+
+.test-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.duration {
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.center {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+  .test-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .test-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -------------------- TEST AREA -------------------- */
+.test-area {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 60px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  text-align: justify;
+}
+
+.test-area h2 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 30px;
+}
+h2, h3 {
+  color: #4E74A8;
+}
+
+/* -------------------- QUESTION ITEM -------------------- */
+.question-item {
+  margin-bottom: 35px;
+}
+
+.question-item p {
+  font-size: 17px;
+  color: #111827;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.question-item ul {
+  list-style: none;
+  padding-left: 30px;
+}
+
+.question-item li {
+  margin: 8px 0;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.question-item li:hover {
+  background-color: #eff6ff;
+}
+
+/* -------------------- BACK BUTTON -------------------- */
+.back-btn {
+  display: block;
+  margin: 30px auto 0;
+  padding: 12px 30px;
+  font-size: 16px;
+}
+
+/* -------------------- ERROR MESSAGE -------------------- */
+.error {
+  color: #dc2626;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 500;
+}

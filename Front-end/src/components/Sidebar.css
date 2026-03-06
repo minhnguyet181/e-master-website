@@ -1,0 +1,61 @@
+.sidebar {
+  width: 230px;
+  height: 100vh;
+  position: fixed;
+  top: 70px; /* nếu Navbar cao 70px */
+  left: 0;
+  background-color: #ffffff !important; /* ÉP nền trắng */
+  border-right: 1px solid #e5e7eb;
+  z-index: 100;
+  padding-top: 20px;
+  overflow-y: auto;
+}
+
+/* Bỏ margin và bullet của danh sách */
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Mỗi mục trong sidebar */
+.sidebar li {
+  margin: 4px 0;
+}
+
+/* Link hiển thị cùng hàng, không xuống dòng */
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  text-decoration: none;
+  color: #333;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 10px;
+  background-color: transparent;
+  transition: all 0.25s ease;
+}
+
+/* Hover hiệu ứng */
+.sidebar a:hover {
+  background-color: #f1f5ff;
+  color: #0066ff;
+}
+
+/* Icon */
+.sidebar a svg {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* Thanh cuộn */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: #dcdcdc;
+  border-radius: 5px;
+}

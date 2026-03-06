@@ -1,0 +1,194 @@
+/* ----- Layout tổng thể ----- */
+.schedule-page {
+  display: flex;
+  height: 100vh;
+  background: #f9fafb;
+}
+
+.schedule-main {
+  flex-grow: 1;
+  margin-left: 240px; /* căn với sidebar */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ----- Khung lịch chính ----- */
+.calendar-section {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  width: 80vw; /* 👈 To ngang */
+  max-width: 1500px;
+  margin: 40px auto;
+  /* min-height: 100vh;  */
+  transition: all 0.3s ease;
+}
+
+/* ----- Header chuyển tháng ----- */
+.calendar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.calendar-header h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #333;
+}
+
+.month-btn {
+  background: #f3f4f6;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.month-btn:hover {
+  background: #e5e7eb;
+}
+
+/* ----- Lưới lịch ----- */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+  width: 100%;
+}
+
+.calendar-day {
+  font-weight: bold;
+  color: #555;
+  padding-bottom: 8px;
+}
+
+/* ----- Ô ngày ----- */
+.calendar-cell {
+  position: relative;
+  height: 110px;
+  background: #fafafa;
+  border-radius: 10px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 6px 10px;
+  font-size: 16px;
+  transition: background 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+.calendar-cell:hover {
+  background: #e5e7eb;
+  transform: scale(1.03);
+}
+
+.calendar-cell.dimmed {
+  opacity: 0.4;
+}
+
+/* ----- Hôm nay ----- */
+.today {
+  background: #e0f2fe !important;
+  border: 2px solid #38bdf8;
+  font-weight: bold;
+}
+
+/* ----- Ngày có buổi học ----- */
+.has-lesson .dot {
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+}
+
+/* ----- Tooltip ----- */
+.tooltip {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background:#4E74A8;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* ----- Popup ----- */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(17, 24, 39, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.popup-content {
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  width: 420px;
+  text-align: center;
+  animation: fadeIn 0.25s ease;
+}
+
+.popup-content h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.popup-content p {
+  font-size: 16px;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.close-btn {
+  background: #4E74A8;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.close-btn:hover {
+  background: #3D5F91;
+  transform: scale(1.05);
+}
+
+/* ----- Animation ----- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "sectionNumber": 3,
+  "sectionTitle": "Section 3",
+  "audio": "audio/audio3.m4a",
+  "image":" ",
+  "questions": [
+    {
+      "questionNumber": 21,
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What has Irene recently done?",
+      "correctAnswer": "C"
+    },
+    {
+      "questionNumber": 22,
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "Bill’s attitude toward Kim",
+      "correctAnswer": "A"
+    },
+    {
+      "questionNumber": 23,
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "Jen thinks of the group",
+      "correctAnswer": "C"
+    },
+    {
+      "questionNumber": 24,
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "How Jen and Bill felt about Linda",
+      "correctAnswer": "B"
+    },
+    {
+      "questionNumber": 25,
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "Why Jen was invited",
+      "correctAnswer": "B"
+    },
+    {
+      "questionNumber": 26,
+      "questionType": "MATCHING",
+      "questionText": "Task for Irene",
+      "correctAnswer": "C"
+    },
+    {
+      "questionNumber": 27,
+      "questionType": "MATCHING",
+      "questionText": "Task for Kim",
+      "correctAnswer": "F"
+    },
+    {
+      "questionNumber": 28,
+      "questionType": "MATCHING",
+      "questionText": "Task for Jen",
+      "correctAnswer": "E"
+    },
+    {
+      "questionNumber": 29,
+      "questionType": "MATCHING",
+      "questionText": "Task for Bill",
+      "correctAnswer": "D"
+    },
+    {
+      "questionNumber": 30,
+      "questionType": "MATCHING",
+      "questionText": "Task for Linda",
+      "correctAnswer": "G"
+    }
+  ]
+}

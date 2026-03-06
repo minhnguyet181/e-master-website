@@ -1,0 +1,133 @@
+/* Tổng thể navbar */
+.navbar {
+  width: 100%;
+  height: 70px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  position: fixed; /* Changed to fixed to stay on top */
+  top: 0;
+  left: 0; /* Ensure it starts from the left edge */
+  z-index: 1000;
+  box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+/* Logo và tên thương hiệu */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-logo {
+  width: 48px;
+  height: 48px;
+}
+
+/* Ensure homepage/landing logo sizing when both classes are present */
+.navbar-left .logo-img {
+  height: 48px; /* increase to match navbar */
+  width: auto;
+}
+
+.navbar-left .logo-text {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.navbar-brand {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Menu giữa */
+.navbar-center {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.exam-select {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #f8f9fa;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #444;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: #007bff;
+}
+
+/* Phần bên phải */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.icon {
+  font-size: 20px;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.icon:hover {
+  color: #007bff;
+}
+
+/* Avatar link in header: keep icon vertically centered and inherit color */
+.nav-avatar-link {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Logout link should match the same alignment as other header icons */
+.nav-logout-link {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Ensure all icons inside navbar-right are centered and use same baseline */
+.navbar-right > *,
+.navbar-right svg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+/* Slightly larger user icon and ensure it aligns nicely */
+.icon.user {
+  font-size: 22px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon.menu {
+  /* keep same visual weight as other icons */
+  font-size: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

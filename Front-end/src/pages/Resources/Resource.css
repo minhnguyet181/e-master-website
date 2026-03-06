@@ -1,0 +1,334 @@
+.resources-page {
+  /* Scope fonts and base text color to this page only (don't touch global body)
+     This prevents the dark background from leaking to the whole app. */
+  font-family: 'Inter', sans-serif;
+  color: #111827;
+}
+
+/* Main Container */
+.resources-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: #ffffff; /* keep the center panel white */
+  color: #111827; /* dark text inside the white panel */
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(16,24,40,0.06);
+}
+@media (min-width: 768px) {
+  .resources-container {
+    padding: 2rem;
+  }
+}
+
+/* Header */
+.resources-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.resources-header h1 {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 800;
+  background-image: linear-gradient(to right, #38bdf8, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (min-width: 768px) {
+  .resources-header h1 {
+    font-size: 3rem;
+    line-height: 1;
+  }
+}
+
+.resources-header p {
+  color: #9ca3af;
+  margin-top: 0.5rem;
+}
+
+/* IPA Image */
+.ipa-image {
+  width: 100%;
+  max-width: 720px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  display: block;
+}
+
+/* Section Component */
+.section {
+  background-color: #f3f4f6; /* light section background */
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.section-toggle-button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #111827;
+}
+@media (min-width: 768px) {
+  .section-toggle-button {
+    padding: 1.5rem;
+  }
+}
+
+.section-title-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-title {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  color: #111827;
+}
+@media (min-width: 768px) {
+  .section-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+}
+
+.section-content-wrapper {
+  transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.section-content-wrapper.open {
+  max-height: 3000px; /* A large enough value to allow content to expand */
+  opacity: 1;
+}
+
+.section-content {
+  padding: 1rem;
+  padding-top: 0;
+}
+@media (min-width: 768px) {
+  .section-content {
+    padding: 1.5rem;
+    padding-top: 0;
+  }
+}
+
+/* Icons */
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.icon-sky { color: #38bdf8; }
+.icon-amber { color: #f59e0b; }
+.icon-rose { color: #f43f5e; }
+.icon-chevron { 
+  color: #9ca3af;
+  transition: transform 0.3s;
+}
+.icon-chevron.open {
+  transform: rotate(180deg);
+}
+.icon-back {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Content Lists */
+.content-list {
+  list-style-type: decimal;
+  list-style-position: inside;
+  padding-left: 0;
+  margin: 0;
+  color: #374151;
+}
+
+.content-list li {
+  margin-bottom: 0.75rem;
+}
+.content-list li:last-child {
+  margin-bottom: 0;
+}
+
+.content-list a, .content-list button {
+  text-decoration: underline;
+  color: inherit;
+  transition: color 0.2s;
+}
+.content-list button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.content-list a:hover, .content-list button:hover {
+  color: #2563eb;
+}
+
+/* Pronunciation Section */
+.pronunciation-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.ipa-chart-container h3, .phoneme-sessions-container h3 {
+  font-size: 1.125rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: #111827; /* make IPA heading darker */
+}
+
+.ipa-chart-container img {
+    border-radius: 0.5rem;
+    border: 1px solid #374151;
+    width: 100%;
+    object-fit: cover;
+}
+.ipa-chart-container p {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+.phoneme-categories-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.phoneme-category h4 {
+  font-weight: 800;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: #111827; /* stronger color for category headings */
+}
+
+.phoneme-grid {
+  display: grid;
+  gap: 0.75rem;
+  /* increase min width so symbols (with slashes) have room and don't get vertically clipped */
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+/* Phoneme Card */
+.phoneme-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 0.75rem; /* more top padding to give space for slashes */
+  border-radius: 0.5rem;
+  border-width: 2px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.phoneme-card:hover {
+  transform: scale(1.05);
+}
+.phoneme-card .symbol {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1; /* ensure slash and symbol stack tightly and are vertically centered */
+  display: block;
+  margin-top: 2px;
+  font-family: 'Noto Serif', 'Georgia', serif; /* better glyphs for IPA slashes */
+}
+.phoneme-card .example {
+  color: #6b7280;
+}
+.phoneme-card .session {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #111827;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* Phoneme Category Colors */
+.phoneme-card.monophthongs { border-color: #f43f5e; background-color: rgba(244, 63, 94, 0.1); }
+.phoneme-card.monophthongs .session { background-color: rgba(244, 63, 94, 0.8); }
+
+.phoneme-card.diphthongs { border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.1); }
+.phoneme-card.diphthongs .session { background-color: rgba(245, 158, 11, 0.8); }
+
+.phoneme-card.unvoiced_consonants { border-color: #0ea5e9; background-color: rgba(14, 165, 233, 0.1); }
+.phoneme-card.unvoiced_consonants .session { background-color: rgba(14, 165, 233, 0.8); }
+
+.phoneme-card.voiced_consonants { border-color: #2dd4bf; background-color: rgba(45, 212, 191, 0.1); }
+.phoneme-card.voiced_consonants .session { background-color: rgba(45, 212, 191, 0.8); }
+
+
+/* Grammar Article View */
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: #38bdf8;
+  transition: color 0.2s;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1rem;
+}
+.back-button:hover {
+  color: #7dd3fc;
+}
+
+/* Simple Prose styles for article content */
+.article-content {
+  color: #374151;
+  max-width: 100%;
+}
+.article-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+.article-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.article-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-content .code-block {
+  background-color: #f3f4f6;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+.article-content strong {
+  font-weight: 700;
+  color: #111827;
+}
