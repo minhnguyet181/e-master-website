@@ -1,0 +1,101 @@
+.logout-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 32px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+  box-sizing: border-box;
+}
+
+.logout-card:hover {
+    transform: translateY(-5px);
+}
+
+.icon-container {
+  margin: 0 auto 24px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  background-color: #e0f2fe; /* light blue */
+}
+
+.icon-container svg {
+  height: 40px;
+  width: 40px;
+  color: #3b82f6; /* blue */
+}
+
+.logout-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937; /* dark gray */
+  margin: 0 0 8px 0;
+}
+
+.logout-text {
+  color: #4b5563; /* medium gray */
+  margin: 0 0 32px 0;
+  line-height: 1.5;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logout-button {
+  width: 100%;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.logout-button:hover {
+    transform: scale(1.03);
+}
+
+.logout-button:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+
+.cancel-button {
+  background-color: #f3f4f6; /* light gray */
+  color: #374151; /* dark gray */
+}
+
+.cancel-button:hover {
+  background-color: #e5e7eb;
+}
+
+.confirm-button {
+  background-color: #3b82f6; /* blue */
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #2563eb;
+}
+
+@media (min-width: 640px) {
+  .button-container {
+    flex-direction: row;
+    justify-content: center;
+  }
+  .logout-button {
+    width: auto;
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "passageTitle": "The Persuaders",
+  "section": "Reading Passage 3",
+  "questions": [
+    {
+      "questionNumber": 27,
+      "questionType": "MULTIPLE_CHOICE",
+      "correctAnswer": "B"
+    },
+    {
+      "questionNumber": 28,
+      "questionType": "MULTIPLE_CHOICE",
+      "correctAnswer": "A"
+    },
+    {
+      "questionNumber": 29,
+      "questionType": "MULTIPLE_CHOICE",
+      "correctAnswer": "D"
+    },
+    {
+      "questionNumber": 30,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "C"
+    },
+    {
+      "questionNumber": 31,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "J"
+    },
+    {
+      "questionNumber": 32,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "F"
+    },
+    {
+      "questionNumber": 33,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "K"
+    },
+    {
+      "questionNumber": 34,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "K"
+    },
+    {
+      "questionNumber": 35,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "D"
+    },
+    {
+      "questionNumber": 36,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "aisles"
+    },
+    {
+      "questionNumber": 37,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "experiments"
+    },
+    {
+      "questionNumber": 38,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "loyalty card"
+    },
+    {
+      "questionNumber": 39,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "cosmetics"
+    },
+    {
+      "questionNumber": 40,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "group"
+    }
+  ]
+}

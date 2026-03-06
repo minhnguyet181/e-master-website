@@ -1,0 +1,71 @@
+{
+  "passageTitle": "Voyage of Going: beyond the blue line 2",
+  "section": "Reading Passage 1",
+  "questions": [
+    {
+      "questionNumber": 1,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "TRUE"
+    },
+    {
+      "questionNumber": 2,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "FALSE"
+    },
+    {
+      "questionNumber": 3,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "FALSE"
+    },
+    {
+      "questionNumber": 4,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "NOT GIVEN"
+    },
+    {
+      "questionNumber": 5,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "TRUE"
+    },
+    {
+      "questionNumber": 6,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "NOT GIVEN"
+    },
+    {
+      "questionNumber": 7,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "FALSE"
+    },
+    {
+      "questionNumber": 8,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "rock"
+    },
+    {
+      "questionNumber": 9,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "teeth"
+    },
+    {
+      "questionNumber": 10,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "descendants"
+    },
+    {
+      "questionNumber": 11,
+      "questionType": "SHORT_ANSWER",
+      "correctAnswer": "canoes"
+    },
+    {
+      "questionNumber": 12,
+      "questionType": "SHORT_ANSWER",
+      "correctAnswer": "trade winds"
+    },
+    {
+      "questionNumber": 13,
+      "questionType": "SHORT_ANSWER",
+      "correctAnswer": "seabirds and turtles"
+    }
+  ]
+}

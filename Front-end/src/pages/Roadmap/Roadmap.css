@@ -1,0 +1,286 @@
+/* --- Global App Styles --- */
+.app-container {
+  min-height: 100vh;
+  background-color: #f9fafb; /* gray-50 */
+}
+
+.app-header {
+  padding: 2rem 0;
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.app-header h1 {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700;
+  text-align: center;
+  color: #1f2937; /* gray-800 */
+  margin: 0;
+}
+
+.app-header p {
+  text-align: center;
+  color: #6b7280; /* gray-500 */
+  margin-top: 0.5rem;
+}
+
+.app-main {
+  max-width: 1280px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+
+/* --- Roadmap Container --- */
+.roadmap-container {
+  position: relative;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 1rem; /* for mobile */
+  width: 2px;
+  height: 100%;
+  background-color: #e5e7eb; /* gray-200 */
+}
+
+.milestones-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* --- Milestone Row --- */
+.milestone-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.milestone-row-left {
+  flex-direction: row-reverse;
+}
+.milestone-row-right {
+  flex-direction: row-reverse;
+}
+
+/* --- Milestone Content --- */
+.milestone-content-container {
+  width: 100%;
+}
+.milestone-left {
+  padding-right: 0.5rem;
+}
+.milestone-right {
+  padding-left: 0.5rem;
+}
+
+/* --- Milestone Card --- */
+.milestone-card {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  border-top: 4px solid transparent;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease-in-out;
+}
+.milestone-card:hover {
+  transform: translateY(-4px);
+}
+
+.milestone-card.completed {
+  background-color: #ffffff;
+  opacity: 0.9;
+}
+.milestone-card.current {
+  background-color: #ffffff;
+  border-color: #10b981; /* emerald-500 */
+  opacity: 1;
+}
+.milestone-card.locked {
+  background-color: #f3f4f6; /* gray-100 */
+  opacity: 0.6;
+}
+
+.milestone-date {
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600;
+}
+.milestone-card.completed .milestone-date { color: #6b7280; } /* gray-500 */
+.milestone-card.current .milestone-date { color: #10b981; } /* emerald-500 */
+.milestone-card.locked .milestone-date { color: #9ca3af; } /* gray-400 */
+
+.milestone-title {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+}
+.milestone-card.completed .milestone-title { color: #1e40af; } /* blue-800 */
+.milestone-card.current .milestone-title { color: #059669; } /* emerald-600 */
+.milestone-card.locked .milestone-title { color: #9ca3af; } /* gray-400 */
+
+.milestone-items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.milestone-card.completed .milestone-items-list { color: #4b5563; } /* gray-600 */
+.milestone-card.current .milestone-items-list { color: #1f2937; } /* gray-800 */
+.milestone-card.locked .milestone-items-list { color: #6b7280; } /* gray-500 */
+
+.milestone-item {
+  display: flex;
+  align-items: center;
+}
+.milestone-item .icon {
+  margin-right: 0.75rem;
+  color: #2563eb; /* blue-600 */
+  flex-shrink: 0;
+}
+
+/* --- Details Toggle & Sub-lessons --- */
+.details-toggle-button {
+  background: none;
+  border: none;
+  color: #2563eb; /* blue-600 */
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 1rem;
+  transition: color 0.2s;
+}
+.details-toggle-button:hover {
+  color: #1d4ed8; /* blue-700 */
+}
+
+.sub-lessons-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+  border-top: 1px solid #e5e7eb; /* gray-200 */
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sub-lesson-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.sub-lesson-completed {
+  color: #1f2937; /* gray-800 */
+  font-weight: 600;
+}
+
+/* The check icon is now rendered as an inline SVG in the component.
+   Remove the CSS generated content to avoid duplicated checks. */
+
+.sub-lessons-collapsed {
+  display: none;
+}
+
+.sub-lesson-locked {
+  color: #9ca3af; /* gray-400 */
+  opacity: 0.8;
+}
+
+.lock-icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 0.5rem;
+  color: #9ca3af; /* gray-400 */
+}
+
+
+/* --- Timeline Connector --- */
+.timeline-connector {
+  position: relative;
+  width: calc(100% / 12);
+  flex-shrink: 0;
+  padding: 0 0.5rem;
+}
+.timeline-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.timeline-circle.completed { background-color: #3b82f6; } /* blue-500 */
+.timeline-circle.current { 
+  background-color: #10b981; /* emerald-500 */
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.5);
+}
+.timeline-circle.locked { background-color: #d1d5db; } /* gray-300 */
+
+.timeline-branch {
+  width: 100%;
+  height: 2px;
+  background-color: #93c5fd; /* blue-300 */
+}
+
+.milestone-spacer {
+  display: none; /* hidden on mobile */
+}
+
+
+/* --- Desktop Styles (md breakpoint) --- */
+@media (min-width: 768px) {
+  .timeline-line {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .milestone-row {
+    flex-direction: row;
+  }
+  
+  .milestone-row-left {
+    flex-direction: row;
+  }
+  .milestone-row-right {
+    flex-direction: row-reverse;
+  }
+
+  .milestone-content-container {
+    width: calc(100% * 5 / 12);
+  }
+  
+  .milestone-left {
+    text-align: right;
+    padding-right: 2rem;
+    padding-left: 0;
+  }
+
+  .milestone-right {
+    padding-left: 2rem;
+    padding-right: 0;
+  }
+  
+  .milestone-left .milestone-items-list,
+  .milestone-left .details-toggle-button,
+  .milestone-left .sub-lessons-list {
+    text-align: left; /* Keep items aligned left even if card is on the left */
+  }
+
+  .timeline-connector {
+    padding: 0 1rem;
+  }
+  
+  .milestone-spacer {
+    display: block;
+    width: calc(100% * 5 / 12);
+  }
+}

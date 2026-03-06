@@ -1,0 +1,24 @@
+{
+  "questions": [
+    {
+      "question": "What is the main topic of the conversation?",
+      "options": [
+        "A. Planning a trip",
+        "B. Buying groceries",
+        "C. Booking a hotel",
+        "D. Talking about school"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "Where are the speakers going?",
+      "options": ["A. Paris", "B. London", "C. New York", "D. Tokyo"],
+      "correct": 1
+    },
+    {
+      "question": "What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?What time is their flight?",
+      "options": ["A. 8 AM", "B. 10 AM", "C. 2 PM", "D. 6 PM"],
+      "correct": 2
+    }
+  ]
+}
