@@ -7,6 +7,7 @@ Test.init(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 
+    code: { type: DataTypes.STRING(80), allowNull: false, unique: true },
     name: { type: DataTypes.STRING(255), allowNull: false },
 
     test_type: {
@@ -23,17 +24,10 @@ Test.init(
       defaultValue: 'IELTS',
     },
 
-    // Các trường đồng bộ từ bảng câu hỏi
-    content: { type: DataTypes.TEXT, allowNull: true },
-    options: { type: DataTypes.JSON, allowNull: true },
-    correct_answer: { type: DataTypes.STRING, allowNull: true },
-    points: { type: DataTypes.INTEGER, defaultValue: 1 },
-    hint: { type: DataTypes.TEXT, allowNull: true },
-    question_number: { type: DataTypes.INTEGER, allowNull: true },
-    section: { type: DataTypes.STRING(100), allowNull: true },
-
-    // Trường bổ sung để dễ lưu và lọc
-    test_id: { type: DataTypes.INTEGER, allowNull: true },
+    source: { type: DataTypes.STRING(20), defaultValue: 'db' }, // db | static
+    is_active: { type: DataTypes.BOOLEAN, defaultValue: true },
+    tags: { type: DataTypes.JSONB, allowNull: true },
+    metadata: { type: DataTypes.JSONB, allowNull: true },
   },
   {
     sequelize,

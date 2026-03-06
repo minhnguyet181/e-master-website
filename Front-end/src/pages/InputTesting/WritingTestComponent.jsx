@@ -11,17 +11,58 @@ const WritingTestComponent = ({ testContent, userAnswer, onAnswerChange, score, 
     const renderScore = () => {
         if (!score) return null;
         
-        // Giả định API trả về { band_score: 7.5, feedback: "..." }
+        // Backend returns: { overall, task_response, coherence_cohesion, lexical_resource, grammar, feedback, suggestions }
+        const bandScore = score.overall || score.band_score || score.score;
+        
         return (
             <div className="score-box writing-score">
                 <h3>Kết quả chấm bài ✍️</h3>
-                {score.band_score ? (
+                {bandScore !== undefined ? (
                     <>
-                        <p className="band-score">Band Score ước tính: <strong>{score.band_score}</strong></p>
-                        <p>Nhận xét AI:</p>
-                        <div className="feedback-area">
-                            <pre>{score.feedback}</pre>
-                        </div>
+                        <p className="band-score">
+                            Band Score ước tính: <strong>{bandScore.toFixed(1)}</strong>
+                        </p>
+                        
+                        {/* Detailed scores */}
+                        {(score.task_response !== undefined || score.coherence_cohesion !== undefined) && (
+                            <div className="detailed-scores">
+                                <h4>Chi tiết điểm số:</h4>
+                                <ul>
+                                    {score.task_response !== undefined && (
+                                        <li>Task Response: <strong>{score.task_response.toFixed(1)}</strong></li>
+                                    )}
+                                    {score.coherence_cohesion !== undefined && (
+                                        <li>Coherence & Cohesion: <strong>{score.coherence_cohesion.toFixed(1)}</strong></li>
+                                    )}
+                                    {score.lexical_resource !== undefined && (
+                                        <li>Lexical Resource: <strong>{score.lexical_resource.toFixed(1)}</strong></li>
+                                    )}
+                                    {score.grammar !== undefined && (
+                                        <li>Grammar: <strong>{score.grammar.toFixed(1)}</strong></li>
+                                    )}
+                                </ul>
+                            </div>
+                        )}
+                        
+                        {score.feedback && (
+                            <>
+                                <p><strong>Nhận xét AI:</strong></p>
+                                <div className="feedback-area">
+                                    <p>{score.feedback}</p>
+                                </div>
+                            </>
+                        )}
+                        
+                        {score.suggestions && Array.isArray(score.suggestions) && score.suggestions.length > 0 && (
+                            <div className="suggestions">
+                                <h4>Gợi ý cải thiện:</h4>
+                                <ul>
+                                    {score.suggestions.map((suggestion, idx) => (
+                                        <li key={idx}>{suggestion}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </>
                 ) : (
                     <p>Đã nộp bài. Đang chờ kết quả chấm điểm chi tiết.</p>

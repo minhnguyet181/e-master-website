@@ -10,7 +10,9 @@
     "db:migrate": "sequelize-cli db:migrate --config sequelize.config.js",
     "db:seed": "sequelize-cli db:seed:all --config sequelize.config.js",
     "db:undo": "sequelize-cli db:migrate:undo --config sequelize.config.js",
-    "test:db": "node test-db.js"
+    "test:db": "node test-db.js",
+    "gen:tests:v2": "node scripts/gen-tests-v2.js",
+    "import:tests:v2": "node scripts/import-tests-v2.js"
   },
   "keywords": [],
   "author": "moon",
