@@ -25,7 +25,7 @@ PracticeAnswer.init(
     },
 
     answer_key: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: false,
       comment: 'Đáp án đầy đủ. Format: {1: "A", 2: "B", 3: "C", ...}'
     },
@@ -37,7 +37,7 @@ PracticeAnswer.init(
     },
 
     scoring_guide: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Hướng dẫn chấm điểm. Format: {total_points: 40, passing_score: 24, ...}'
     }

@@ -38,13 +38,13 @@ PlacementTest.init({
   
   // ========== Test Results ==========
   answers: {
-    type: DataTypes.JSONB,
+    type: DataTypes.JSON,
     allowNull: true,
     comment: 'Câu trả lời của user. Format: [{question_id: 1, answer: "A"}, ...]'
   },
   
   scores: {
-    type: DataTypes.JSONB,
+    type: DataTypes.JSON,
     allowNull: true,
     comment: 'Điểm từng skill. Format: {reading: 5.5, listening: 6.0, writing: 5.0, speaking: 5.5}'
   },
@@ -69,13 +69,13 @@ PlacementTest.init({
   },
   
   weak_skills: {
-    type: DataTypes.JSONB,
+    type: DataTypes.JSON,
     allowNull: true,
     comment: 'Kỹ năng yếu. Format: ["writing", "speaking"]'
   },
   
   strong_skills: {
-    type: DataTypes.JSONB,
+    type: DataTypes.JSON,
     allowNull: true,
     comment: 'Kỹ năng mạnh. Format: ["reading", "listening"]'
   },
@@ -88,7 +88,7 @@ PlacementTest.init({
   },
   
   study_recommendations: {
-    type: DataTypes.JSONB,
+    type: DataTypes.JSON,
     allowNull: true,
     comment: 'Gợi ý học tập. Format: ["Focus on Writing", "Practice Speaking daily"]'
   },

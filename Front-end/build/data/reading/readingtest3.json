@@ -1,0 +1,81 @@
+{
+  "passageTitle": "Facial expression 1",
+  "section": "Reading Passage 3",
+  "passageText": {
+    "A": "A facial expression is one or more motions or positions of the muscles in the skin. These movements covey the emotional state of the individual to observers. Facial expressions are a form of nonverbal communication. They are a primary means of conveying social information among aliens, but also occur in most other mammals and some other animal species. Facial expressions and their significance in the perceiver can, to some extent, vary between cultures with evidence from descriptions in the works of Charles Darwin.",
+    "B": "Humans can adopt a facial expression to read as a voluntary action. However, because expressions are closely tied to emotion, they are more often involuntary. It can be nearly impossible to avoid expressions for certain emotions, even when it would be strongly desirable to do so; a person who is trying to avoid insulting an individual he or she finds highly unattractive might, nevertheless, show a brief expression of disgust before being able to reassume a neutral expression. Microexpressions are one example of this phenomenon. The close link between emotion and expression can also work in the order direction; it has been observed that voluntarily assuming an expression can actually cause the associated emotion.",
+    "C": "Some expressions can be accurately interpreted even between members of different species – anger and extreme contentment being the primary examples. Others, however, are difficult to interpret even in familiar individuals. For instance, disgust and fear can be tough to tell apart. Because faces have only a limited range of movement, expressions rely upon fairly minuscule differences in the proportion and relative position of facial features, and reading them requires considerable sensitivity to same. Some faces are often falsely read as expressing some emotion, even when they are neutral, because their proportions naturally resemble those another face would temporarily assume when emoting.",
+    "D": "Also, a person’s eyes reveal much about how they are feeling, or what they are thinking. Blink rate can reveal how nervous or at ease a person maybe. Research by Boston College professor Joe Tecce suggests that stress levels are revealed by blink rates. He supports his data with statistics on the relation between the blink rates of presidential candidates and their success in their races. Tecce claims that the faster blinker in the presidential debates has lost every election since 1980. Though Tecce’s data is interesting, it is important to recognize that non-verbal communication is multi-channeled, and focusing on only one aspect is reckless. Nervousness can also be measured by examining each candidates’ perspiration, eye contact and stiffness.",
+    "E": "As Charles Darwin noted in his book The Expression of the Emotions in Man and Animals: the young and the old of widely different races, both with man and animals, express the same state of mind by the same movements. Still, up to the mid-20th century most anthropologists believed that facial expressions were entirely learned and could therefore differ among cultures. Studies conducted in the 1960s by Paul Ekman eventually supported Darwin’s belief to a large degree.",
+    "F": "Ekman’s work on facial expressions had its starting point in the work of psychologist Silvan Tomkins. Ekman showed that contrary to the belief of some anthropologists including Margaret Mead, facial expressions of emotion are not culturally determined, but universal across human cultures. The South Fore people of New Guinea were chosen as subjects for one such survey. The study consisted of 189 adults and 130 children from among a very isolated population, as well as twenty three members of the culture who lived a less isolated lifestyle as a control group. Participants were told a story that described one particular emotion; they were then shown three pictures (two for children) of facial expressions and asked to match the picture which expressed the story’s emotion.",
+    "G": "While the isolated South Fore people could identify emotions with the same accuracy as the non-isolated control group, problems associated with the study include the fact that both fear and surprise were constantly misidentified. The study concluded that certain facial expressions correspond to particular emotions and can not be covered, regardless of cultural background, and regardless of whether or not the culture has been isolated or exposed to the mainstream.",
+    "H": "Expressions Ekman found to be universal included those indicating anger, disgust, fear, joy, sadness, and surprise (not that none of these emotions has a definitive social component, such as shame, pride, or schadenfreude). Findings on contempt (which is social) are less clear, though there is at least some preliminary evidence that this emotion and its expression are universally recognized. This may suggest that the facial expressions are largely related to the mind and each parts on the face can express specific emotion."
+  },
+  "questions": [
+    {
+      "questionNumber": 28,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "misidentified"
+    },
+    {
+      "questionNumber": 29,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "emotions"
+    },
+    {
+      "questionNumber": 30,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "cultural background"
+    },
+    {
+      "questionNumber": 31,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "isolated"
+    },
+    {
+      "questionNumber": 32,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "exposed"
+    },
+    {
+      "questionNumber": 33,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "C"
+    },
+    {
+      "questionNumber": 34,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "A"
+    },
+    {
+      "questionNumber": 35,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "D"
+    },
+    {
+      "questionNumber": 36,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "H"
+    },
+    {
+      "questionNumber": 37,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "D"
+    },
+    {
+      "questionNumber": 38,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "B"
+    },
+    {
+      "questionNumber": 39,
+      "questionType": "MULTIPLE_CHOICE",
+      "correctAnswer": "B"
+    },
+    {
+      "questionNumber": 40,
+      "questionType": "MULTIPLE_CHOICE",
+      "correctAnswer": "D"
+    }
+  ]
+}

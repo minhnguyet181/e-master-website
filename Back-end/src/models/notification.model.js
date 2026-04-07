@@ -36,6 +36,12 @@ Notification.init(
       comment: 'Nội dung thông báo'
     },
 
+    type: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      defaultValue: 'info', // info | warning | reminder | congrats
+    },
+
     is_read: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,

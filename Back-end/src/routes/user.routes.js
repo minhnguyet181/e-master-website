@@ -11,6 +11,7 @@ router.get('/user/recommended-resources', authenticate, UserController.getRecomm
 router.get('/user/courses', authenticate, UserController.getUserCourses);
 router.get('/user/courses/:id', authenticate, UserController.getUserCourseById);
 router.get('/user/ai-recommendation', authenticate, UserController.getAIRecommendation);
+router.put('/user/ai-recommendation', authenticate, UserController.updateAIRecommendation);
 
 // Learning path endpoints
 router.post('/generate-learning-path', authenticate, UserController.generateLearningPath);

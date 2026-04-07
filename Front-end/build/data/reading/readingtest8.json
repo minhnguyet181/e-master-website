@@ -1,0 +1,71 @@
+{
+  "passageTitle": "Facial expression 1",
+  "section": "Reading Passage 3",
+  "questions": [
+    {
+      "questionNumber": 28,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "misidentified"
+    },
+    {
+      "questionNumber": 29,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "emotions"
+    },
+    {
+      "questionNumber": 30,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "cultural background"
+    },
+    {
+      "questionNumber": 31,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "isolated"
+    },
+    {
+      "questionNumber": 32,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "exposed"
+    },
+    {
+      "questionNumber": 33,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "C"
+    },
+    {
+      "questionNumber": 34,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "A"
+    },
+    {
+      "questionNumber": 35,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "D"
+    },
+    {
+      "questionNumber": 36,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "H"
+    },
+    {
+      "questionNumber": 37,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "D"
+    },
+    {
+      "questionNumber": 38,
+      "questionType": "PARAGRAPH_MATCH",
+      "correctAnswer": "B"
+    },
+    {
+      "questionNumber": 39,
+      "questionType": "MULTIPLE_CHOICE",
+      "correctAnswer": "B"
+    },
+    {
+      "questionNumber": 40,
+      "questionType": "MULTIPLE_CHOICE",
+      "correctAnswer": "D"
+    }
+  ]
+}

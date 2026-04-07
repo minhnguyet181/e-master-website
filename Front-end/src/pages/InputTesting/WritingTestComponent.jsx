@@ -87,12 +87,19 @@ const WritingTestComponent = ({ testContent, userAnswer, onAnswerChange, score, 
             </h2>
             <p className="test-info">
                 Thời gian: ⏱ {testContent.duration_minutes || 'N/A'} phút | 
-                Yêu cầu: Viết tối thiểu **{testContent.points || 250} từ**
+                Yêu cầu: Viết tối thiểu <strong>{testContent.points || 250} từ</strong>
             </p>
-            
- 
+
             <div className="writing-prompt-box">
-                <h3 className="prompt-header">Đề bài (Task {testContent.question_number || 'N/A'})</h3>
+                <h3 className="prompt-header">
+                    Đề bài (Task {testContent.task_type === 'task1' ? '1' : testContent.question_number || '2'})
+                </h3>
+                {/* Task 1: hiển thị hình ảnh chart/graph */}
+                {testContent.image_url && (
+                    <div className="task1-image">
+                        <img src={testContent.image_url} alt="Task 1 chart" style={{ maxWidth: '100%', borderRadius: 8, marginBottom: 12 }} />
+                    </div>
+                )}
                 <div className="prompt-content">
                     <p>{testContent.content}</p>
                 </div>

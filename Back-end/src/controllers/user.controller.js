@@ -6,11 +6,9 @@ const { getBandBucket, representativeBandForBucket } = require('../utils/studyPl
 const { handleResponse, handleError } = require('./base.controller');
 const UserCourse = require('../models/userCourse.model');
 const User = require('../models/user.model');
-const jwt = require('jsonwebtoken');
 exports.getProfile = async (req, res) => {
   try {
-    const decoded = req.user;
-    const user = await UserService.getProfile(decoded.id);
+    const user = await UserService.getProfile(req.user.id);
     handleResponse(res, user);
   } catch (err) {
     handleError(res, err);
@@ -20,9 +18,7 @@ exports.getProfile = async (req, res) => {
 // Get user's enrolled courses
 exports.getUserCourses = async (req, res) => {
   try {
-    const decoded = req.user;
-    const userId = decoded.id;
-
+    const userId = req.user.id;
     const courses = await UserCourse.findAll({ where: { user_id: userId } });
     handleResponse(res, { courses }, 'User courses retrieved');
   } catch (err) {
@@ -33,8 +29,7 @@ exports.getUserCourses = async (req, res) => {
 // Get specific user course
 exports.getUserCourseById = async (req, res) => {
   try {
-    const decoded = req.user;
-    const userId = decoded.id;
+    const userId = req.user.id;
     const courseId = parseInt(req.params.id, 10);
 
     const course = await UserCourse.findOne({ where: { id: courseId, user_id: userId } });
@@ -48,8 +43,7 @@ exports.getUserCourseById = async (req, res) => {
 // Return saved AI recommendation for user (if any)
 exports.getAIRecommendation = async (req, res) => {
   try {
-    const decoded = req.user;
-    const user = await User.findByPk(decoded.id);
+    const user = await User.findByPk(req.user.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
     const raw = user.ai_recommendation || null;
@@ -63,11 +57,25 @@ exports.getAIRecommendation = async (req, res) => {
   }
 };
 
+// Update AI recommendation for user
+exports.updateAIRecommendation = async (req, res) => {
+  try {
+    const { recommendation } = req.body;
+    const user = await User.findByPk(req.user.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    const value = typeof recommendation === 'string' ? recommendation : JSON.stringify(recommendation);
+    await user.update({ ai_recommendation: value });
+    handleResponse(res, { ai_recommendation: recommendation }, 'AI recommendation updated');
+  } catch (err) {
+    handleError(res, err);
+  }
+};
+
 // Get recommended resources based on user's band (without AI generation)
 exports.getRecommendedResources = async (req, res) => {
   try {
-    const decoded = req.user;
-    const user = await UserService.getProfile(decoded.id);
+    const user = await UserService.getProfile(req.user.id);
     
     // Use user's target or current band
     const band = user.band_target || user.current_band;
@@ -102,8 +110,7 @@ exports.getRecommendedResources = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const decoded = req.user;
-    const user = await UserService.updateProfile(decoded.id, req.body);
+    const user = await UserService.updateProfile(req.user.id, req.body);
     handleResponse(res, user, 'Profile updated successfully');
   } catch (err) {
     handleError(res, err);
@@ -113,9 +120,7 @@ exports.updateProfile = async (req, res) => {
 // Gửi thông tin học tập lên AI để tạo lộ trình
 exports.generateLearningPlan = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await UserService.getProfile(decoded.id);
+    const user = await UserService.getProfile(req.user.id);
 
     const aiPlan = await AIService.generateLearningPlan({
       goal: user.goal,
@@ -125,7 +130,7 @@ exports.generateLearningPlan = async (req, res) => {
     });
 
     await UserService.saveAIRecommendation(user.id, aiPlan);
-  handleResponse(res, aiPlan, 'AI learning plan generated'); 
+    handleResponse(res, aiPlan, 'AI learning plan generated');
   } catch (err) {
     handleError(res, err);
   }
@@ -225,26 +230,13 @@ exports.searchUsersByBandRange = async (req, res) => {
 
 exports.generateLearningPath = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
-    
     const LearningPathService = require('../services/learningPath.service');
-    
-    const result = await LearningPathService.generateLearningPathFromBands(userId);
-    
-    if (!result.success) {
-      return res.status(400).json(result);
-    }
-    
+    const result = await LearningPathService.generateLearningPathFromBands(req.user.id);
+    if (!result.success) return res.status(400).json(result);
     return res.status(200).json(result);
-    
   } catch (error) {
     console.error('❌ Error in generateLearningPath:', error.message);
-    return res.status(500).json({
-      success: false,
-      error: error.message
-    });
+    return res.status(500).json({ success: false, error: error.message });
   }
 };
 
@@ -254,25 +246,12 @@ exports.generateLearningPath = async (req, res) => {
  */
 exports.getLearningPath = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
-    
     const LearningPathService = require('../services/learningPath.service');
-    
-    const result = await LearningPathService.getLearningPath(userId);
-    
-    if (!result.success) {
-      return res.status(404).json(result);
-    }
-    
+    const result = await LearningPathService.getLearningPath(req.user.id);
+    if (!result.success) return res.status(404).json(result);
     return res.status(200).json(result);
-    
   } catch (error) {
     console.error('❌ Error in getLearningPath:', error.message);
-    return res.status(500).json({
-      success: false,
-      error: error.message
-    });
+    return res.status(500).json({ success: false, error: error.message });
   }
 };

@@ -74,13 +74,13 @@ Resource.init(
 
     // ========== Tags & Search ==========
     tags: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Tags để search dễ hơn. Format: ["ielts", "task2", "opinion-essay", "environment"]'
     },
 
     keywords: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Keywords quan trọng trong tài liệu. Format: ["climate change", "global warming", "pollution"]'
     },
@@ -157,7 +157,7 @@ Resource.init(
 
     // ========== Metadata ==========
     metadata: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Thông tin bổ sung linh hoạt: {author: "...", publish_date: "...", estimated_time: 15, ...}'
     }

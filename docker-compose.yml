@@ -1,0 +1,74 @@
+services:
+  # ── MySQL ──────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: emaster-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS:-moon123}
+      MYSQL_DATABASE: ${DB_NAME:-e-master}
+      MYSQL_USER: ${DB_USER:-root}
+      MYSQL_PASSWORD: ${DB_PASS:-moon123}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - emaster-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pmoon123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./Back-end
+      dockerfile: Dockerfile
+    container_name: emaster-backend
+    restart: unless-stopped
+    env_file:
+      - ./Back-end/.env
+    environment:
+      DB_HOST: mysql
+    ports:
+      - "1818:1818"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - emaster-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:1818/e-master"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./Front-end
+      dockerfile: Dockerfile
+      args:
+        # Override khi dev local Docker: REACT_APP_BACKEND_URL=http://localhost:1818/e-master trong file .env cùng thư mục
+        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-https://e-master.id.vn/e-master}
+        REACT_APP_GOOGLE_CLIENT_ID: ${REACT_APP_GOOGLE_CLIENT_ID:-}
+    container_name: emaster-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - emaster-net
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  emaster-net:
+    driver: bridge

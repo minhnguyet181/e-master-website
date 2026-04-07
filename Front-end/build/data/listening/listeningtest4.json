@@ -1,0 +1,68 @@
+{
+  "sectionNumber": 4,
+  "sectionTitle": "Section 4",
+  "audio": "audio/audio4.m4a",
+  "image": "",
+  "questions": [
+    {
+      "questionNumber": 31,
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "New type of .............",
+      "correctAnswer": "microscope"
+    },
+    {
+      "questionNumber": 32,
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Aids in getting .............",
+      "correctAnswer": "iron"
+    },
+    {
+      "questionNumber": 33,
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Reduces the cost of .............",
+      "correctAnswer": "chocolates"
+    },
+    {
+      "questionNumber": 34,
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Improves the ............. of food",
+      "correctAnswer": "flavour"
+    },
+    {
+      "questionNumber": 35,
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Efficiency of ............. in the soil",
+      "correctAnswer": "fertilisers"
+    },
+    {
+      "questionNumber": 36,
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Kill foods’ .............",
+      "correctAnswer": "bacteria"
+    },
+    {
+      "questionNumber": 37,
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Allow ............. to enter the veins",
+      "correctAnswer": "drugs"
+    },
+    {
+      "questionNumber": 38,
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "............. has the greatest antibacterial qualities",
+      "correctAnswer": "silver"
+    },
+    {
+      "questionNumber": 39,
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Splifferenes help ............. loss programmes",
+      "correctAnswer": "weight"
+    },
+    {
+      "questionNumber": 40,
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Preventing ............. from entering the body avoids skin cancer",
+      "correctAnswer": "radiation"
+    }
+  ]
+}

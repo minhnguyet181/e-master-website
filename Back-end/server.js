@@ -16,6 +16,9 @@ app.use(express.json());
 
 app.use('/e-master', routes);
 
+// Health check endpoint for Docker/load balancer
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
 // Apply associations once at boot (doesn't hit DB)
 applyTestV2Associations();
 

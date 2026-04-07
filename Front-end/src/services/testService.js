@@ -1,5 +1,5 @@
 // src/services/test.service.js
-import api from '../api'; // file api đã cấu hình sẵn axiosClient + header + token
+import api from '../api/api'; // file api đã cấu hình sẵn axiosClient + header + token
 
 class TestService {
   async listTests() {

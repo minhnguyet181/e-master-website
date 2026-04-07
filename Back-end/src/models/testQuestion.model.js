@@ -13,10 +13,10 @@ TestQuestion.init(
     question_no: { type: DataTypes.INTEGER, allowNull: false },
     question_type: { type: DataTypes.STRING(50), allowNull: false },
     prompt: { type: DataTypes.TEXT, allowNull: true },
-    options: { type: DataTypes.JSONB, allowNull: true },
+    options: { type: DataTypes.JSON, allowNull: true },
     correct_answer: { type: DataTypes.TEXT, allowNull: true },
     points: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
-    metadata: { type: DataTypes.JSONB, allowNull: true },
+    metadata: { type: DataTypes.JSON, allowNull: true },
   },
   {
     sequelize,

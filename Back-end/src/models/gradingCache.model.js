@@ -12,7 +12,7 @@ GradingCache.init(
     answer_hash: { type: DataTypes.STRING(64), allowNull: false },
     rubric_ver: { type: DataTypes.STRING(30), allowNull: false, defaultValue: 'v1' },
     ai_provider: { type: DataTypes.STRING(30), allowNull: false, defaultValue: 'gemini' },
-    result_json: { type: DataTypes.JSONB, allowNull: false },
+    result_json: { type: DataTypes.JSON, allowNull: false },
     hit_count: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     expires_at: { type: DataTypes.DATE, allowNull: true },
   },

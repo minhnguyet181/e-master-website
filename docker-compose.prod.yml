@@ -1,0 +1,22 @@
+# Production override — dùng prebuilt images từ registry
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  mysql:
+    ports: []   # không expose ra ngoài trong prod
+
+  backend:
+    image: ${DOCKER_REGISTRY}/emaster-backend:${IMAGE_TAG:-latest}
+    build: null
+    environment:
+      NODE_ENV: production
+      DB_HOST: mysql
+      FRONTEND_URL: ${FRONTEND_URL:-https://e-master.id.vn}
+    ports: []
+
+  frontend:
+    image: ${DOCKER_REGISTRY}/emaster-frontend:${IMAGE_TAG:-latest}
+    build: null
+    ports:
+      - "80:80"
+      - "443:443"

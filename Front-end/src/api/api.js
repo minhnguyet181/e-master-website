@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL = process.env.BACKEND_URL || "http://localhost:1818/e-master";
+const BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:1818/e-master";
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,
@@ -51,6 +51,9 @@ const api = {
   getTest: id => axiosClient.get(`/test/${id}/test`),
   getCorrectAnswers: id => axiosClient.get(`/test/${id}/answers`),
   gradeTest: data => axiosClient.post(`/test/grade`, data),
+  /** Same as gradeTest — dùng cho resourceService / màn hình gọi submit theo tên cũ */
+  submitTest: (testId, answers) =>
+    axiosClient.post(`/test/grade`, { testId, answers }),
 },
 
   progress: {
