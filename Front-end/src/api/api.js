@@ -1,5 +1,10 @@
 import axios from "axios";
-const BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:1818/e-master";
+// Dev: .env.development → /e-master + package.json proxy | Prod: .env.production full URL
+const BASE_URL =
+  process.env.REACT_APP_BACKEND_URL ||
+  (process.env.NODE_ENV === "development"
+    ? "/e-master"
+    : "http://localhost:1818/e-master");
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,

@@ -1,0 +1,41 @@
+{
+  "code": "IELTS-WRITING-002",
+  "name": "Writing Test 02",
+  "test_type": "writing",
+  "task_type": "Task 2",
+  "duration_minutes": 40,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Task 2",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Some people believe that using technology in the classroom improves learning outcomes, while others argue it creates distractions. Discuss both views and give your own opinion.",
+      "content": {
+        "task_type": "Task 2",
+        "title": "Education and Technology",
+        "question": "Some people believe that using technology in the classroom improves learning outcomes, while others argue it creates distractions. Discuss both views and give your own opinion."
+      },
+      "media": {
+        "image": null
+      },
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "WRITING_TASK",
+          "prompt": "Some people believe that using technology in the classroom improves learning outcomes, while others argue it creates distractions. Discuss both views and give your own opinion.",
+          "options": null,
+          "correct_answer": null,
+          "points": 250,
+          "metadata": {
+            "band_rubric": "ielts_writing_v1",
+            "sample_answer": null
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

@@ -1,0 +1,23 @@
+{
+  "code": "IELTS-SPEAKING-002",
+  "name": "Speaking Test 02",
+  "test_type": "speaking",
+  "duration_minutes": 15,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 2",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Describe a person you enjoy spending time with.",
+      "content": {
+        "topic": "Describe a person you enjoy spending time with."
+      },
+      "media": null,
+      "questions": []
+    }
+  ],
+  "metadata": {}
+}

@@ -1,0 +1,72 @@
+{
+  "code": "IELTS-SPEAKING-007",
+  "name": "Speaking Test 07",
+  "test_type": "speaking",
+  "duration_minutes": 15,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 1",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Nature",
+      "content": {
+        "topic": "Nature"
+      },
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Do you enjoy spending time in nature?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Nature",
+            "part": "Part 1"
+          }
+        },
+        {
+          "question_no": 2,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Are there any parks or natural places near your home?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Nature",
+            "part": "Part 1"
+          }
+        },
+        {
+          "question_no": 3,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "How often do you visit these places?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Nature",
+            "part": "Part 1"
+          }
+        },
+        {
+          "question_no": 4,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Do you think children should learn more about nature?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Nature",
+            "part": "Part 1"
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

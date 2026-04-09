@@ -1,0 +1,72 @@
+{
+  "code": "IELTS-SPEAKING-001",
+  "name": "Speaking Test 01",
+  "test_type": "speaking",
+  "duration_minutes": 15,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 1",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Hometown",
+      "content": {
+        "topic": "Hometown"
+      },
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Where is your hometown?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Hometown",
+            "part": "Part 1"
+          }
+        },
+        {
+          "question_no": 2,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "What do you like most about your hometown?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Hometown",
+            "part": "Part 1"
+          }
+        },
+        {
+          "question_no": 3,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Has your hometown changed much over the years?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Hometown",
+            "part": "Part 1"
+          }
+        },
+        {
+          "question_no": 4,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Would you like to live in your hometown in the future?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Hometown",
+            "part": "Part 1"
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

@@ -1,9 +1,35 @@
 // src/services/ai.service.js
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 const axios = require('axios');
 
-const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
+/** Chuẩn hóa key: trim, bỏ BOM UTF-8, bỏ ngoặc, không dùng URL làm key; sửa typo thừa "y" trước AIza */
+function normalizeGeminiApiKey(raw) {
+  if (raw == null || raw === '') return '';
+  let k = String(raw).trim();
+  if (k.charCodeAt(0) === 0xfeff) k = k.slice(1).trim();
+  if ((k.startsWith('"') && k.endsWith('"')) || (k.startsWith("'") && k.endsWith("'"))) {
+    k = k.slice(1, -1).trim();
+  }
+  const fromUrl = k.match(/[?&]key=([^&]+)/);
+  if (fromUrl) {
+    try {
+      k = decodeURIComponent(fromUrl[1]);
+    } catch {
+      k = fromUrl[1];
+    }
+  }
+  if (k.startsWith('yAIza')) {
+    k = k.slice(1);
+    console.warn('[ai.service] GEMINI_API_KEY had a stray leading "y" before AIza — fixed. Check your .env.');
+  }
+  return k.trim();
+}
+
+const GEMINI_KEY = normalizeGeminiApiKey(process.env.GEMINI_API_KEY);
 const HF_TOKEN = process.env.HF_TOKEN || '';
+/** Model: gemini-1.5-flash ổn định với API key thường; đổi qua GEMINI_MODEL nếu cần */
+const GEMINI_MODEL = (process.env.GEMINI_MODEL || 'gemini-1.5-flash').trim();
 
 /**
  * Helper: clean and try to parse JSON within AI text
@@ -35,7 +61,7 @@ async function callGemini(prompt, maxTokens = 800, retries = 3) {
     throw new Error('Prompt cannot be empty');
   }
   
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(GEMINI_KEY)}`;
   const body = {
     contents: [
       {

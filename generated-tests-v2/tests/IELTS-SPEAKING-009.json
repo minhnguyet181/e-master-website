@@ -1,0 +1,72 @@
+{
+  "code": "IELTS-SPEAKING-009",
+  "name": "Speaking Test 09",
+  "test_type": "speaking",
+  "duration_minutes": 15,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 3",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Environmental Protection",
+      "content": {
+        "topic": "Environmental Protection"
+      },
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Do you think governments are doing enough to protect the environment?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Environmental Protection",
+            "part": "Part 3"
+          }
+        },
+        {
+          "question_no": 2,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "What can individuals do to reduce pollution?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Environmental Protection",
+            "part": "Part 3"
+          }
+        },
+        {
+          "question_no": 3,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "How can schools help students understand environmental issues?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Environmental Protection",
+            "part": "Part 3"
+          }
+        },
+        {
+          "question_no": 4,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Do you think environmental problems will get worse in the future?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Environmental Protection",
+            "part": "Part 3"
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

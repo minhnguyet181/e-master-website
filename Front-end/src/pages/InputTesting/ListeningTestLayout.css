@@ -149,6 +149,24 @@
   color: #333;
 }
 
+.result-pill {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+.result-pill--ok {
+  background: #d4edda;
+  color: #155724;
+}
+.result-pill--bad {
+  background: #f8d7da;
+  color: #721c24;
+}
+
 /* Options */
 .options-list {
   display: flex;

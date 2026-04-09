@@ -26,6 +26,88 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
   // passageText can be object {A: "...", B: "..."} or string
   const passageText = section.content?.passageText || section.passage_text;
   const questions = section.questions || [];
+  const paragraphLabels =
+    passageText && typeof passageText === "object" ? Object.keys(passageText) : [];
+  const sortedQuestionNos = questions
+    .map((q) => Number(q.question_no))
+    .filter((n) => Number.isFinite(n))
+    .sort((a, b) => a - b);
+  const questionStart = sortedQuestionNos[0] || 1;
+  const questionEnd = sortedQuestionNos[sortedQuestionNos.length - 1] || questions.length;
+
+  const getGroupType = (qTypeRaw) => {
+    const qType = (qTypeRaw || "").toUpperCase();
+    if (qType === "TRUE_FALSE_NOT_GIVEN" || qType === "TFNG") return "TFNG";
+    if (qType === "YES_NO_NOT_GIVEN" || qType === "YNNG") return "YNNG";
+    if (qType === "PARAGRAPH_MATCH" || qType === "MATCHING_PARAGRAPHS") return "PARAGRAPH_MATCH";
+    if (qType === "MULTIPLE_CHOICE" || qType === "MCQ") return "MCQ";
+    if (qType === "SUMMARY_COMPLETION") return "SUMMARY";
+    return "SHORT";
+  };
+
+  const getTaskMeta = (groupType, firstQ, lastQ) => {
+    const range = `Questions ${firstQ}-${lastQ}`;
+    if (groupType === "TFNG") {
+      return {
+        range,
+        title: "Do the following statements agree with the information in the passage?",
+        instruction: "Choose TRUE, FALSE or NOT GIVEN for each question.",
+      };
+    }
+    if (groupType === "YNNG") {
+      return {
+        range,
+        title: "Do the following statements agree with the writer's views?",
+        instruction: "Choose YES, NO or NOT GIVEN for each question.",
+      };
+    }
+    if (groupType === "PARAGRAPH_MATCH") {
+      return {
+        range,
+        title: "Which paragraph contains the following information?",
+        instruction: "Write the correct letter, A-H, in boxes on your answer sheet.",
+      };
+    }
+    if (groupType === "MCQ") {
+      return {
+        range,
+        title: "Choose the correct letter, A, B, C or D.",
+        instruction: "Select the best answer for each question.",
+      };
+    }
+    if (groupType === "SUMMARY") {
+      return {
+        range,
+        title: "Complete the summary below.",
+        instruction: "Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+      };
+    }
+    return {
+      range,
+      title: "Answer the questions below.",
+      instruction: "Write your answers in the boxes provided.",
+    };
+  };
+
+  // Split into IELTS-like task blocks: contiguous question ranges by question type
+  const taskBlocks = [];
+  let currentBlock = null;
+  for (const q of questions) {
+    const type = getGroupType(q.question_type);
+    const no = Number(q.question_no);
+    if (
+      !currentBlock ||
+      currentBlock.groupType !== type ||
+      no !== currentBlock.lastNo + 1
+    ) {
+      if (currentBlock) taskBlocks.push(currentBlock);
+      currentBlock = { groupType: type, list: [q], firstNo: no, lastNo: no };
+    } else {
+      currentBlock.list.push(q);
+      currentBlock.lastNo = no;
+    }
+  }
+  if (currentBlock) taskBlocks.push(currentBlock);
 
   const renderPassage = () => {
     if (!passageText) return <p className="no-passage">No passage available.</p>;
@@ -57,23 +139,41 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
     const answer = userAnswers[key] ?? userAnswers[q.question_no] ?? "";
     const isAnswered = answer !== "" && answer !== undefined && answer !== null;
 
-    // Determine correct/wrong after submit
+    const detailRow = score?.detail?.find?.(
+      (d) => d.public_id === key || d.question_no === q.question_no
+    );
+    const isOk =
+      detailRow !== undefined ? (detailRow.is_correct ?? detailRow.correct) : undefined;
     let resultClass = "";
-    if (score?.detail) {
-      const detail = score.detail.find?.(d => d.public_id === key || d.question_no === q.question_no);
-      if (detail) resultClass = detail.correct ? "answer-correct" : "answer-wrong";
+    if (detailRow && typeof isOk === "boolean") {
+      resultClass = isOk ? "answer-correct" : "answer-wrong";
     }
 
     const tfngOptions = ["TRUE", "FALSE", "NOT GIVEN"];
     const ynngOptions = ["YES", "NO", "NOT GIVEN"];
 
     const qType = (q.question_type || "").toUpperCase();
+    const groupType = getGroupType(q.question_type);
+    const generatedPrompt =
+      groupType === "PARAGRAPH_MATCH"
+        ? `Which paragraph contains the information for question ${q.question_no}?`
+        : groupType === "MCQ"
+        ? `Choose the correct option for question ${q.question_no}.`
+        : groupType === "SUMMARY"
+        ? `Complete the gap for question ${q.question_no} using words from the passage.`
+        : `Answer question ${q.question_no}.`;
+    const promptText = q.prompt || generatedPrompt;
 
     return (
       <div key={key} className={`reading-question ${isAnswered ? "answered" : ""} ${resultClass}`}>
         <p className="question-text">
           <span className="question-num">Q{q.question_no}.</span>{" "}
-          {q.prompt || ""}
+          {promptText}
+          {score && typeof isOk === "boolean" && (
+            <span className={`result-pill ${isOk ? "result-pill--ok" : "result-pill--bad"}`}>
+              {isOk ? "Đúng" : "Sai"}
+            </span>
+          )}
         </p>
 
         {/* MCQ */}
@@ -131,12 +231,43 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
           </div>
         )}
 
+        {/* Paragraph matching */}
+        {!q.options && groupType === "PARAGRAPH_MATCH" && (
+          <div className="options-list paragraph-match">
+            {paragraphLabels.length > 0 ? (
+              paragraphLabels.map((label) => (
+                <label
+                  key={label}
+                  className={`option-label ${answer === label ? "selected" : ""}`}
+                >
+                  <input
+                    type="radio"
+                    name={`q-${key}`}
+                    disabled={!!score}
+                    checked={answer === label}
+                    onChange={() => onAnswer(key, label)}
+                  />
+                  <span>Paragraph {label}</span>
+                </label>
+              ))
+            ) : (
+              <input
+                type="text"
+                className="fill-input"
+                placeholder="Paragraph letter (e.g. A)"
+                disabled={!!score}
+                value={answer}
+                onChange={(e) => onAnswer(key, e.target.value.toUpperCase())}
+              />
+            )}
+          </div>
+        )}
+
         {/* Fill-in / Short answer / Summary completion */}
         {!q.options &&
-          qType !== "TRUE_FALSE_NOT_GIVEN" &&
-          qType !== "TFNG" &&
-          qType !== "YES_NO_NOT_GIVEN" &&
-          qType !== "YNNG" && (
+          groupType !== "TFNG" &&
+          groupType !== "YNNG" &&
+          groupType !== "PARAGRAPH_MATCH" && (
             <input
               type="text"
               className="fill-input"
@@ -190,12 +321,26 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
         {/* RIGHT: Questions */}
         <div className="questions-panel">
           <div className="questions-header">
-            <span>Questions 1–{questions.length}</span>
+            <span>Questions {questionStart}-{questionEnd}</span>
             <span className="progress-badge">{answeredCount}/{questions.length} answered</span>
           </div>
 
           <div className="questions-list">
-            {questions.map((q, idx) => renderQuestion(q, idx))}
+            {taskBlocks.map((block, blockIdx) => {
+              const first = block.list[0];
+              const last = block.list[block.list.length - 1];
+              const meta = getTaskMeta(block.groupType, first?.question_no, last?.question_no);
+              return (
+                <div key={`${block.groupType}-${blockIdx}`} className="question-group">
+                  <h4 className="question-group-title">
+                    {meta.range}
+                  </h4>
+                  <p className="question-group-heading">{meta.title}</p>
+                  <p className="question-group-instruction">{meta.instruction}</p>
+                  {block.list.map((q, idx) => renderQuestion(q, idx))}
+                </div>
+              );
+            })}
           </div>
 
           {!score && (

@@ -1,0 +1,195 @@
+{
+  "code": "IELTS-READING-004",
+  "name": "Reading Test 05",
+  "test_type": "reading",
+  "duration_minutes": 60,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Reading Passage 1",
+      "passage_text": "null",
+      "audio_url": null,
+      "image_url": null,
+      "content": {
+        "passageTitle": "Voyage of Going: beyond the blue line 2",
+        "passageText": null
+      },
+      "media": null,
+      "questions": [
+        {
+          "prompt": "Statement 1",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "question_no": 1,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "correct_answer": "TRUE",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 1
+          }
+        },
+        {
+          "prompt": "Statement 2",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "question_no": 2,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "correct_answer": "FALSE",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 2
+          }
+        },
+        {
+          "prompt": "Statement 3",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "question_no": 3,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "correct_answer": "FALSE",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 3
+          }
+        },
+        {
+          "prompt": "Statement 4",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "question_no": 4,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "correct_answer": "NOT GIVEN",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 4
+          }
+        },
+        {
+          "prompt": "Statement 5",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "question_no": 5,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "correct_answer": "TRUE",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 5
+          }
+        },
+        {
+          "prompt": "Statement 6",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "question_no": 6,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "correct_answer": "NOT GIVEN",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 6
+          }
+        },
+        {
+          "prompt": "Statement 7",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "question_no": 7,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "correct_answer": "FALSE",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 7
+          }
+        },
+        {
+          "prompt": "Complete the gap for question 8 using words from the passage.",
+          "options": null,
+          "question_no": 8,
+          "question_type": "SUMMARY_COMPLETION",
+          "correct_answer": "rock",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 8
+          }
+        },
+        {
+          "prompt": "Complete the gap for question 9 using words from the passage.",
+          "options": null,
+          "question_no": 9,
+          "question_type": "SUMMARY_COMPLETION",
+          "correct_answer": "teeth",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 9
+          }
+        },
+        {
+          "prompt": "Complete the gap for question 10 using words from the passage.",
+          "options": null,
+          "question_no": 10,
+          "question_type": "SUMMARY_COMPLETION",
+          "correct_answer": "descendants",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 10
+          }
+        },
+        {
+          "prompt": "Answer question 11.",
+          "options": null,
+          "question_no": 11,
+          "question_type": "SHORT_ANSWER",
+          "correct_answer": "canoes",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 11
+          }
+        },
+        {
+          "prompt": "Answer question 12.",
+          "options": null,
+          "question_no": 12,
+          "question_type": "SHORT_ANSWER",
+          "correct_answer": "trade winds",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 12
+          }
+        },
+        {
+          "prompt": "Answer question 13.",
+          "options": null,
+          "question_no": 13,
+          "question_type": "SHORT_ANSWER",
+          "correct_answer": "seabirds and turtles",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 13
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

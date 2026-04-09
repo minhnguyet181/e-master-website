@@ -340,7 +340,7 @@ const InputTesting = () => {
 
   if (testContent) {
     return (
-      <div className="input-testing-page">
+      <div className="input-testing-page input-testing-page--exam">
         <Navbar />
         <div className="main-layout">
           <Sidebar />

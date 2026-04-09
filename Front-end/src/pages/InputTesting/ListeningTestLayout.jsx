@@ -49,10 +49,14 @@ const ListeningTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubm
     const answer = userAnswers[key] ?? userAnswers[q.question_no] ?? "";
     const isAnswered = answer !== "" && answer !== undefined && answer !== null;
 
+    const detailRow = score?.detail?.find?.(
+      (d) => d.public_id === key || d.question_no === q.question_no
+    );
+    const isOk =
+      detailRow !== undefined ? (detailRow.is_correct ?? detailRow.correct) : undefined;
     let resultClass = "";
-    if (score?.detail) {
-      const detail = score.detail.find?.(d => d.public_id === key || d.question_no === q.question_no);
-      if (detail) resultClass = detail.correct ? "answer-correct" : "answer-wrong";
+    if (detailRow && typeof isOk === "boolean") {
+      resultClass = isOk ? "answer-correct" : "answer-wrong";
     }
 
     const qType = (q.question_type || "").toUpperCase();
@@ -61,7 +65,14 @@ const ListeningTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubm
       <div key={key} className={`listening-question ${isAnswered ? "answered" : ""} ${resultClass}`}>
         <div className="question-row">
           <span className="question-num">Q{q.question_no}.</span>
-          <span className="question-text">{q.prompt || ""}</span>
+          <span className="question-text">
+            {q.prompt || ""}
+            {score && typeof isOk === "boolean" && (
+              <span className={`result-pill ${isOk ? "result-pill--ok" : "result-pill--bad"}`}>
+                {isOk ? "Đúng" : "Sai"}
+              </span>
+            )}
+          </span>
         </div>
 
         {/* MCQ */}

@@ -18,22 +18,22 @@ const Sidebar = () => {
     <aside className="sidebar">
       <ul>
         <li>
-          <Link to="/dashboard"><FontAwesomeIcon icon={faHouse} /> <span>Dashboard</span></Link>
+          <Link to="/dashboard" title="Dashboard"><FontAwesomeIcon icon={faHouse} /> <span>Dashboard</span></Link>
         </li>
         <li>
-          <Link to="/mycourse"><FontAwesomeIcon icon={faBook} /> <span>My Courses</span></Link>
+          <Link to="/mycourse" title="My Courses"><FontAwesomeIcon icon={faBook} /> <span>My Courses</span></Link>
         </li>
         <li>
-          <Link to="/roadmap"><FontAwesomeIcon icon={faBookOpen} /> <span>Roadmap</span></Link>
+          <Link to="/roadmap" title="Roadmap"><FontAwesomeIcon icon={faBookOpen} /> <span>Roadmap</span></Link>
         </li>
         <li>
-          <Link to="/schedule"><FontAwesomeIcon icon={faClock} /> <span>Schedule</span></Link>
+          <Link to="/schedule" title="Schedule"><FontAwesomeIcon icon={faClock} /> <span>Schedule</span></Link>
         </li>
         <li>
-          <Link to="/resources"><FontAwesomeIcon icon={faFolderOpen} /> <span>Resources</span></Link>
+          <Link to="/resources" title="Resources"><FontAwesomeIcon icon={faFolderOpen} /> <span>Resources</span></Link>
         </li>
         <li>
-          <Link to="/assistant"><FontAwesomeIcon icon={faAirbnb} /> <span>AI Assistant</span></Link>
+          <Link to="/assistant" title="AI Assistant"><FontAwesomeIcon icon={faAirbnb} /> <span>AI Assistant</span></Link>
         </li>
         
       

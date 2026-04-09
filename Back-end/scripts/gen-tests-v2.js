@@ -24,6 +24,49 @@ function makeCode(skill, idx) {
   return `IELTS-${skill.toUpperCase()}-${String(idx).padStart(3, '0')}`;
 }
 
+/** displayNo = 1..N trong đề (sau khi remap); không dùng questionNumber gốc Cambridge trong UI */
+function inferReadingPromptAndOptions(q, displayNo) {
+  const n = displayNo;
+  const qType = (q.questionType || '').toUpperCase();
+  if (q.questionText && String(q.questionText).trim()) {
+    return { prompt: q.questionText, options: q.options || null };
+  }
+  if (qType === 'TRUE_FALSE_NOT_GIVEN' || qType === 'TFNG') {
+    return {
+      prompt: `Statement ${n}`,
+      options: ['TRUE', 'FALSE', 'NOT GIVEN'],
+    };
+  }
+  if (qType === 'YES_NO_NOT_GIVEN' || qType === 'YNNG') {
+    return {
+      prompt: `Statement ${n}`,
+      options: ['YES', 'NO', 'NOT GIVEN'],
+    };
+  }
+  if (qType === 'PARAGRAPH_MATCH' || qType === 'MATCHING_PARAGRAPHS') {
+    return {
+      prompt: `Which paragraph contains the information for question ${n}?`,
+      options: null,
+    };
+  }
+  if (qType === 'MULTIPLE_CHOICE' || qType === 'MCQ') {
+    return {
+      prompt: `Choose the best answer for question ${n}.`,
+      options: q.options || ['A', 'B', 'C', 'D'],
+    };
+  }
+  if (qType === 'SUMMARY_COMPLETION') {
+    return {
+      prompt: `Complete the gap for question ${n} using words from the passage.`,
+      options: null,
+    };
+  }
+  return {
+    prompt: `Answer question ${n}.`,
+    options: q.options || null,
+  };
+}
+
 function normalizeListening(fileJson, code, name) {
   const sectionNo = fileJson.sectionNumber || 1;
   // audio path relative to /data/
@@ -46,14 +89,14 @@ function normalizeListening(fileJson, code, name) {
         passage_text: null,
         content: null,
         media: { audio: audioUrl, image: imageUrl },
-        questions: (fileJson.questions || []).map((q) => ({
-          question_no: q.questionNumber,
+        questions: (fileJson.questions || []).map((q, idx) => ({
+          question_no: idx + 1,
           question_type: q.questionType || 'TABLE_COMPLETION',
           prompt: q.questionText || null,
           options: q.options || null,
           correct_answer: q.correctAnswer ?? null,
           points: q.points ?? 1,
-          metadata: {},
+          metadata: { source_question_no: q.questionNumber ?? idx + 1 },
         })),
       },
     ],
@@ -85,14 +128,13 @@ function normalizeReading(fileJson, code, name) {
           passageText: passageText,
         },
         media: null,
-        questions: (fileJson.questions || []).map((q) => ({
-          question_no: q.questionNumber,
+        questions: (fileJson.questions || []).map((q, idx) => ({
+          ...inferReadingPromptAndOptions(q, idx + 1),
+          question_no: idx + 1,
           question_type: q.questionType || 'UNKNOWN',
-          prompt: q.questionText || null,
-          options: q.options || null,
           correct_answer: q.correctAnswer ?? null,
           points: q.points ?? 1,
-          metadata: {},
+          metadata: { source_question_no: q.questionNumber ?? idx + 1 },
         })),
       },
     ],

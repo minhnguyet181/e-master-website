@@ -7,23 +7,59 @@
   margin-top: 70px;
 }
 
+/* Phải khớp với .sidebar { width } trong Sidebar.css (Sidebar position: fixed) */
+:root {
+  --input-testing-sidebar-w: 230px;
+  --input-testing-sidebar-collapsed-w: 56px;
+}
+
 .main-layout {
   display: flex;
-  /* flex: 1; */
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: var(--input-testing-sidebar-w);
+  transition: padding-left 0.2s ease;
 }
+
+/* Đang làm bài: thu gọn sidebar chỉ còn icon, chừa ít chỗ bên trái */
+.input-testing-page--exam .main-layout {
+  padding-left: var(--input-testing-sidebar-collapsed-w);
+}
+
+.input-testing-page--exam .sidebar {
+  width: var(--input-testing-sidebar-collapsed-w);
+}
+
+.input-testing-page--exam .sidebar a {
+  justify-content: center;
+  padding: 14px 8px;
+  gap: 0;
+}
+
+.input-testing-page--exam .sidebar a span {
+  display: none;
+}
+
+/* Sidebar fixed: không chiếm chỗ trong flex flow — chừa chỗ bằng padding-left ở trên */
+.main-layout > .sidebar {
+  flex: 0 0 0;
+  width: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  overflow: visible;
+}
+
 .test-content {
-  flex: 1; /* chiếm phần còn lại */
- 
+  flex: 1;
+  min-width: 0;
 }
 .test-container {
-  flex: 1; /* chiếm phần còn lại */
-
-}
-
-.main-layout > *:first-child {
-  width: 220px;         /* sidebar cố định 220px */
-  background: #fff;
-  border-right: 1px solid #ddd;
+  flex: 1;
+  min-width: 0;
 }
 /* ✅ Giới hạn độ rộng và tự xuống dòng cho câu hỏi */
 .question-item p {
@@ -91,7 +127,13 @@
 }
 
 /* Để responsive (khi màn hình nhỏ) */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .main-layout {
+    padding-left: 0;
+  }
+  .input-testing-page--exam .main-layout {
+    padding-left: var(--input-testing-sidebar-collapsed-w);
+  }
   .skill-options {
     justify-content: center;
   }

@@ -1,0 +1,23 @@
+{
+  "code": "IELTS-SPEAKING-008",
+  "name": "Speaking Test 08",
+  "test_type": "speaking",
+  "duration_minutes": 15,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 2",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Describe an environmentally friendly activity you do.",
+      "content": {
+        "topic": "Describe an environmentally friendly activity you do."
+      },
+      "media": null,
+      "questions": []
+    }
+  ],
+  "metadata": {}
+}

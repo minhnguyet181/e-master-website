@@ -1,0 +1,41 @@
+{
+  "code": "IELTS-WRITING-001",
+  "name": "Writing Test 01",
+  "test_type": "writing",
+  "task_type": "Task 1 Academic",
+  "duration_minutes": 20,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Task 1 Academic",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": "image/writingtest1.jpg",
+      "prompt": "The chart below shows the percentage of households with Internet access in five countries in 2010 and 2020. Summarise the information by selecting and reporting the main features and make comparisons where relevant.",
+      "content": {
+        "task_type": "Task 1 Academic",
+        "title": "Bar Chart – Internet Usage",
+        "question": "The chart below shows the percentage of households with Internet access in five countries in 2010 and 2020. Summarise the information by selecting and reporting the main features and make comparisons where relevant."
+      },
+      "media": {
+        "image": "image/writingtest1.jpg"
+      },
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "WRITING_TASK",
+          "prompt": "The chart below shows the percentage of households with Internet access in five countries in 2010 and 2020. Summarise the information by selecting and reporting the main features and make comparisons where relevant.",
+          "options": null,
+          "correct_answer": null,
+          "points": 150,
+          "metadata": {
+            "band_rubric": "ielts_writing_v1",
+            "sample_answer": null
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

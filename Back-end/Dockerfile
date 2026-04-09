@@ -2,11 +2,14 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 
 # ── Stage 2: runtime ───────────────────────────────────────────
 FROM node:20-alpine AS runtime
 WORKDIR /app
+
+# Healthcheck dùng wget; image node:alpine mặc định không có
+RUN apk add --no-cache wget
 
 # Copy only production deps from stage 1
 COPY --from=deps /app/node_modules ./node_modules
@@ -18,7 +21,7 @@ USER appuser
 
 EXPOSE 1818
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-  CMD wget -qO- http://localhost:1818/e-master || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=5 \
+  CMD wget -qO- http://127.0.0.1:1818/health || exit 1
 
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "npm run db:migrate && node server.js"]
