@@ -356,7 +356,6 @@ const InputTesting = () => {
                 setSelectedTest(null);
                 setUserAnswers({});
                 setScore(null);
-                window.history.back();
               }}
             >
               ← Back to {selectedSkill}
@@ -477,9 +476,9 @@ const InputTesting = () => {
           {/* --- Test list --- */}
           {selectedSkill && !testContent && (
             <>
-              {/* <button className="back-btn" onClick={() => window.history.back()}>
-                ← Back to Skill List
-              </button> */}
+              <button className="back-btn" onClick={() => { setSelectedSkill(null); setTestList([]); }}>
+                ← Back to Skills
+              </button>
               <h2 className="skill-header">
                 {selectedSkill.toUpperCase()} TESTS
               </h2>

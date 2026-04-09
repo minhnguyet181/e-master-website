@@ -54,7 +54,7 @@ export default function PracticeTesting() {
     window.history.pushState({}, "", `#${skill}`);
   };
 
-  const handleStartTest = async (test) => {
+  const handleStartTest = async (test, idx) => {
     setSelectedTest(test);
     setLoading(true);
     setError("");
@@ -63,7 +63,7 @@ export default function PracticeTesting() {
       if (!res.ok) throw new Error("Cannot load this test file.");
       const data = await res.json();
       setTestContent(data);
-      window.history.pushState({}, "", `#${selectedSkill}-test-${test.id}`);
+      window.history.pushState({}, "", `#${selectedSkill}-test-${idx}`);
     } catch (err) {
       console.error(err);
       setError("Cannot load test content.");
@@ -108,12 +108,12 @@ export default function PracticeTesting() {
             {error && <p className="error">{error}</p>}
 
             <div className="test-grid">
-              {testsData[selectedSkill]?.slice(0, visibleExtra).map(t => (
-                <div key={t.id} className="test-card">
+              {testsData[selectedSkill]?.slice(0, visibleExtra).map((t, idx) => (
+                <div key={idx} className="test-card">
                   <h3>{t.name}</h3>
                   <p>{t.desc}</p>
                   <p className="duration">⏱ {t.duration || 60} minutes</p>
-                  <button className="start-btn" onClick={() => handleStartTest(t)}>
+                  <button className="start-btn" onClick={() => handleStartTest(t, idx)}>
                     Start Test
                   </button>
                 </div>

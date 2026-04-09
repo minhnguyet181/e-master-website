@@ -79,6 +79,7 @@ const NavigationButtons = ({ onBack, onNext, isNextDisabled = false }) => {
 
 // --- Step Components ---
 const WelcomeStep = ({ onNext }) => {
+    const navigate = useNavigate();
     return (
         <div className="step-card text-center fade-in">
             <AppLogo className="app-logo-large" />
@@ -91,6 +92,13 @@ const WelcomeStep = ({ onNext }) => {
                 className="btn-primary"
             >
                 Let's Get Started
+            </button>
+            <button
+                type="button"
+                onClick={() => navigate('/dashboard')}
+                style={{ marginTop: '0.75rem', background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '0.9rem', textDecoration: 'underline' }}
+            >
+                Skip for now
             </button>
         </div>
     );
@@ -384,6 +392,17 @@ useEffect(() => {
                 style={{ marginTop: '1rem' }}
             >
                 Try Again
+            </button>
+            <br />
+            <button
+                type="button"
+                onClick={() => navigate('/dashboard')}
+                style={{ marginTop: '0.75rem', background: 'none', border: 'none', color: '#4C82F7', cursor: 'pointer', fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Back to Home
             </button>
         </div>
     );
