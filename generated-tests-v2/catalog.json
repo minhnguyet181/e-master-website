@@ -68,6 +68,17 @@
       ]
     },
     {
+      "code": "IELTS-READ-002",
+      "name": "IELTS Reading Test 2 (Make That Wine)",
+      "test_type": "reading",
+      "task_type": null,
+      "level": "IELTS",
+      "duration_minutes": 60,
+      "source": "pdf",
+      "file": "ielts-reading-test-2.json",
+      "tags": ["practice", "pdf-import"]
+    },
+    {
       "code": "IELTS-READING-002",
       "name": "Reading Test 03",
       "test_type": "reading",

@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 import Navbar from '../../components/Navbar';
-import { updateUserProfile } from '../../services/resourceService';
+import { getUserProfile, updateUserProfile } from '../../services/resourceService';
 
 const CameraIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,19 +20,49 @@ const PencilIcon = () => (
 const Profile = () => {
     const navigate = useNavigate();
     const [profile, setProfile] = useState({
-        name: 'Alex Doe',
-        email: 'alex.doe@example.com',
-        avatar: 'https://picsum.photos/seed/user1/200',
-        englishLevel: 'Intermediate',
-        learningGoals: 'I want to improve my business English communication skills for international meetings and presentations. I also aim to expand my vocabulary related to technology and finance.',
+        name: '',
+        email: '',
+        avatar: '',
+        englishLevel: '',
+        learningGoals: '',
     });
-    
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [avatarPreview, setAvatarPreview] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
     const [saveError, setSaveError] = useState('');
     const fileInputRef = useRef(null);
     const [initialProfile, setInitialProfile] = useState(profile);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            setIsLoading(true);
+            setLoadError('');
+            try {
+                const result = await getUserProfile();
+                if (result.success) {
+                    const u = result.user?.user || result.user || {};
+                    const mapped = {
+                        name: u.username || u.name || '',
+                        email: u.email || '',
+                        avatar: u.avatar || u.profile_picture || `https://picsum.photos/seed/${u.id || 'user'}/200`,
+                        englishLevel: u.english_level || u.englishLevel || '',
+                        learningGoals: u.learning_goals || u.learningGoals || '',
+                    };
+                    setProfile(mapped);
+                    setInitialProfile(mapped);
+                } else {
+                    setLoadError(result.message || 'Failed to load profile');
+                }
+            } catch (err) {
+                setLoadError('Error loading profile');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchProfile();
+    }, []);
 
     const handleAvatarChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -103,6 +133,11 @@ const Profile = () => {
         <div>
             <Navbar />
             <main className="profile-page-wrapper">
+            {isLoading ? (
+                <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>Loading profile...</div>
+            ) : loadError ? (
+                <div style={{ textAlign: 'center', padding: '3rem', color: '#d32f2f' }}>{loadError}</div>
+            ) : (
             <div className={"profile-container" + (isEditing ? " editing" : "")}>
             <h1 className="profile-title top">My Profile</h1>
 
@@ -203,6 +238,7 @@ const Profile = () => {
                 </div>
             </form>
             </div>
+            )}
             </main>
         </div>
     );
