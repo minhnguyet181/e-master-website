@@ -76,7 +76,10 @@
       "duration_minutes": 60,
       "source": "pdf",
       "file": "ielts-reading-test-2.json",
-      "tags": ["practice", "pdf-import"]
+      "tags": [
+        "practice",
+        "pdf-import"
+      ]
     },
     {
       "code": "IELTS-READING-002",
@@ -427,6 +430,119 @@
       "file": "tests/IELTS-WRITING-010.json",
       "tags": [
         "practice"
+      ]
+    },
+    {
+      "code": "CAM17-READING-T1",
+      "name": "Cambridge IELTS 17 – Reading Test 1",
+      "test_type": "reading",
+      "task_type": null,
+      "level": "IELTS",
+      "duration_minutes": 60,
+      "source": "cambridge",
+      "file": "tests/CAM17-READING-T1.json",
+      "tags": [
+        "cambridge",
+        "cam17",
+        "academic"
+      ]
+    },
+    {
+      "code": "CAM17-LISTENING-T1",
+      "name": "Cambridge IELTS 17 – Listening Test 1",
+      "test_type": "listening",
+      "task_type": null,
+      "level": "IELTS",
+      "duration_minutes": 30,
+      "source": "cambridge",
+      "file": "tests/CAM17-LISTENING-T1.json",
+      "tags": [
+        "cambridge",
+        "cam17"
+      ]
+    },
+    {
+      "code": "CAM17-LISTENING-T2",
+      "name": "Cambridge IELTS 17 – Listening Test 2",
+      "test_type": "listening",
+      "task_type": null,
+      "level": "IELTS",
+      "duration_minutes": 30,
+      "source": "cambridge",
+      "file": "tests/CAM17-LISTENING-T2.json",
+      "tags": [
+        "cambridge",
+        "cam17"
+      ]
+    },
+    {
+      "code": "CAM17-LISTENING-T3",
+      "name": "Cambridge IELTS 17 – Listening Test 3",
+      "test_type": "listening",
+      "task_type": null,
+      "level": "IELTS",
+      "duration_minutes": 30,
+      "source": "cambridge",
+      "file": "tests/CAM17-LISTENING-T3.json",
+      "tags": [
+        "cambridge",
+        "cam17"
+      ]
+    },
+    {
+      "code": "CAM17-LISTENING-T4",
+      "name": "Cambridge IELTS 17 – Listening Test 4",
+      "test_type": "listening",
+      "task_type": null,
+      "level": "IELTS",
+      "duration_minutes": 30,
+      "source": "cambridge",
+      "file": "tests/CAM17-LISTENING-T4.json",
+      "tags": [
+        "cambridge",
+        "cam17"
+      ]
+    },
+    {
+      "code": "CAM17-WRITING-T1",
+      "name": "Cambridge IELTS 17 – Writing Test 1",
+      "test_type": "writing",
+      "task_type": null,
+      "level": "IELTS",
+      "duration_minutes": 60,
+      "source": "cambridge",
+      "file": "tests/CAM17-WRITING-T1.json",
+      "tags": [
+        "cambridge",
+        "cam17"
+      ]
+    },
+    {
+      "code": "CAM17-SPEAKING-T1",
+      "name": "Cambridge IELTS 17 – Speaking Test 1",
+      "test_type": "speaking",
+      "task_type": null,
+      "level": "IELTS",
+      "duration_minutes": 14,
+      "source": "cambridge",
+      "file": "tests/CAM17-SPEAKING-T1.json",
+      "tags": [
+        "cambridge",
+        "cam17"
+      ]
+    },
+    {
+      "code": "CAM17-READING-T2",
+      "name": "Cambridge IELTS 17 – Reading Test 2",
+      "test_type": "reading",
+      "task_type": null,
+      "level": "IELTS",
+      "duration_minutes": 60,
+      "source": "cambridge",
+      "file": "tests/CAM17-READING-T2.json",
+      "tags": [
+        "cambridge",
+        "cam17"
       ]
     }
   ]

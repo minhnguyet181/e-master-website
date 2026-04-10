@@ -1,0 +1,49 @@
+{
+  "code": "CAM17-WRITING-T1",
+  "name": "Cambridge IELTS 17 – Writing Test 1",
+  "test_type": "writing",
+  "level": "IELTS",
+  "duration_minutes": 60,
+  "metadata": {
+    "source": "Cambridge IELTS 17",
+    "test_no": 1
+  },
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Writing Task 1 – Maps: Norbiton industrial area",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "prompt": "The maps below show an industrial area in the town of Norbiton, and planned future development of the site. Summarise the information by selecting and reporting the main features, and make comparisons where relevant. Write at least 150 words.",
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "WRITING_TASK1",
+          "prompt": "The maps below show an industrial area in the town of Norbiton, and planned future development of the site. Summarise the information by selecting and reporting the main features, and make comparisons where relevant. Write at least 150 words.",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 2,
+      "title": "Writing Task 2 – Taking risks",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "prompt": "It is important for people to take risks, both in their professional lives and their personal lives. Do you think the advantages of taking risks outweigh the disadvantages? Give reasons for your answer and include any relevant examples from your own knowledge or experience. Write at least 250 words.",
+      "questions": [
+        {
+          "question_no": 2,
+          "question_type": "WRITING_TASK2",
+          "prompt": "It is important for people to take risks, both in their professional lives and their personal lives. Do you think the advantages of taking risks outweigh the disadvantages? Give reasons for your answer and include any relevant examples from your own knowledge or experience. Write at least 250 words.",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        }
+      ]
+    }
+  ]
+}

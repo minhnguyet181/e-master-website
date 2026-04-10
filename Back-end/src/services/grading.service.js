@@ -45,7 +45,15 @@ function isCorrectObjectiveAnswer(q, userAns) {
 
   // TFNG / YNNG normalization
   if (qType === 'TRUE_FALSE_NOT_GIVEN' || qType === 'TFNG' || qType === 'YES_NO_NOT_GIVEN' || qType === 'YNNG') {
-    const userNorm = normalizeTfngLike(userAns);
+    // If user sent a numeric index (e.g. from MCQ renderer), map it to option text first
+    let answerToNorm = userAns;
+    if (Array.isArray(q.options) && q.options.length > 0) {
+      const idx = Number(userAns);
+      if (Number.isInteger(idx) && idx >= 0 && idx < q.options.length) {
+        answerToNorm = q.options[idx];
+      }
+    }
+    const userNorm = normalizeTfngLike(answerToNorm);
     const accepted = splitAcceptedAnswers(q.correct_answer).map(normalizeTfngLike);
     return userNorm.length > 0 && accepted.includes(userNorm);
   }
@@ -109,6 +117,10 @@ function computeObjectiveResult(questions, answers) {
     let userAns;
     if (answers && typeof answers === 'object' && !Array.isArray(answers) && q.public_id && answers[q.public_id] !== undefined) {
       userAns = answers[q.public_id];
+    } else if (answers && typeof answers === 'object' && !Array.isArray(answers) && answers[String(q.question_no)] !== undefined) {
+      userAns = answers[String(q.question_no)];
+    } else if (answers && typeof answers === 'object' && !Array.isArray(answers) && answers[q.question_no] !== undefined) {
+      userAns = answers[q.question_no];
     } else {
       userAns = getAnswerByIndex(idx);
     }

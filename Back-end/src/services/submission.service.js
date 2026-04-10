@@ -16,25 +16,29 @@ class SubmissionService {
 
   static async submitWriting(userId, testId, essay) {
     const ai = await AIService.gradeWriting(essay);
+    let score = null;
+    try { score = (typeof ai === 'string' ? JSON.parse(ai) : ai).overall ?? null; } catch (_) {}
 
     return await UserSubmission.create({
       user_id: userId,
       test_id: testId,
       answers: { essay },
-      score: JSON.parse(ai).overall,
-      ai_feedback: ai,
+      score,
+      ai_feedback: typeof ai === 'string' ? ai : JSON.stringify(ai),
     });
   }
 
   static async submitSpeaking(userId, testId, transcript) {
     const ai = await AIService.gradeSpeaking(transcript);
+    let score = null;
+    try { score = (typeof ai === 'string' ? JSON.parse(ai) : ai).overall ?? null; } catch (_) {}
 
     return await UserSubmission.create({
       user_id: userId,
       test_id: testId,
       answers: { transcript },
-      score: JSON.parse(ai).overall,
-      ai_feedback: ai,
+      score,
+      ai_feedback: typeof ai === 'string' ? ai : JSON.stringify(ai),
     });
   }
 }

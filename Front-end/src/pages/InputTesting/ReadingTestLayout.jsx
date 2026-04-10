@@ -42,49 +42,49 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
     if (qType === "PARAGRAPH_MATCH" || qType === "MATCHING_PARAGRAPHS") return "PARAGRAPH_MATCH";
     if (qType === "MULTIPLE_CHOICE" || qType === "MCQ") return "MCQ";
     if (qType === "SUMMARY_COMPLETION") return "SUMMARY";
+    if (qType === "TABLE_COMPLETION") return "TABLE";
+    if (qType === "FLOW_CHART_COMPLETION") return "FLOW";
+    if (qType === "SHORT_ANSWER") return "SHORT";
+    if (qType === "EXAMPLE_COMPLETION") return "EXAMPLE";
     return "SHORT";
   };
 
   const getTaskMeta = (groupType, firstQ, lastQ) => {
-    const range = `Questions ${firstQ}-${lastQ}`;
-    if (groupType === "TFNG") {
-      return {
-        range,
-        title: "Do the following statements agree with the information in the passage?",
-        instruction: "Choose TRUE, FALSE or NOT GIVEN for each question.",
-      };
-    }
-    if (groupType === "YNNG") {
-      return {
-        range,
-        title: "Do the following statements agree with the writer's views?",
-        instruction: "Choose YES, NO or NOT GIVEN for each question.",
-      };
-    }
-    if (groupType === "PARAGRAPH_MATCH") {
-      return {
-        range,
-        title: "Which paragraph contains the following information?",
-        instruction: "Write the correct letter, A-H, in boxes on your answer sheet.",
-      };
-    }
-    if (groupType === "MCQ") {
-      return {
-        range,
-        title: "Choose the correct letter, A, B, C or D.",
-        instruction: "Select the best answer for each question.",
-      };
-    }
-    if (groupType === "SUMMARY") {
-      return {
-        range,
-        title: "Complete the summary below.",
-        instruction: "Choose NO MORE THAN TWO WORDS from the passage for each answer.",
-      };
-    }
+    const range = `Questions ${firstQ}–${lastQ}`;
+    if (groupType === "TFNG") return {
+      range, title: "Do the following statements agree with the information in the passage?",
+      instruction: "Write TRUE, FALSE or NOT GIVEN.",
+    };
+    if (groupType === "YNNG") return {
+      range, title: "Do the following statements agree with the writer's views?",
+      instruction: "Write YES, NO or NOT GIVEN.",
+    };
+    if (groupType === "PARAGRAPH_MATCH") return {
+      range, title: "Which paragraph contains the following information?",
+      instruction: "Write the correct letter, A–H, in the boxes.",
+    };
+    if (groupType === "MCQ") return {
+      range, title: "Choose the correct letter, A, B, C or D.",
+      instruction: "Select the best answer for each question.",
+    };
+    if (groupType === "SUMMARY") return {
+      range, title: "Complete the summary below.",
+      instruction: "Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+    };
+    if (groupType === "TABLE") return {
+      range, title: "Complete the table below.",
+      instruction: "Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+    };
+    if (groupType === "FLOW") return {
+      range, title: "Complete the flow-chart below.",
+      instruction: "Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+    };
+    if (groupType === "EXAMPLE") return {
+      range, title: "Complete the examples below.",
+      instruction: "Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+    };
     return {
-      range,
-      title: "Answer the questions below.",
+      range, title: "Answer the questions below.",
       instruction: "Write your answers in the boxes provided.",
     };
   };
@@ -135,8 +135,10 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
   };
 
   const renderQuestion = (q, idx) => {
-    const key = q.public_id || `${activeSection}-${idx}`;
-    const answer = userAnswers[key] ?? userAnswers[q.question_no] ?? "";
+    // Use public_id as primary key (matches grading service lookup)
+    // Fall back to string question_no so grading service index-fallback also works
+    const key = q.public_id || String(q.question_no);
+    const answer = userAnswers[key] ?? "";
     const isAnswered = answer !== "" && answer !== undefined && answer !== null;
 
     const detailRow = score?.detail?.find?.(
@@ -176,8 +178,11 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
           )}
         </p>
 
-        {/* MCQ */}
-        {q.options && Array.isArray(q.options) && q.options.length > 0 && (
+        {/* MCQ — only for non-TFNG/YNNG questions that have options */}
+        {q.options && Array.isArray(q.options) && q.options.length > 0
+          && qType !== "TRUE_FALSE_NOT_GIVEN" && qType !== "TFNG"
+          && qType !== "YES_NO_NOT_GIVEN" && qType !== "YNNG"
+          && (
           <div className="options-list">
             {q.options.map((opt, i) => (
               <label key={i} className={`option-label ${answer === i || answer === opt ? "selected" : ""}`}>
@@ -195,8 +200,8 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
           </div>
         )}
 
-        {/* TRUE/FALSE/NOT GIVEN */}
-        {!q.options && (qType === "TRUE_FALSE_NOT_GIVEN" || qType === "TFNG") && (
+        {/* TRUE/FALSE/NOT GIVEN — always render as text buttons regardless of options field */}
+        {(qType === "TRUE_FALSE_NOT_GIVEN" || qType === "TFNG") && (
           <div className="options-list tfng">
             {tfngOptions.map((opt) => (
               <label key={opt} className={`option-label ${answer === opt ? "selected" : ""}`}>
@@ -213,8 +218,8 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
           </div>
         )}
 
-        {/* YES/NO/NOT GIVEN */}
-        {!q.options && (qType === "YES_NO_NOT_GIVEN" || qType === "YNNG") && (
+        {/* YES/NO/NOT GIVEN — always render as text buttons regardless of options field */}
+        {(qType === "YES_NO_NOT_GIVEN" || qType === "YNNG") && (
           <div className="options-list tfng">
             {ynngOptions.map((opt) => (
               <label key={opt} className={`option-label ${answer === opt ? "selected" : ""}`}>
@@ -232,7 +237,8 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
         )}
 
         {/* Paragraph matching */}
-        {!q.options && groupType === "PARAGRAPH_MATCH" && (
+        {/* Paragraph matching */}
+        {groupType === "PARAGRAPH_MATCH" && (
           <div className="options-list paragraph-match">
             {paragraphLabels.length > 0 ? (
               paragraphLabels.map((label) => (
@@ -263,10 +269,10 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
           </div>
         )}
 
-        {/* Fill-in / Short answer / Summary completion */}
-        {!q.options &&
-          groupType !== "TFNG" &&
-          groupType !== "YNNG" &&
+        {/* Fill-in / Short answer / Summary / Table / Flow chart completion */}
+        {qType !== "TRUE_FALSE_NOT_GIVEN" && qType !== "TFNG" &&
+          qType !== "YES_NO_NOT_GIVEN" && qType !== "YNNG" &&
+          groupType !== "MCQ" &&
           groupType !== "PARAGRAPH_MATCH" && (
             <input
               type="text"
@@ -289,8 +295,8 @@ const ReadingTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubmit
   };
 
   const answeredCount = questions.filter(q => {
-    const key = q.public_id || q.question_no;
-    const a = userAnswers[key] ?? userAnswers[q.question_no];
+    const key = q.public_id || String(q.question_no);
+    const a = userAnswers[key];
     return a !== "" && a !== undefined && a !== null;
   }).length;
 

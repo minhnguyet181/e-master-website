@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./InputTesting.css";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
@@ -9,6 +10,7 @@ import ReadingTestLayout from "./ReadingTestLayout";
 import ListeningTestLayout from "./ListeningTestLayout";
 
 const InputTesting = () => {
+  const navigate = useNavigate();
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedTest, setSelectedTest] = useState(null);
   const [testContent, setTestContent] = useState(null);
@@ -18,6 +20,11 @@ const InputTesting = () => {
   const [error, setError] = useState("");
   const [visibleExtra, setVisibleExtra] = useState(6);
   const [testList, setTestList] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) navigate("/login");
+  }, [navigate]);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -47,11 +54,19 @@ const InputTesting = () => {
     try {
       const response = await api.test.getTestsBySkill(skill);
       // Backend returns: { success: true, data: [...] }
-      const tests = Array.isArray(response.data?.data) ? response.data.data : [];
+      const raw = response.data?.data;
+      const tests = Array.isArray(raw) ? raw : [];
+      if (tests.length === 0) console.warn("⚠️ Empty test list. Raw response:", response.data);
       setTestList(tests);
     } catch (err) {
       console.error("❌ Error loading tests:", err);
-      setError("Cannot load tests for this skill.");
+      const status = err.response?.status;
+      if (status === 401 || status === 403) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        return;
+      }
+      setError(`Cannot load tests (${status || err.message})`);
       setTestList([]);
     }
     window.history.pushState({}, "", `#${skill}`);
@@ -73,6 +88,11 @@ const InputTesting = () => {
       setTestContent(testData);
     } catch (err) {
       console.error("❌ Error loading test:", err);
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        return;
+      }
       setError("Cannot load test content.");
       setTestContent(null);
     } finally {
@@ -345,24 +365,24 @@ const InputTesting = () => {
         <div className="main-layout">
           <Sidebar />
           <main className="test-content">
-            <h2>
-              {testContent.test_type?.toUpperCase()} - {testContent.name || selectedTest?.name}
-            </h2>
-
-            <button
-              className="back-btn"
-              onClick={() => {
-                setTestContent(null);
-                setSelectedTest(null);
-                setUserAnswers({});
-                setScore(null);
-              }}
-            >
-              ← Back to {selectedSkill}
-            </button>
-
-            {error && <p className="error">{error}</p>}
-            {loading && !score && <p>Loading...</p>}
+            <div className="exam-header">
+              <button
+                className="back-btn"
+                onClick={() => {
+                  setTestContent(null);
+                  setSelectedTest(null);
+                  setUserAnswers({});
+                  setScore(null);
+                }}
+              >
+                ← Back
+              </button>
+              <h2 className="exam-title">
+                {testContent.test_type?.toUpperCase()} — {testContent.name || selectedTest?.name}
+              </h2>
+              {error && <p className="error">{error}</p>}
+              {loading && !score && <p>Loading...</p>}
+            </div>
 
             {renderTestContent()}
 
@@ -451,25 +471,21 @@ const InputTesting = () => {
           {/* --- Skill selection --- */}
           {!selectedSkill && (
             <div className="skill-grid">
-              {["listening", "reading", "writing", "speaking", "full"].map(
-                (skill) => (
-                  <div key={skill} className="skill-card">
-                    <img
-                      src={`/assets/images/${skill}.jpg`}
-                      alt={skill}
-                      className="skill-img"
-                    />
-                    <h2>{skill.charAt(0).toUpperCase() + skill?.slice(1)}</h2>
-                    <p>Practice your {skill} skill effectively.</p>
-                    <button
-                      className="view-btn"
-                      onClick={() => handleSkillClick(skill)}
-                    >
-                      Detail
-                    </button>
+              {[
+                { key: "listening", label: "Listening", desc: "Train your ear with authentic IELTS audio tracks." },
+                { key: "reading",   label: "Reading",   desc: "Sharpen comprehension with full passage tests." },
+                { key: "writing",   label: "Writing",   desc: "Practice Task 1 & Task 2 with AI feedback." },
+                { key: "speaking",  label: "Speaking",  desc: "Prepare for the speaking exam with guided prompts." },
+              ].map(({ key, label, desc }) => (
+                <div key={key} className="skill-card" onClick={() => handleSkillClick(key)}>
+                  <img src={`/assets/images/${key}.jpg`} alt={label} className="skill-img" />
+                  <div className="skill-card-body">
+                    <h2>{label}</h2>
+                    <p>{desc}</p>
+                    <button className="view-btn">Start Practice</button>
                   </div>
-                )
-              )}
+                </div>
+              ))}
             </div>
           )}
 

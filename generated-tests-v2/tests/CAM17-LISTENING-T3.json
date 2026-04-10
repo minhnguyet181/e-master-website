@@ -1,0 +1,413 @@
+{
+  "code": "CAM17-LISTENING-T3",
+  "name": "Cambridge IELTS 17 – Listening Test 3",
+  "test_type": "listening",
+  "level": "IELTS",
+  "duration_minutes": 30,
+  "metadata": {
+    "source": "Cambridge IELTS 17",
+    "test_no": 3
+  },
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 1 – Advice on surfing holidays",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t3_audio1.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Recommends surfing for 1 ________ holidays in the summer",
+          "options": null,
+          "correct_answer": "family",
+          "points": 1
+        },
+        {
+          "question_no": 2,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Need to be quite 2 ________",
+          "options": null,
+          "correct_answer": "fit",
+          "points": 1
+        },
+        {
+          "question_no": 3,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Lahinch has some good quality 3 ________ and surf schools",
+          "options": null,
+          "correct_answer": "hotels",
+          "points": 1
+        },
+        {
+          "question_no": 4,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Good surf school at 4 ________ beach",
+          "options": null,
+          "correct_answer": "Carrowniskey",
+          "points": 1
+        },
+        {
+          "question_no": 5,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Surf camp lasts for one 5 ________",
+          "options": null,
+          "correct_answer": "week",
+          "points": 1
+        },
+        {
+          "question_no": 6,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Can also explore the local 6 ________ by kayak",
+          "options": null,
+          "correct_answer": "bay",
+          "points": 1
+        },
+        {
+          "question_no": 7,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Best month to go: 7 ________",
+          "options": null,
+          "correct_answer": "September",
+          "points": 1
+        },
+        {
+          "question_no": 8,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Average temperature in summer: approx. 8 ________ degrees",
+          "options": null,
+          "correct_answer": "19",
+          "points": 1
+        },
+        {
+          "question_no": 9,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Wetsuit and surfboard: 9 ________ euros per day",
+          "options": null,
+          "correct_answer": "30",
+          "points": 1
+        },
+        {
+          "question_no": 10,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Also advisable to hire 10 ________ for warmth",
+          "options": null,
+          "correct_answer": "boots",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 2,
+      "title": "Part 2 – School extended hours childcare service",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t3_audio2.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 11,
+          "question_type": "MCQ_MULTI",
+          "prompt": "Which TWO facts are given about the school's extended hours childcare service? (Choose TWO: A–E)",
+          "options": [
+            "It started recently.",
+            "More children attend after school than before school.",
+            "An average of 50 children attend in the mornings.",
+            "A child cannot attend both the before and after school sessions.",
+            "The maximum number of children who can attend is 70."
+          ],
+          "correct_answer": "B|E",
+          "points": 1
+        },
+        {
+          "question_no": 12,
+          "question_type": "MCQ_MULTI",
+          "prompt": "(Second answer for Q11)",
+          "options": [
+            "It started recently.",
+            "More children attend after school than before school.",
+            "An average of 50 children attend in the mornings.",
+            "A child cannot attend both the before and after school sessions.",
+            "The maximum number of children who can attend is 70."
+          ],
+          "correct_answer": "B|E",
+          "points": 1
+        },
+        {
+          "question_no": 13,
+          "question_type": "MCQ",
+          "prompt": "How much does childcare cost for a complete afternoon session per child?",
+          "options": [
+            "£3.50",
+            "£5.70",
+            "£7.20"
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 14,
+          "question_type": "MCQ",
+          "prompt": "What does the manager say about food?",
+          "options": [
+            "Children with allergies should bring their own food.",
+            "Children may bring healthy snacks with them.",
+            "Children are given a proper meal at 5 p.m."
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 15,
+          "question_type": "MCQ",
+          "prompt": "What is different about arrangements in the school holidays?",
+          "options": [
+            "Children from other schools can attend.",
+            "Older children can attend.",
+            "A greater number of children can attend."
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 16,
+          "question_type": "MATCHING",
+          "prompt": "Spanish – information",
+          "options": null,
+          "correct_answer": "E",
+          "points": 1
+        },
+        {
+          "question_no": 17,
+          "question_type": "MATCHING",
+          "prompt": "Music – information",
+          "options": null,
+          "correct_answer": "D",
+          "points": 1
+        },
+        {
+          "question_no": 18,
+          "question_type": "MATCHING",
+          "prompt": "Painting – information",
+          "options": null,
+          "correct_answer": "G",
+          "points": 1
+        },
+        {
+          "question_no": 19,
+          "question_type": "MATCHING",
+          "prompt": "Yoga – information",
+          "options": null,
+          "correct_answer": "F",
+          "points": 1
+        },
+        {
+          "question_no": 20,
+          "question_type": "MATCHING",
+          "prompt": "Cooking – information",
+          "options": null,
+          "correct_answer": "C",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 3,
+      "title": "Part 3 – Holly's Work Placement Tutorial",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t3_audio3.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 21,
+          "question_type": "MCQ",
+          "prompt": "Holly has chosen the Orion Stadium placement because",
+          "options": [
+            "it involves children.",
+            "it is outdoors.",
+            "it sounds like fun."
+          ],
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 22,
+          "question_type": "MCQ",
+          "prompt": "Which aspect of safety does Dr Green emphasise most?",
+          "options": [
+            "ensuring children stay in the stadium",
+            "checking the equipment children will use",
+            "removing obstacles in changing rooms"
+          ],
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 23,
+          "question_type": "MCQ",
+          "prompt": "What does Dr Green say about the spectators?",
+          "options": [
+            "They can be hard to manage.",
+            "They make useful volunteers.",
+            "They shouldn't take photographs."
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 24,
+          "question_type": "MCQ",
+          "prompt": "What has affected the schedule in the past?",
+          "options": [
+            "bad weather",
+            "an injury",
+            "extra time"
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 25,
+          "question_type": "MATCHING",
+          "prompt": "planning – important aspect",
+          "options": null,
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 26,
+          "question_type": "MATCHING",
+          "prompt": "communication – important aspect",
+          "options": null,
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 27,
+          "question_type": "MATCHING",
+          "prompt": "teamwork – important aspect",
+          "options": null,
+          "correct_answer": "D",
+          "points": 1
+        },
+        {
+          "question_no": 28,
+          "question_type": "MATCHING",
+          "prompt": "problem-solving – important aspect",
+          "options": null,
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 29,
+          "question_type": "MATCHING",
+          "prompt": "time management – important aspect",
+          "options": null,
+          "correct_answer": "F",
+          "points": 1
+        },
+        {
+          "question_no": 30,
+          "question_type": "MATCHING",
+          "prompt": "leadership – important aspect",
+          "options": null,
+          "correct_answer": "H",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 4,
+      "title": "Part 4 – Bird migration",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t3_audio4.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 31,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Birds use the position of the 31 ________ to navigate",
+          "options": null,
+          "correct_answer": "mud",
+          "points": 1
+        },
+        {
+          "question_no": 32,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Birds also use 32 ________ to navigate",
+          "options": null,
+          "correct_answer": "feathers",
+          "points": 1
+        },
+        {
+          "question_no": 33,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Birds can detect the 33 ________ of the Earth's magnetic field",
+          "options": null,
+          "correct_answer": "shape",
+          "points": 1
+        },
+        {
+          "question_no": 34,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Birds navigate using the 34 ________",
+          "options": null,
+          "correct_answer": "moon",
+          "points": 1
+        },
+        {
+          "question_no": 35,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Birds can detect the angle of the 35 ________ of the Earth's magnetic field",
+          "options": null,
+          "correct_answer": "neck",
+          "points": 1
+        },
+        {
+          "question_no": 36,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Scientists have found 36 ________ that birds use star patterns",
+          "options": null,
+          "correct_answer": "evidence",
+          "points": 1
+        },
+        {
+          "question_no": 37,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Birds can remember 37 ________ they have visited before",
+          "options": null,
+          "correct_answer": "destinations",
+          "points": 1
+        },
+        {
+          "question_no": 38,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Some birds cross 38 ________ without stopping",
+          "options": null,
+          "correct_answer": "oceans",
+          "points": 1
+        },
+        {
+          "question_no": 39,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Scientists are studying bird population 39 ________",
+          "options": null,
+          "correct_answer": "recovery",
+          "points": 1
+        },
+        {
+          "question_no": 40,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Scientists have created a migration 40 ________",
+          "options": null,
+          "correct_answer": "atlas",
+          "points": 1
+        }
+      ]
+    }
+  ]
+}

@@ -85,7 +85,7 @@ exports.getRecommendedResources = async (req, res) => {
       if (band) {
         resources = await ResourceService.getResourcesByBand({ band }, 10, 0);
       } else {
-        resources = await ResourceService.getResourcesForUser(decoded.id, { useTargetBand: true }, 10);
+        resources = await ResourceService.getResourcesForUser(req.user.id, { useTargetBand: true }, 10);
       }
     } catch (e) {
       console.warn('⚠️ Failed to fetch resources:', e.message);

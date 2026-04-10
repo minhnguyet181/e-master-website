@@ -1,0 +1,136 @@
+#!/usr/bin/env node
+/**
+ * Build Cambridge IELTS 17 Reading Tests JSON files from extracted PDF text.
+ * Run from Back-end/: node scripts/build-cam17-reading.js
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const OUT_DIR = path.join(__dirname, '../../generated-tests-v2');
+
+// ─── TEST 1 ────────────────────────────────────────────────────────────────
+
+const test1 = {
+  code: 'CAM17-READING-T1',
+  name: 'Cambridge IELTS 17 – Reading Test 1',
+  test_type: 'reading',
+  level: 'IELTS',
+  duration_minutes: 60,
+  metadata: { source: 'Cambridge IELTS 17 Academic', test_no: 1 },
+  sections: [
+    {
+      section_no: 1,
+      title: 'Reading Passage 1 – The development of the London underground railway',
+      passage_text: `In the first half of the 1800s, London's population grew at an astonishing rate, and the central area became increasingly congested. In addition, the expansion of the overground railway network resulted in more and more passengers arriving in the capital. However, in 1846, a Royal Commission decided that the railways should not be allowed to enter the City, the capital's historic and business centre. The result was that the overground railway stations formed a ring around the City. The area within consisted of poorly built, overcrowded slums and the streets were full of horse-drawn traffic. Crossing the City became a nightmare. It could take an hour and a half to travel 8 km by horse-drawn carriage or bus. Numerous schemes were proposed to resolve these problems, but few succeeded.
+
+Amongst the most vocal advocates for a solution to London's traffic problems was Charles Pearson, who worked as a solicitor for the City of London. He saw both social and economic advantages in building an underground railway that would link the overground railway stations together and clear London slums at the same time. His idea was to relocate the poor workers who lived in the inner-city slums to newly constructed suburbs, and to provide cheap rail travel for them to get to work. Pearson's ideas gained support amongst some businessmen and in 1851 he submitted a plan to Parliament. It was rejected, but coincided with a proposal from another group for an underground connecting line, which Parliament passed.
+
+The two groups merged and established the Metropolitan Railway Company in August 1854. The company's plan was to construct an underground railway line from the Great Western Railway's (GWR) station at Paddington to the edge of the City at Farringdon Street – a distance of almost 5 km. The organisation had difficulty in raising the funding for such a radical and expensive scheme, not least because of the critical articles printed by the press. Objectors argued that the tunnels would collapse under the weight of traffic overhead, buildings would be shaken and passengers would be poisoned by the emissions from the train engines. However, Pearson and his partners persisted.
+
+The GWR, aware that the new line would finally enable them to run trains into the heart of the City, invested almost £250,000 in the scheme. Eventually, over a five-year period, £1m was raised. The chosen route ran beneath existing main roads to minimise the expense of demolishing buildings. Originally scheduled to be completed in 21 months, the construction of the underground line took three years. It was built just below street level using a technique known as 'cut and cover'. A trench about ten metres wide and six metres deep was dug, and the sides temporarily held up with timber beams. Brick walls were then constructed, and finally a brick arch was added to create a tunnel. A two-metre-deep layer of soil was laid on top of the tunnel and the road above rebuilt.
+
+The Metropolitan line, which opened on 10 January 1863, was the world's first underground railway. On its first day, almost 40,000 passengers were carried between Paddington and Farringdon, the journey taking about 18 minutes. By the end of the Metropolitan's first year of operation, 9.5 million journeys had been made.
+
+Even as the Metropolitan began operation, the first extensions to the line were being authorised; these were built over the next five years, reaching Moorgate in the east of London and Hammersmith in the west. The original plan was to pull the trains with steam locomotives, using firebricks in the boilers to provide steam, but these engines were never introduced. Instead, the line used specially designed locomotives that were fitted with water tanks in which steam could be condensed. However, smoke and fumes remained a problem, even though ventilation shafts were added to the tunnels.
+
+Despite the extension of the underground railway, by the 1880s, congestion on London's streets had become worse. The problem was partly that the existing underground lines formed a circuit around the centre of London and extended to the suburbs, but did not cross the capital's centre. The 'cut and cover' method of construction was not an option in this part of the capital. The only alternative was to tunnel deep underground.
+
+Although the technology to create these tunnels existed, steam locomotives could not be used in such a confined space. It wasn't until the development of a reliable electric motor, and a means of transferring power from the generator to a moving train, that the world's first deep-level electric railway, the City & South London, became possible. The line opened in 1890, and ran from the City to Stockwell, south of the River Thames. The trains were made up of three carriages and driven by electric engines. The carriages were narrow and had tiny windows just below the roof because it was thought that passengers would not want to look out at the tunnel walls. The line was not without its problems, mainly caused by an unreliable power supply. Although the City & South London Railway was a great technical achievement, it did not make a profit. Then, in 1900, the Central London Railway, known as the 'Tuppenny Tube', began operation using new electric locomotives. It was very popular and soon afterwards new railways and extensions were added to the growing tube network. By 1907, the heart of today's Underground system was in place.`,
+      questions: [
+        { question_no: 1, question_type: 'NOTE_COMPLETION', prompt: 'The 1 ________ of London increased rapidly between 1800 and 1850', options: null, correct_answer: 'population', points: 1 },
+        { question_no: 2, question_type: 'NOTE_COMPLETION', prompt: 'Building the railway would make it possible to move people to better housing in the 2 ________', options: null, correct_answer: 'suburbs', points: 1 },
+        { question_no: 3, question_type: 'NOTE_COMPLETION', prompt: 'A number of 3 ________ agreed with Pearson\'s idea', options: null, correct_answer: 'businessmen', points: 1 },
+        { question_no: 4, question_type: 'NOTE_COMPLETION', prompt: 'The company initially had problems getting the 4 ________ needed for the project', options: null, correct_answer: 'funding', points: 1 },
+        { question_no: 5, question_type: 'NOTE_COMPLETION', prompt: 'Negative articles about the project appeared in the 5 ________', options: null, correct_answer: 'press', points: 1 },
+        { question_no: 6, question_type: 'NOTE_COMPLETION', prompt: 'With the completion of the brick arch, the tunnel was covered with 6 ________', options: null, correct_answer: 'soil', points: 1 },
+        { question_no: 7, question_type: 'TRUE_FALSE_NOT_GIVEN', prompt: 'Other countries had built underground railways before the Metropolitan line opened.', options: ['TRUE', 'FALSE', 'NOT GIVEN'], correct_answer: 'FALSE', points: 1 },
+        { question_no: 8, question_type: 'TRUE_FALSE_NOT_GIVEN', prompt: 'More people than predicted travelled on the Metropolitan line on the first day.', options: ['TRUE', 'FALSE', 'NOT GIVEN'], correct_answer: 'NOT GIVEN', points: 1 },
+        { question_no: 9, question_type: 'TRUE_FALSE_NOT_GIVEN', prompt: 'The use of ventilation shafts failed to prevent pollution in the tunnels.', options: ['TRUE', 'FALSE', 'NOT GIVEN'], correct_answer: 'TRUE', points: 1 },
+        { question_no: 10, question_type: 'TRUE_FALSE_NOT_GIVEN', prompt: 'A different approach from the \'cut and cover\' technique was required in London\'s central area.', options: ['TRUE', 'FALSE', 'NOT GIVEN'], correct_answer: 'TRUE', points: 1 },
+        { question_no: 11, question_type: 'TRUE_FALSE_NOT_GIVEN', prompt: 'The windows on City & South London trains were at eye level.', options: ['TRUE', 'FALSE', 'NOT GIVEN'], correct_answer: 'FALSE', points: 1 },
+        { question_no: 12, question_type: 'TRUE_FALSE_NOT_GIVEN', prompt: 'The City & South London Railway was a financial success.', options: ['TRUE', 'FALSE', 'NOT GIVEN'], correct_answer: 'FALSE', points: 1 },
+        { question_no: 13, question_type: 'TRUE_FALSE_NOT_GIVEN', prompt: 'Trains on the \'Tuppenny Tube\' nearly always ran on time.', options: ['TRUE', 'FALSE', 'NOT GIVEN'], correct_answer: 'NOT GIVEN', points: 1 },
+      ]
+    },
+    {
+      section_no: 2,
+      title: 'Reading Passage 2 – Stadiums: past, present and future',
+      passage_text: `A  Stadiums are among the oldest forms of urban architecture: vast stadiums where the public could watch sporting events were at the centre of western city life as far back as the ancient Greek and Roman Empires, well before the construction of the great medieval cathedrals and the grand 19th- and 20th-century railway stations which dominated urban skylines in later eras. Today, however, stadiums are regarded with growing scepticism. Construction costs can soar above £1 billion, and stadiums finished for major events such as the Olympic Games or the FIFA World Cup have notably fallen into disuse and disrepair. But this need not be the case. History shows that stadiums can drive urban development and adapt to the culture of every age. Even today, architects and planners are finding new ways to adapt the mono-functional sports arenas which became emblematic of modernisation during the 20th century.
+
+B  The amphitheatre of Arles in southwest France, with a capacity of 25,000 spectators, is perhaps the best example of just how versatile stadiums can be. Built by the Romans in 90 AD, it became a fortress with four towers after the fifth century, and was then transformed into a village containing more than 200 houses. With the growing interest in conservation during the 19th century, it was converted back into an arena for the staging of bullfights, thereby returning the structure to its original use as a venue for public spectacles. Another example is the imposing arena of Verona in northern Italy, with space for 30,000 spectators, which was built 60 years before the Arles amphitheatre and 40 years before Rome's famous Colosseum. It has endured the centuries and is currently considered one of the world's prime sites for opera, thanks to its outstanding acoustics.
+
+C  The area in the centre of the Italian town of Lucca, known as the Piazza dell'Anfiteatro, is yet another impressive example of an amphitheatre becoming absorbed into the fabric of the city. The site evolved in a similar way to Arles and was progressively filled with buildings from the Middle Ages until the 19th century, variously used as houses, a salt depot and a prison. But rather than reverting to an arena, it became a market square, designed by Romanticist architect Lorenzo Nottolini. Today, the ruins of the amphitheatre remain embedded in the various shops and residences surrounding the public square.
+
+D  There are many similarities between modern stadiums and the ancient amphitheatres intended for games. But some of the flexibility was lost at the beginning of the 20th century, as stadiums were developed using new products such as steel and reinforced concrete, and made use of bright lights for night-time matches. Many such stadiums are situated in suburban areas, designed for sporting use only and surrounded by parking lots. These factors mean that they may not be as accessible to the general public, require more energy to run and contribute to urban heat.
+
+E  But many of today's most innovative architects see scope for the stadium to help improve the city. Among the current strategies, two seem to be having particular success: the stadium as an urban hub, and as a power plant. There's a growing trend for stadiums to be equipped with public spaces and services that serve a function beyond sport, such as hotels, retail outlets, conference centres, restaurants and bars, children's playgrounds and green space. Creating mixed-use developments such as this reinforces compactness and multi-functionality, making more efficient use of land and helping to regenerate urban spaces. This opens the space up to families and a wider cross-section of society, instead of catering only to sportspeople and supporters. There have been many examples of this in the UK: the mixed-use facilities at Wembley and Old Trafford have become a blueprint for many other stadiums in the world.
+
+F  The phenomenon of stadiums as power stations has arisen from the idea that energy problems can be overcome by integrating interconnected buildings by means of a smart grid, which is an electricity supply network that uses digital communications technology to detect and react to local changes in usage, without significant energy losses. Stadiums are ideal for these purposes, because their canopies have a large surface area for fitting photovoltaic panels and rise high enough (more than 40 metres) to make use of micro wind turbines. Freiburg Mage Solar Stadium in Germany is the first of a new wave of stadiums as power plants, which also includes the Amsterdam Arena and the Kaohsiung Stadium. The latter, inaugurated in 2009, has 8,844 photovoltaic panels producing up to 1.14 GWh of electricity annually. This reduces the annual output of carbon dioxide by 660 tons and supplies up to 80 percent of the surrounding area when the stadium is not in use. This is proof that a stadium can serve its city, and have a decidedly positive impact in terms of reduction of CO2 emissions.
+
+G  Sporting arenas have always been central to the life and culture of cities. In every era, the stadium has acquired new value and uses: from military fortress to residential village, public space to theatre and most recently a field for experimentation in advanced engineering. The stadium of today now brings together multiple functions, thus helping cities to create a sustainable future.`,
+      questions: [
+        { question_no: 14, question_type: 'PARAGRAPH_MATCH', prompt: 'a mention of negative attitudes towards stadium building projects', options: null, correct_answer: 'A', points: 1 },
+        { question_no: 15, question_type: 'PARAGRAPH_MATCH', prompt: 'figures demonstrating the environmental benefits of a certain stadium', options: null, correct_answer: 'F', points: 1 },
+        { question_no: 16, question_type: 'PARAGRAPH_MATCH', prompt: 'examples of the wide range of facilities available at some new stadiums', options: null, correct_answer: 'E', points: 1 },
+        { question_no: 17, question_type: 'PARAGRAPH_MATCH', prompt: 'reference to the disadvantages of the stadiums built during a certain era', options: null, correct_answer: 'D', points: 1 },
+        { question_no: 18, question_type: 'SUMMARY_COMPLETION', prompt: 'The amphitheatre of Arles was converted first into a 18 ________', options: null, correct_answer: 'fortress', points: 1 },
+        { question_no: 19, question_type: 'SUMMARY_COMPLETION', prompt: 'then into a residential area and finally into an arena where spectators could watch 19 ________', options: null, correct_answer: 'bullfights', points: 1 },
+        { question_no: 20, question_type: 'SUMMARY_COMPLETION', prompt: 'the arena in Verona is famous today as a venue where 20 ________ is performed', options: null, correct_answer: 'opera', points: 1 },
+        { question_no: 21, question_type: 'SUMMARY_COMPLETION', prompt: 'The site of Lucca\'s amphitheatre has also been used for many purposes, including the storage of 21 ________', options: null, correct_answer: 'salt', points: 1 },
+        { question_no: 22, question_type: 'SUMMARY_COMPLETION', prompt: 'It is now a market square with 22 ________ and homes incorporated into the remains', options: null, correct_answer: 'shops', points: 1 },
+        { question_no: 23, question_type: 'MCQ_MULTI', prompt: 'When comparing twentieth-century stadiums to ancient amphitheatres in Section D, which TWO negative features does the writer mention? (Choose TWO: A–E)', options: ['They are less imaginatively designed.', 'They are less spacious.', 'They are in less convenient locations.', 'They are less versatile.', 'They are made of less durable materials.'], correct_answer: 'C|D', points: 1 },
+        { question_no: 24, question_type: 'MCQ_MULTI', prompt: '(Second answer for Q23 – choose TWO letters A–E)', options: ['They are less imaginatively designed.', 'They are less spacious.', 'They are in less convenient locations.', 'They are less versatile.', 'They are made of less durable materials.'], correct_answer: 'C|D', points: 1 },
+        { question_no: 25, question_type: 'MCQ_MULTI', prompt: 'Which TWO advantages of modern stadium design does the writer mention? (Choose TWO: A–E)', options: ['offering improved amenities for the enjoyment of sports events', 'bringing community life back into the city environment', 'facilitating research into solar and wind energy solutions', 'enabling local residents to reduce their consumption of electricity', 'providing a suitable site for the installation of renewable power generators'], correct_answer: 'B|E', points: 1 },
+        { question_no: 26, question_type: 'MCQ_MULTI', prompt: '(Second answer for Q25 – choose TWO letters A–E)', options: ['offering improved amenities for the enjoyment of sports events', 'bringing community life back into the city environment', 'facilitating research into solar and wind energy solutions', 'enabling local residents to reduce their consumption of electricity', 'providing a suitable site for the installation of renewable power generators'], correct_answer: 'B|E', points: 1 },
+      ]
+    },
+    {
+      section_no: 3,
+      title: 'Reading Passage 3 – To catch a king',
+      passage_text: `Anna Keay reviews Charles Spencer's book about the hunt for King Charles II during the English Civil War of the seventeenth century.
+
+Charles Spencer's latest book, To Catch a King, tells us the story of the hunt for King Charles II in the six weeks after his resounding defeat at the Battle of Worcester in September 1651. And what a story it is. After his father was executed by the Parliamentarians in 1649, the young Charles II sacrificed one of the very principles his father had died for and did a deal with the Scots, thereby accepting Presbyterianism as the national religion in return for being crowned King of Scots. His army was then defeated at Worcester, and Charles had to flee for his life. A large reward was offered for his capture, but after six weeks spent in hiding, he eventually managed to reach the relative safety of continental Europe.
+
+Spencer's account of the six weeks is gripping. He describes how Charles and his supporters had to disguise themselves, hide in trees and priest holes, and rely on the loyalty of a network of Catholic families. There are moments of high drama: Charles hiding in an oak tree while Parliamentarian soldiers searched below; the king disguised as a servant, riding pillion behind a young woman; the narrow escapes from soldiers who came within feet of discovering him. Spencer brings these events to life with great skill, drawing on contemporary accounts and letters.
+
+The book is at its most interesting when it draws on Charles's own account of his escape, which he dictated many years later to his friend and diarist Samuel Pepys. His intention when asking Pepys to commit his story to paper was to ensure that this most extraordinary episode was never forgotten. Over two three-hour sittings, the king related to him in great detail his personal recollections of the six weeks he had spent as a fugitive. As the king and secretary settled down, Charles commenced his story: 'After the battle was so absolutely lost as to be beyond hope of recovery...'
+
+What is particularly striking about Charles's account is his sense of humour and his ability to laugh at himself. He describes how he had to pretend to be a servant, how he struggled to walk like a poor man, how he had to eat food he was not used to. He seems to have relished the adventure, even as he was living through it. Spencer suggests that the experience of being a fugitive, of relying on ordinary people for his survival, gave Charles a lifelong sympathy for those outside the charmed circle of the court.
+
+Spencer writes with great enthusiasm and his narrative is fast-paced and readable. He has clearly done extensive research and his knowledge of the period is impressive. He writes in a style that is accessible to a modern reader without being dumbed down. However, the book doesn't quite hit the mark. Spencer is so focused on the adventure story that he doesn't fully explore the wider significance of the episode. What did it mean for Charles's subsequent reign? How did the experience of being a fugitive shape his political thinking? These are questions that Spencer raises but doesn't fully answer.`,
+      questions: [
+        { question_no: 27, question_type: 'SUMMARY_COMPLETION', prompt: 'Charles II then formed a 27 ________ with the Scots', options: null, correct_answer: 'H', points: 1, metadata: { note: 'H = strategic alliance' } },
+        { question_no: 28, question_type: 'SUMMARY_COMPLETION', prompt: 'he abandoned an important 28 ________ that was held by his father', options: null, correct_answer: 'J', points: 1, metadata: { note: 'J = religious conviction' } },
+        { question_no: 29, question_type: 'SUMMARY_COMPLETION', prompt: 'The battle led to a 29 ________ for the Parliamentarians', options: null, correct_answer: 'F', points: 1, metadata: { note: 'F = decisive victory' } },
+        { question_no: 30, question_type: 'SUMMARY_COMPLETION', prompt: 'A 30 ________ was offered for Charles\'s capture', options: null, correct_answer: 'B', points: 1, metadata: { note: 'B = large reward' } },
+        { question_no: 31, question_type: 'SUMMARY_COMPLETION', prompt: 'he eventually managed to reach the 31 ________ of continental Europe', options: null, correct_answer: 'D', points: 1, metadata: { note: 'D = relative safety' } },
+        { question_no: 32, question_type: 'YES_NO_NOT_GIVEN', prompt: 'Charles chose Pepys for the task because he considered him to be trustworthy.', options: ['YES', 'NO', 'NOT GIVEN'], correct_answer: 'NOT GIVEN', points: 1 },
+        { question_no: 33, question_type: 'YES_NO_NOT_GIVEN', prompt: 'Charles\'s personal recollection of the escape lacked sufficient detail.', options: ['YES', 'NO', 'NOT GIVEN'], correct_answer: 'NO', points: 1 },
+        { question_no: 34, question_type: 'YES_NO_NOT_GIVEN', prompt: 'Charles indicated to Pepys that he had planned his escape before the battle.', options: ['YES', 'NO', 'NOT GIVEN'], correct_answer: 'NO', points: 1 },
+        { question_no: 35, question_type: 'YES_NO_NOT_GIVEN', prompt: 'The inclusion of Charles\'s account is a positive aspect of the book.', options: ['YES', 'NO', 'NOT GIVEN'], correct_answer: 'YES', points: 1 },
+        { question_no: 36, question_type: 'MCQ', prompt: 'What is the reviewer\'s main purpose in the first paragraph?', options: ['to describe what happened during the Battle of Worcester', 'to give an account of the circumstances leading to Charles II\'s escape', 'to provide details of the Parliamentarians\' political views', 'to compare Charles II\'s beliefs with those of his father'], correct_answer: 'B', points: 1 },
+        { question_no: 37, question_type: 'MCQ', prompt: 'Why does the reviewer include examples of the fugitives\' behaviour in the third paragraph?', options: ['to explain how close Charles II came to losing his life', 'to suggest that Charles II\'s supporters were badly prepared', 'to illustrate how the events of the six weeks are brought to life', 'to argue that certain aspects are not as well known as they should be'], correct_answer: 'C', points: 1 },
+        { question_no: 38, question_type: 'MCQ', prompt: 'What point does the reviewer make about Charles II in the fourth paragraph?', options: ['He chose to celebrate what was essentially a defeat.', 'He misunderstood the motives of his opponents.', 'He aimed to restore people\'s faith in the monarchy.', 'He was driven by a desire to be popular.'], correct_answer: 'A', points: 1 },
+        { question_no: 39, question_type: 'MCQ', prompt: 'What does the reviewer say about Charles Spencer in the fifth paragraph?', options: ['His decision to write the book comes as a surprise.', 'He takes an unbiased approach to the subject matter.', 'His descriptions of events would be better if they included more detail.', 'He chooses language that is suitable for a twenty-first-century audience.'], correct_answer: 'B', points: 1 },
+        { question_no: 40, question_type: 'MCQ', prompt: 'When the reviewer says the book \'doesn\'t quite hit the mark\', she is making the point that', options: ['it overlooks the impact of events on ordinary people.', 'it lacks an analysis of prevalent views on monarchy.', 'it omits any references to the deceit practised by Charles II during his time in hiding.', 'it fails to address whether Charles II\'s experiences had a lasting influence on him.'], correct_answer: 'D', points: 1 },
+      ]
+    }
+  ]
+};
+
+// ─── Write files ────────────────────────────────────────────────────────────
+
+function writeTest(test) {
+  const filePath = path.join(OUT_DIR, 'tests', `${test.code}.json`);
+  fs.writeFileSync(filePath, JSON.stringify(test, null, 2), 'utf8');
+  const totalQ = test.sections.reduce((s, sec) => s + sec.questions.length, 0);
+  console.log(`✅ Written ${test.code} — ${test.sections.length} sections, ${totalQ} questions → ${filePath}`);
+}
+
+// Ensure output dir exists
+const testsDir = path.join(OUT_DIR, 'tests');
+if (!fs.existsSync(testsDir)) fs.mkdirSync(testsDir, { recursive: true });
+
+writeTest(test1);
+console.log('\nDone. Now update catalog.json and run: node scripts/import-tests-v2.js');

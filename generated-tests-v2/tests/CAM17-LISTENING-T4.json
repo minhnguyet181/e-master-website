@@ -1,0 +1,413 @@
+{
+  "code": "CAM17-LISTENING-T4",
+  "name": "Cambridge IELTS 17 – Listening Test 4",
+  "test_type": "listening",
+  "level": "IELTS",
+  "duration_minutes": 30,
+  "metadata": {
+    "source": "Cambridge IELTS 17",
+    "test_no": 4
+  },
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 1 – Easy Life Cleaning Services",
+      "audio_url": "/audio/cam17/IELTS17_t4_audio1.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Cleaning the 1 ________ throughout the apartment",
+          "options": null,
+          "correct_answer": "floors",
+          "points": 1
+        },
+        {
+          "question_no": 2,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Every week: Cleaning the 2 ________",
+          "options": null,
+          "correct_answer": "fridge",
+          "points": 1
+        },
+        {
+          "question_no": 3,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Ironing clothes – 3 ________ only",
+          "options": null,
+          "correct_answer": "shirts",
+          "points": 1
+        },
+        {
+          "question_no": 4,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Every month: Cleaning all the 4 ________ from the inside",
+          "options": null,
+          "correct_answer": "windows",
+          "points": 1
+        },
+        {
+          "question_no": 5,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Washing down the 5 ________",
+          "options": null,
+          "correct_answer": "balcony",
+          "points": 1
+        },
+        {
+          "question_no": 6,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "They can organise a plumber or an 6 ________ if necessary",
+          "options": null,
+          "correct_answer": "electrician",
+          "points": 1
+        },
+        {
+          "question_no": 7,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Special cleaning service for customers allergic to 7 ________",
+          "options": null,
+          "correct_answer": "dust",
+          "points": 1
+        },
+        {
+          "question_no": 8,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "All cleaners have a background check carried out by the 8 ________",
+          "options": null,
+          "correct_answer": "police",
+          "points": 1
+        },
+        {
+          "question_no": 9,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "All cleaners are given 9 ________ for two weeks",
+          "options": null,
+          "correct_answer": "training",
+          "points": 1
+        },
+        {
+          "question_no": 10,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Customers send a 10 ________ after each visit",
+          "options": null,
+          "correct_answer": "review",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 2,
+      "title": "Part 2 – Hotel staff retention",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t4_audio2.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 11,
+          "question_type": "MCQ",
+          "prompt": "Many hotel managers are unaware that their staff often leave because of",
+          "options": [
+            "a lack of training.",
+            "long hours.",
+            "low pay."
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 12,
+          "question_type": "MCQ",
+          "prompt": "What is the impact of high staff turnover on managers?",
+          "options": [
+            "an increased workload",
+            "low morale",
+            "an inability to meet targets"
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 13,
+          "question_type": "MCQ",
+          "prompt": "What mistake should managers always avoid?",
+          "options": [
+            "failing to treat staff equally",
+            "reorganising shifts without warning",
+            "neglecting to have enough staff during busy periods"
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 14,
+          "question_type": "MCQ",
+          "prompt": "What unexpected benefit did Dunwich Hotel notice after improving staff retention rates?",
+          "options": [
+            "a fall in customer complaints",
+            "an increase in loyalty club membership",
+            "a rise in spending per customer"
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 15,
+          "question_type": "MATCHING",
+          "prompt": "The Sun Club – way of reducing staff turnover",
+          "options": null,
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 16,
+          "question_type": "MATCHING",
+          "prompt": "The Portland – way of reducing staff turnover",
+          "options": null,
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 17,
+          "question_type": "MATCHING",
+          "prompt": "Bluewater Hotels – way of reducing staff turnover",
+          "options": null,
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 18,
+          "question_type": "MATCHING",
+          "prompt": "Pentlow Hotels – way of reducing staff turnover",
+          "options": null,
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 19,
+          "question_type": "MATCHING",
+          "prompt": "Green Planet – way of reducing staff turnover",
+          "options": null,
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 20,
+          "question_type": "MATCHING",
+          "prompt": "The Amesbury – way of reducing staff turnover",
+          "options": null,
+          "correct_answer": "A",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 3,
+      "title": "Part 3 – Sporting equipment development",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t4_audio3.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 21,
+          "question_type": "MCQ_MULTI",
+          "prompt": "Which TWO points do Thomas and Jeanne make about Thomas's sporting activities at school? (Choose TWO: A–E)",
+          "options": [
+            "He should have felt more positive about them.",
+            "The training was too challenging for him.",
+            "He could have worked harder at them.",
+            "His parents were disappointed in him.",
+            "His fellow students admired him."
+          ],
+          "correct_answer": "C|E",
+          "points": 1
+        },
+        {
+          "question_no": 22,
+          "question_type": "MCQ_MULTI",
+          "prompt": "(Second answer for Q21)",
+          "options": [
+            "He should have felt more positive about them.",
+            "The training was too challenging for him.",
+            "He could have worked harder at them.",
+            "His parents were disappointed in him.",
+            "His fellow students admired him."
+          ],
+          "correct_answer": "C|E",
+          "points": 1
+        },
+        {
+          "question_no": 23,
+          "question_type": "MCQ_MULTI",
+          "prompt": "Which TWO feelings did Thomas experience when he was in Kenya? (Choose TWO: A–E)",
+          "options": [
+            "disbelief",
+            "relief",
+            "stress",
+            "gratitude",
+            "homesickness"
+          ],
+          "correct_answer": "A|D",
+          "points": 1
+        },
+        {
+          "question_no": 24,
+          "question_type": "MCQ_MULTI",
+          "prompt": "(Second answer for Q23)",
+          "options": [
+            "disbelief",
+            "relief",
+            "stress",
+            "gratitude",
+            "homesickness"
+          ],
+          "correct_answer": "A|D",
+          "points": 1
+        },
+        {
+          "question_no": 25,
+          "question_type": "MATCHING",
+          "prompt": "running shoes – comment",
+          "options": null,
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 26,
+          "question_type": "MATCHING",
+          "prompt": "swimwear – comment",
+          "options": null,
+          "correct_answer": "F",
+          "points": 1
+        },
+        {
+          "question_no": 27,
+          "question_type": "MATCHING",
+          "prompt": "cycling helmet – comment",
+          "options": null,
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 28,
+          "question_type": "MATCHING",
+          "prompt": "ski boots – comment",
+          "options": null,
+          "correct_answer": "D",
+          "points": 1
+        },
+        {
+          "question_no": 29,
+          "question_type": "MATCHING",
+          "prompt": "tennis racket – comment",
+          "options": null,
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 30,
+          "question_type": "MATCHING",
+          "prompt": "golf club – comment",
+          "options": null,
+          "correct_answer": "G",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 4,
+      "title": "Part 4 – Geysers",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t4_audio4.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 31,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "The word \"geyser\" comes from an Icelandic word meaning 31 ________",
+          "options": null,
+          "correct_answer": "golden",
+          "points": 1
+        },
+        {
+          "question_no": 32,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Geysers need a 32 ________ water supply",
+          "options": null,
+          "correct_answer": "healthy",
+          "points": 1
+        },
+        {
+          "question_no": 33,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Geysers need a specific 33 ________ to function",
+          "options": null,
+          "correct_answer": "climate",
+          "points": 1
+        },
+        {
+          "question_no": 34,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Geysers need a specific type of 34 ________ underground",
+          "options": null,
+          "correct_answer": "rocks",
+          "points": 1
+        },
+        {
+          "question_no": 35,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "The 35 ________ of the underground channel affects eruption frequency",
+          "options": null,
+          "correct_answer": "diameter",
+          "points": 1
+        },
+        {
+          "question_no": 36,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Water travels up through a 36 ________ shaped channel",
+          "options": null,
+          "correct_answer": "tube",
+          "points": 1
+        },
+        {
+          "question_no": 37,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "The heat source for geysers is usually volcanic 37 ________",
+          "options": null,
+          "correct_answer": "fire",
+          "points": 1
+        },
+        {
+          "question_no": 38,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "The water turns to 38 ________ underground",
+          "options": null,
+          "correct_answer": "steam",
+          "points": 1
+        },
+        {
+          "question_no": 39,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "After an eruption the sky above can look 39 ________",
+          "options": null,
+          "correct_answer": "cloudy",
+          "points": 1
+        },
+        {
+          "question_no": 40,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "A geyser can eject thousands of 40 ________ of water",
+          "options": null,
+          "correct_answer": "litres",
+          "points": 1
+        }
+      ]
+    }
+  ]
+}

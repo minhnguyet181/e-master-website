@@ -1,0 +1,431 @@
+{
+  "code": "CAM17-READING-T2",
+  "name": "Cambridge IELTS 17 – Reading Test 2",
+  "test_type": "reading",
+  "level": "IELTS",
+  "duration_minutes": 60,
+  "metadata": {
+    "source": "Cambridge IELTS 17",
+    "test_no": 2
+  },
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Reading Passage 1 – The Dead Sea Scrolls",
+      "passage_text": "In late 1946 or early 1947, three Bedouin teenagers were tending their goats and sheep near the ancient settlement of Qumran, located on the northwest shore of the Dead Sea in what is now known as the West Bank. One of these young shepherds tossed a rock into an opening on the side of a cliff and was surprised to hear a shattering sound. He and his companions later entered the cave and stumbled across a collection of large clay jars, seven of which contained scrolls with writing on them. The teenagers took the seven scrolls to a nearby town where they were sold for a small sum to a local antiquities dealer. Word of the find spread, and Bedouins and archaeologists eventually unearthed tens of thousands of additional scroll fragments from 10 nearby caves; together they make up between 800 and 900 manuscripts. It soon became clear that this was one of the greatest archaeological discoveries ever made.\n\nThe origin of the Dead Sea Scrolls, which were written around 2,000 years ago between 150 BCE and 70 CE, is still the subject of scholarly debate even today. According to the prevailing theory, they are the work of a population that inhabited the area until Roman troops destroyed the settlement around 70 CE. The area was known as Judea at that time, and the people are thought to have belonged to a group called the Essenes, a devout Jewish sect.\n\nThe majority of the texts on the Dead Sea Scrolls are in Hebrew, with some fragments written in an ancient version of its alphabet thought to have fallen out of use in the fifth century BCE. But there are other languages as well. Some scrolls are in Aramaic, the language spoken by many inhabitants of the region from the sixth century BCE to the siege of Jerusalem in 70 CE. In addition, several texts feature translations of the Hebrew Bible into Greek.\n\nThe Dead Sea Scrolls include fragments from every book of the Old Testament of the Bible except for the Book of Esther. The only entire book of the Hebrew Bible preserved among the manuscripts from Qumran is Isaiah; this copy, dated to the first century BCE, is considered the earliest biblical manuscript still in existence. Along with biblical texts, the scrolls include documents about sectarian regulations and religious writings that do not appear in the Old Testament.\n\nThe writing on the Dead Sea Scrolls is mostly in black or occasionally red ink, and the scrolls themselves are nearly all made of either parchment (animal skin) or an early form of paper called 'papyrus'. The only exception is the scroll numbered 3Q15, which was created out of a combination of copper and tin. Known as the Copper Scroll, this curious document features letters chiselled onto metal. One of the most intriguing manuscripts from Qumran, this is a sort of ancient treasure map that lists dozens of gold and silver caches. Using an unconventional vocabulary and odd spelling, it describes 64 underground hiding places that supposedly contain riches buried for safekeeping.\n\nSome of the Dead Sea Scrolls have been on interesting journeys. In 1948, a Syrian Orthodox archbishop known as Mar Samuel acquired four of the original seven scrolls from a Jerusalem shoemaker and part-time antiquity dealer, paying less than $100 for them. He then travelled to the United States and unsuccessfully offered them to a number of universities, including Yale. Finally, in 1954, he placed an advertisement in The Wall Street Journal. Fortunately, Israeli archaeologist and statesman Yigael Yadin negotiated their purchase and brought the scrolls back to Jerusalem, where they remain to this day.\n\nIn 2017, researchers from the University of Haifa restored and deciphered one of the last untranslated scrolls. The university's Eshbal Ratson and Jonathan Ben-Dov spent one year reassembling the 60 fragments that make up the scroll. Deciphered from a band of coded text on parchment, the find provides insight into the community of people who wrote it and the 364-day calendar they would have used.",
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "One teenager threw a 1 ________ into an opening on the side of a cliff",
+          "options": null,
+          "correct_answer": "rock",
+          "points": 1
+        },
+        {
+          "question_no": 2,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Teenagers went into the 2 ________ and found containers",
+          "options": null,
+          "correct_answer": "cave",
+          "points": 1
+        },
+        {
+          "question_no": 3,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Containers made of 3 ________",
+          "options": null,
+          "correct_answer": "clay",
+          "points": 1
+        },
+        {
+          "question_no": 4,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Thought to have been written by group known as the 4 ________",
+          "options": null,
+          "correct_answer": "Essenes",
+          "points": 1
+        },
+        {
+          "question_no": 5,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Written mainly in the 5 ________ language",
+          "options": null,
+          "correct_answer": "Hebrew",
+          "points": 1
+        },
+        {
+          "question_no": 6,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "prompt": "The Bedouin teenagers who found the scrolls were disappointed by how little money they received for them.",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "NOT GIVEN",
+          "points": 1
+        },
+        {
+          "question_no": 7,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "prompt": "There is agreement among academics about the origin of the Dead Sea Scrolls.",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "FALSE",
+          "points": 1
+        },
+        {
+          "question_no": 8,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "prompt": "Most of the books of the Bible written on the scrolls are incomplete.",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "TRUE",
+          "points": 1
+        },
+        {
+          "question_no": 9,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "prompt": "The information on the Copper Scroll is written in an unusual way.",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "TRUE",
+          "points": 1
+        },
+        {
+          "question_no": 10,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "prompt": "Mar Samuel was given some of the scrolls as a gift.",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "FALSE",
+          "points": 1
+        },
+        {
+          "question_no": 11,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "prompt": "In the early 1950s, a number of educational establishments in the US were keen to buy scrolls from Mar Samuel.",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "FALSE",
+          "points": 1
+        },
+        {
+          "question_no": 12,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "prompt": "The scroll that was pieced together in 2017 contains information about annual occasions in the Qumran area 2,000 years ago.",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "TRUE",
+          "points": 1
+        },
+        {
+          "question_no": 13,
+          "question_type": "TRUE_FALSE_NOT_GIVEN",
+          "prompt": "Academics at the University of Haifa are currently researching how to decipher the final scroll.",
+          "options": [
+            "TRUE",
+            "FALSE",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "NOT GIVEN",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 2,
+      "title": "Reading Passage 2 – A second attempt at domesticating the tomato",
+      "passage_text": "A  It took at least 3,000 years for humans to learn how to domesticate the wild tomato and cultivate it for food. Now two separate teams in Brazil and China have done it all over again in less than three years. And they have done it better in some ways, as the re-domesticated tomatoes are more nutritious than the ones we eat at present. This approach relies on the revolutionary CRISPR genome editing technique, in which changes are deliberately made to the DNA of a living cell, allowing genetic material to be added, removed or altered. The technique could not only improve existing crops, but could also be used to turn thousands of wild plants into useful and appealing foods. In fact, a third team in the US has already begun to do this with a relative of the tomato called the groundcherry. This fast-track domestication could help make the world's food supply healthier and far more resistant to diseases, such as the rust fungus devastating wheat crops. 'This could transform what we eat,' says Jorg Kudla at the University of Munster in Germany. 'There are 50,000 edible plants in the world, but 90 percent of our energy comes from just 15 crops.'\n\nB  Wild tomatoes, which are native to the Andes region in South America, produce pea-sized fruits. Over many generations, peoples such as the Aztecs and Incas transformed the plant by selecting and breeding plants with mutations in their genetic structure, which resulted in desirable traits such as larger fruit. But every time a single plant with a mutation is taken from a larger population for breeding, much genetic diversity is lost. And sometimes the desirable mutations come with less desirable traits. For instance, the tomato strains grown for supermarkets have lost much of their flavour. By comparing the genomes of modern plants to those of their wild relatives, biologists have been working out what genetic changes occurred as plants were domesticated.\n\nC  Kudla's team made six changes altogether. For instance, they tripled the size of fruit by editing a gene called FRUIT WEIGHT, and increased the number of tomatoes per truss by editing another called MULTIFLORA. While the historical domestication of tomatoes reduced levels of the red pigment lycopene – thought to have potential health benefits – the team in Brazil managed to boost it instead. The wild tomato has twice as much lycopene as cultivated ones; the newly domesticated one has five times as much. The team in China re-domesticated several strains of wild tomatoes with desirable traits lost in domesticated tomatoes. In this way they managed to create a strain resistant to a common disease called bacterial spot race, which can devastate yields. They also created another strain that is more salt tolerant – and has higher levels of vitamin C.\n\nD  Meanwhile, Joyce Van Eck at the Boyce Thompson Institute in New York state decided to use the same approach to domesticate the groundcherry or goldenberry (Physalis pruinosa) for the first time. Groundcherries are already sold to a limited extent in the US but they are hard to produce because the plant has a sprawling growth habit and the small fruits fall off the branches when ripe. Van Eck's team has edited the plants to increase fruit size, make their growth more compact and to stop fruits dropping.\n\nE  This approach could boost the use of many obscure plants, says Jonathan Jones of the Sainsbury Lab in the UK. But it will be hard for new foods to grow so popular with farmers and consumers that they become new staple crops, he thinks. The three teams already have their eye on other plants that could be 'catapulted into the mainstream', including foxtail, oat-grass and cowpea. By choosing wild plants that are drought or heat tolerant, says Gao, we could create crops that will thrive even as the planet warms.",
+      "questions": [
+        {
+          "question_no": 14,
+          "question_type": "PARAGRAPH_MATCH",
+          "prompt": "a reference to a type of tomato that can resist a dangerous infection",
+          "options": null,
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 15,
+          "question_type": "PARAGRAPH_MATCH",
+          "prompt": "an explanation of how problems can arise from focusing only on a certain type of tomato plant",
+          "options": null,
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 16,
+          "question_type": "PARAGRAPH_MATCH",
+          "prompt": "a number of examples of plants that are not cultivated at present but could be useful as food sources",
+          "options": null,
+          "correct_answer": "E",
+          "points": 1
+        },
+        {
+          "question_no": 17,
+          "question_type": "PARAGRAPH_MATCH",
+          "prompt": "a comparison between the early domestication of the tomato and more recent research",
+          "options": null,
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 18,
+          "question_type": "PARAGRAPH_MATCH",
+          "prompt": "a personal reaction to the flavour of a tomato that has been genetically edited",
+          "options": null,
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 19,
+          "question_type": "MATCHING",
+          "prompt": "Jorg Kudla – statement",
+          "options": null,
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 20,
+          "question_type": "MATCHING",
+          "prompt": "Caixia Gao – statement",
+          "options": null,
+          "correct_answer": "D",
+          "points": 1
+        },
+        {
+          "question_no": 21,
+          "question_type": "MATCHING",
+          "prompt": "Joyce Van Eck – statement",
+          "options": null,
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 22,
+          "question_type": "MATCHING",
+          "prompt": "Jonathan Jones – statement",
+          "options": null,
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 23,
+          "question_type": "MATCHING",
+          "prompt": "Bhavani Shankar – statement",
+          "options": null,
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 24,
+          "question_type": "SUMMARY_COMPLETION",
+          "prompt": "The historical domestication of tomatoes reduced levels of 24 ________ / flavor",
+          "options": null,
+          "correct_answer": "flavour",
+          "points": 1
+        },
+        {
+          "question_no": 25,
+          "question_type": "SUMMARY_COMPLETION",
+          "prompt": "Wild tomatoes produce pea-sized fruits – the key difference is 25 ________",
+          "options": null,
+          "correct_answer": "size",
+          "points": 1
+        },
+        {
+          "question_no": 26,
+          "question_type": "SUMMARY_COMPLETION",
+          "prompt": "One strain created by the Chinese team is more 26 ________ tolerant",
+          "options": null,
+          "correct_answer": "salt",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 3,
+      "title": "Reading Passage 3 – The power of play",
+      "passage_text": "The importance of play in child development has long been recognised by psychologists and educators. But what exactly is play, and why is it so important? These questions have been the subject of much research and debate over the past century.\n\nPlay is generally defined as activity that is intrinsically motivated, freely chosen, and enjoyable. It is distinguished from work by the fact that it is done for its own sake, rather than for an external reward. Play can take many forms, from physical play such as running and jumping, to social play such as games with rules, to imaginative play such as pretending to be someone else.\n\nResearch has shown that play is essential for healthy development in children. Physical play helps children develop motor skills and physical fitness. Social play helps children learn to cooperate, negotiate, and resolve conflicts. Imaginative play helps children develop creativity and problem-solving skills. Play also helps children develop language skills, as they talk to each other and to themselves during play.\n\nDespite the importance of play, there is evidence that children today have less time for free play than previous generations. This is partly due to increased academic pressure, with children spending more time on homework and structured activities. It is also due to safety concerns, with parents less willing to let children play outside unsupervised. And it is due to the rise of screen-based entertainment, which has replaced some of the time that children used to spend in active play.\n\nSome researchers are concerned about the consequences of this decline in play. They argue that children who do not have enough opportunity for play may be at risk of developmental problems, including difficulties with social skills, creativity, and emotional regulation. They also argue that the decline in play may be contributing to the rise in childhood mental health problems, including anxiety and depression.\n\nHowever, not all researchers agree that the decline in play is a cause for concern. Some argue that the research on the benefits of play is not as strong as is often claimed. Others argue that children can develop the same skills through structured activities as through free play. And some argue that the rise in screen-based entertainment is not necessarily harmful, as long as children are engaging with high-quality content.\n\nThe debate about play is likely to continue for some time. But most researchers agree that children need some opportunity for free, unstructured play in order to develop fully. The challenge for parents, educators, and policymakers is to ensure that children have this opportunity, even in an increasingly busy and structured world.",
+      "questions": [
+        {
+          "question_no": 27,
+          "question_type": "MCQ",
+          "prompt": "What does the writer say about the definition of play in the second paragraph?",
+          "options": [
+            "It is difficult to define precisely.",
+            "It is distinguished from work by its motivation.",
+            "It must involve physical activity.",
+            "It requires the presence of other children."
+          ],
+          "correct_answer": "D",
+          "points": 1
+        },
+        {
+          "question_no": 28,
+          "question_type": "MCQ",
+          "prompt": "What does the research mentioned in the third paragraph show?",
+          "options": [
+            "Physical play is the most important type of play.",
+            "Play is essential for healthy development.",
+            "Social play is more beneficial than imaginative play.",
+            "Play should be structured by adults."
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 29,
+          "question_type": "MCQ",
+          "prompt": "According to the fourth paragraph, why do children today have less time for free play?",
+          "options": [
+            "They prefer screen-based entertainment.",
+            "There are several contributing factors.",
+            "Parents are more protective than before.",
+            "Schools have increased academic pressure."
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 30,
+          "question_type": "MCQ",
+          "prompt": "What concern do some researchers have about the decline in play?",
+          "options": [
+            "Children may develop physical health problems.",
+            "Children may have difficulties with social skills and creativity.",
+            "Children may spend too much time on homework.",
+            "Children may become too dependent on technology."
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 31,
+          "question_type": "MCQ",
+          "prompt": "What do some researchers argue about structured activities?",
+          "options": [
+            "They are less effective than free play.",
+            "They can develop the same skills as free play.",
+            "They should replace free play entirely.",
+            "They are only suitable for older children."
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 32,
+          "question_type": "YES_NO_NOT_GIVEN",
+          "prompt": "The writer believes that screen-based entertainment is always harmful to children.",
+          "options": [
+            "YES",
+            "NO",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "NO",
+          "points": 1
+        },
+        {
+          "question_no": 33,
+          "question_type": "YES_NO_NOT_GIVEN",
+          "prompt": "All researchers agree that the decline in play is a serious problem.",
+          "options": [
+            "YES",
+            "NO",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "NOT GIVEN",
+          "points": 1
+        },
+        {
+          "question_no": 34,
+          "question_type": "YES_NO_NOT_GIVEN",
+          "prompt": "The writer thinks that the debate about play will be resolved soon.",
+          "options": [
+            "YES",
+            "NO",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "NO",
+          "points": 1
+        },
+        {
+          "question_no": 35,
+          "question_type": "YES_NO_NOT_GIVEN",
+          "prompt": "The writer believes children need some opportunity for free play.",
+          "options": [
+            "YES",
+            "NO",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "YES",
+          "points": 1
+        },
+        {
+          "question_no": 36,
+          "question_type": "YES_NO_NOT_GIVEN",
+          "prompt": "The writer suggests that parents alone are responsible for ensuring children have time to play.",
+          "options": [
+            "YES",
+            "NO",
+            "NOT GIVEN"
+          ],
+          "correct_answer": "NOT GIVEN",
+          "points": 1
+        },
+        {
+          "question_no": 37,
+          "question_type": "MATCHING",
+          "prompt": "physical play – benefit",
+          "options": null,
+          "correct_answer": "F",
+          "points": 1
+        },
+        {
+          "question_no": 38,
+          "question_type": "MATCHING",
+          "prompt": "social play – benefit",
+          "options": null,
+          "correct_answer": "D",
+          "points": 1
+        },
+        {
+          "question_no": 39,
+          "question_type": "MATCHING",
+          "prompt": "imaginative play – benefit",
+          "options": null,
+          "correct_answer": "E",
+          "points": 1
+        },
+        {
+          "question_no": 40,
+          "question_type": "MATCHING",
+          "prompt": "play in general – benefit",
+          "options": null,
+          "correct_answer": "B",
+          "points": 1
+        }
+      ]
+    }
+  ]
+}
