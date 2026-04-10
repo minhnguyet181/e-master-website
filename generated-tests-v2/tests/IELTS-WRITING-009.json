@@ -1,0 +1,41 @@
+{
+  "code": "IELTS-WRITING-009",
+  "name": "Writing Test 09",
+  "test_type": "writing",
+  "task_type": "Task 1 Academic",
+  "duration_minutes": 20,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Task 1 Academic",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": "image/writingtest9.jpg",
+      "prompt": "The diagram below illustrates the process of recycling plastic bottles. Summarise the main stages of the process.",
+      "content": {
+        "task_type": "Task 1 Academic",
+        "title": "Process Diagram – Recycling",
+        "question": "The diagram below illustrates the process of recycling plastic bottles. Summarise the main stages of the process."
+      },
+      "media": {
+        "image": "image/writingtest9.jpg"
+      },
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "WRITING_TASK",
+          "prompt": "The diagram below illustrates the process of recycling plastic bottles. Summarise the main stages of the process.",
+          "options": null,
+          "correct_answer": null,
+          "points": 150,
+          "metadata": {
+            "band_rubric": "ielts_writing_v1",
+            "sample_answer": null
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

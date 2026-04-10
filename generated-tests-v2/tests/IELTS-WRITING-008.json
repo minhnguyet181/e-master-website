@@ -1,0 +1,41 @@
+{
+  "code": "IELTS-WRITING-008",
+  "name": "Writing Test 08",
+  "test_type": "writing",
+  "task_type": "Task 2",
+  "duration_minutes": 40,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Task 2",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "In many parts of the world, traditional customs are disappearing as people adopt modern lifestyles. Do the advantages of this trend outweigh the disadvantages?",
+      "content": {
+        "task_type": "Task 2",
+        "title": "Cultural Preservation",
+        "question": "In many parts of the world, traditional customs are disappearing as people adopt modern lifestyles. Do the advantages of this trend outweigh the disadvantages?"
+      },
+      "media": {
+        "image": null
+      },
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "WRITING_TASK",
+          "prompt": "In many parts of the world, traditional customs are disappearing as people adopt modern lifestyles. Do the advantages of this trend outweigh the disadvantages?",
+          "options": null,
+          "correct_answer": null,
+          "points": 250,
+          "metadata": {
+            "band_rubric": "ielts_writing_v1",
+            "sample_answer": null
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

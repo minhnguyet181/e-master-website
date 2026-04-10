@@ -14,6 +14,82 @@ function normalizeTextAnswer(v) {
     .toLowerCase();
 }
 
+function toLetterFromIndex(v) {
+  const n = Number(v);
+  if (!Number.isInteger(n) || n < 0 || n > 25) return null;
+  return String.fromCharCode(65 + n);
+}
+
+function normalizeTfngLike(v) {
+  const raw = normalizeTextAnswer(v).toUpperCase();
+  if (!raw) return '';
+  if (raw === 'T' || raw === 'TRUE') return 'TRUE';
+  if (raw === 'F' || raw === 'FALSE') return 'FALSE';
+  if (raw === 'Y' || raw === 'YES') return 'YES';
+  if (raw === 'N' || raw === 'NO') return 'NO';
+  if (raw === 'NG' || raw === 'NOT GIVEN' || raw === 'NOTGIVEN') return 'NOT GIVEN';
+  return raw;
+}
+
+function splitAcceptedAnswers(correctAnswer) {
+  if (correctAnswer === null || correctAnswer === undefined) return [];
+  const raw = String(correctAnswer);
+  return raw
+    .split(/[|/;]+/g)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function isCorrectObjectiveAnswer(q, userAns) {
+  const qType = String(q.question_type || '').toUpperCase();
+
+  // TFNG / YNNG normalization
+  if (qType === 'TRUE_FALSE_NOT_GIVEN' || qType === 'TFNG' || qType === 'YES_NO_NOT_GIVEN' || qType === 'YNNG') {
+    // If user sent a numeric index (e.g. from MCQ renderer), map it to option text first
+    let answerToNorm = userAns;
+    if (Array.isArray(q.options) && q.options.length > 0) {
+      const idx = Number(userAns);
+      if (Number.isInteger(idx) && idx >= 0 && idx < q.options.length) {
+        answerToNorm = q.options[idx];
+      }
+    }
+    const userNorm = normalizeTfngLike(answerToNorm);
+    const accepted = splitAcceptedAnswers(q.correct_answer).map(normalizeTfngLike);
+    return userNorm.length > 0 && accepted.includes(userNorm);
+  }
+
+  // MCQ: support index, letter, and option text
+  if (Array.isArray(q.options) && q.options.length > 0) {
+    const accepted = splitAcceptedAnswers(q.correct_answer).map((v) => normalizeTextAnswer(v).toUpperCase());
+    const userLetter = toLetterFromIndex(userAns);
+    const candidates = [
+      normalizeTextAnswer(userAns).toUpperCase(),
+      userLetter || '',
+    ];
+    const userIndex = Number(userAns);
+    if (Number.isInteger(userIndex) && userIndex >= 0 && userIndex < q.options.length) {
+      candidates.push(normalizeTextAnswer(q.options[userIndex]).toUpperCase());
+    }
+
+    // If DB stores correct as letter (A/B/...), map to option text too
+    for (const a of accepted) {
+      if (/^[A-Z]$/.test(a)) {
+        const idx = a.charCodeAt(0) - 65;
+        if (idx >= 0 && idx < q.options.length) {
+          const optText = normalizeTextAnswer(q.options[idx]).toUpperCase();
+          if (candidates.includes(optText)) return true;
+        }
+      }
+    }
+    return candidates.some((c) => c && accepted.includes(c));
+  }
+
+  // Fill/short answers: accept multiple answers separated by | / ;
+  const userNorm = normalizeTextAnswer(userAns);
+  const accepted = splitAcceptedAnswers(q.correct_answer).map((v) => normalizeTextAnswer(v));
+  return userNorm.length > 0 && accepted.includes(userNorm);
+}
+
 function computeObjectiveResult(questions, answers) {
   const ordered = [...questions].sort((a, b) => {
     const sa = a.section_id || 0;
@@ -41,13 +117,15 @@ function computeObjectiveResult(questions, answers) {
     let userAns;
     if (answers && typeof answers === 'object' && !Array.isArray(answers) && q.public_id && answers[q.public_id] !== undefined) {
       userAns = answers[q.public_id];
+    } else if (answers && typeof answers === 'object' && !Array.isArray(answers) && answers[String(q.question_no)] !== undefined) {
+      userAns = answers[String(q.question_no)];
+    } else if (answers && typeof answers === 'object' && !Array.isArray(answers) && answers[q.question_no] !== undefined) {
+      userAns = answers[q.question_no];
     } else {
       userAns = getAnswerByIndex(idx);
     }
 
-    const userNorm = normalizeTextAnswer(userAns);
-    const correctNorm = normalizeTextAnswer(q.correct_answer);
-    const ok = userNorm.length > 0 && userNorm === correctNorm;
+    const ok = isCorrectObjectiveAnswer(q, userAns);
     if (ok) correct += 1;
 
     detail.push({
@@ -58,6 +136,7 @@ function computeObjectiveResult(questions, answers) {
       user_answer: userAns ?? null,
       correct_answer: q.correct_answer,
       is_correct: ok,
+      correct: ok,
     });
   }
 

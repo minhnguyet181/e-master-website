@@ -1,0 +1,72 @@
+{
+  "code": "IELTS-SPEAKING-003",
+  "name": "Speaking Test 03",
+  "test_type": "speaking",
+  "duration_minutes": 15,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 3",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Relationships & Communication",
+      "content": {
+        "topic": "Relationships & Communication"
+      },
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "How has technology changed the way people communicate?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Relationships & Communication",
+            "part": "Part 3"
+          }
+        },
+        {
+          "question_no": 2,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Do you think it's easier to make friends now compared to the past?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Relationships & Communication",
+            "part": "Part 3"
+          }
+        },
+        {
+          "question_no": 3,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "What qualities do you think are important in a good friend?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Relationships & Communication",
+            "part": "Part 3"
+          }
+        },
+        {
+          "question_no": 4,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Why do some people find it difficult to maintain long-term relationships?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Relationships & Communication",
+            "part": "Part 3"
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

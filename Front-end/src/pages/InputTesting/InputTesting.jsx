@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./InputTesting.css";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
 import { FaRegSmileBeam, FaRegThumbsUp, FaRegSadTear } from "react-icons/fa";
 import api from "../../api/api.js";
 import WritingTestComponent from "./WritingTestComponent";
+import ReadingTestLayout from "./ReadingTestLayout";
+import ListeningTestLayout from "./ListeningTestLayout";
 
 const InputTesting = () => {
+  const navigate = useNavigate();
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedTest, setSelectedTest] = useState(null);
   const [testContent, setTestContent] = useState(null);
@@ -16,6 +20,11 @@ const InputTesting = () => {
   const [error, setError] = useState("");
   const [visibleExtra, setVisibleExtra] = useState(6);
   const [testList, setTestList] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) navigate("/login");
+  }, [navigate]);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -45,11 +54,19 @@ const InputTesting = () => {
     try {
       const response = await api.test.getTestsBySkill(skill);
       // Backend returns: { success: true, data: [...] }
-      const tests = Array.isArray(response.data?.data) ? response.data.data : [];
+      const raw = response.data?.data;
+      const tests = Array.isArray(raw) ? raw : [];
+      if (tests.length === 0) console.warn("⚠️ Empty test list. Raw response:", response.data);
       setTestList(tests);
     } catch (err) {
       console.error("❌ Error loading tests:", err);
-      setError("Cannot load tests for this skill.");
+      const status = err.response?.status;
+      if (status === 401 || status === 403) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        return;
+      }
+      setError(`Cannot load tests (${status || err.message})`);
       setTestList([]);
     }
     window.history.pushState({}, "", `#${skill}`);
@@ -71,6 +88,11 @@ const InputTesting = () => {
       setTestContent(testData);
     } catch (err) {
       console.error("❌ Error loading test:", err);
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        return;
+      }
       setError("Cannot load test content.");
       setTestContent(null);
     } finally {
@@ -126,38 +148,29 @@ const InputTesting = () => {
     if (!testContent || !selectedTest) return;
     
     const testId = selectedTest.id || selectedTest;
-    if (!testId) {
-      setError("Test ID is missing");
-      return;
-    }
+    if (!testId) { setError("Test ID is missing"); return; }
 
     setLoading(true);
     setError("");
 
     try {
-      const res = await api.test.gradeTest({
-        testId,
-        answers: userAnswers, // { public_id: answer, ... } or { 0: 1, ... }
-      });
+      // Normalize answers per test type
+      let answers = userAnswers;
+      if (testContent.test_type === "writing") {
+        const text = typeof userAnswers === "string" ? userAnswers : userAnswers.essay || userAnswers.text || "";
+        answers = { essay: text };
+      } else if (testContent.test_type === "speaking") {
+        const text = typeof userAnswers === "string" ? userAnswers : userAnswers.transcript || userAnswers.text || "";
+        answers = { transcript: text };
+      }
 
-      // Backend returns: { success: true, data: { attempt_id, cache_hit, result: { correct, total, score, ... }, progress } }
+      const res = await api.test.gradeTest({ testId, answers });
       const result = res.data?.data?.result || res.data?.data || res.data;
-      
+
       if (result.correct !== undefined && result.total !== undefined) {
-        setScore({ 
-          correct: result.correct, 
-          total: result.total, 
-          score: result.score || (result.correct / result.total),
-          ...result 
-        });
+        setScore({ correct: result.correct, total: result.total, score: result.score, ...result });
       } else if (result.overall !== undefined) {
-        // Writing/Speaking AI result
-        setScore({ 
-          overall: result.overall,
-          band_score: result.overall,
-          feedback: result.feedback,
-          ...result 
-        });
+        setScore({ overall: result.overall, band_score: result.overall, ...result });
       } else {
         setScore(result);
       }
@@ -185,17 +198,30 @@ const InputTesting = () => {
     if (testType === "writing") {
       const firstSection = testContent.sections?.[0];
       const firstQuestion = questions[0];
-      const writingPrompt = firstSection?.content || testContent.description || "";
-      const userAnswer = typeof userAnswers === 'string' ? userAnswers : (userAnswers.essay || userAnswers.text || userAnswers.answer || "");
+      // Lấy prompt từ section.prompt (mới) hoặc section.content (cũ)
+      const writingPrompt =
+        firstSection?.prompt ||
+        firstSection?.content?.question ||
+        firstSection?.content ||
+        testContent.description ||
+        "";
+      // Lấy image nếu là Task 1
+      const taskImage = firstSection?.image_url || firstSection?.media?.image || null;
+      const userAnswer =
+        typeof userAnswers === "string"
+          ? userAnswers
+          : userAnswers.essay || userAnswers.text || userAnswers.answer || "";
 
       return (
         <WritingTestComponent
           testContent={{
             name: testContent.name,
+            task_type: testContent.task_type, // task1 | task2
             duration_minutes: testContent.duration_minutes,
             points: firstQuestion?.points || 250,
-            content: writingPrompt?.question || writingPrompt,
-            question_number: firstSection?.title || "1",
+            content: typeof writingPrompt === "object" ? JSON.stringify(writingPrompt) : writingPrompt,
+            image_url: taskImage,
+            question_number: testContent.task_type || firstSection?.title || "2",
             hint: firstQuestion?.metadata?.sample_answer || null,
             info: { name: testContent.name },
           }}
@@ -207,15 +233,20 @@ const InputTesting = () => {
       );
     }
 
-    // Speaking test - render prompts
+    // Speaking test
     if (testType === "speaking") {
+      const userTranscript =
+        typeof userAnswers === "string"
+          ? userAnswers
+          : userAnswers.transcript || userAnswers.text || userAnswers.answer || "";
+
       return (
         <div className="speaking-test-content">
-          <h3>Speaking Test</h3>
           {testContent.sections?.map((section, sIdx) => (
             <div key={sIdx} className="speaking-section">
               <h4>{section.title || `Part ${section.section_no}`}</h4>
-              {section.content?.topic && <p className="topic">Topic: {section.content.topic}</p>}
+              {section.prompt && <p className="speaking-prompt">{section.prompt}</p>}
+              {section.content?.topic && <p className="topic"><strong>Topic:</strong> {section.content.topic}</p>}
               {section.questions?.map((q, qIdx) => (
                 <div key={qIdx} className="speaking-question">
                   <p><strong>Question {q.question_no}:</strong> {q.prompt}</p>
@@ -223,119 +254,102 @@ const InputTesting = () => {
               ))}
             </div>
           ))}
-          <p className="info">Note: Speaking test requires audio recording. Feature coming soon.</p>
+
+          <div className="speaking-answer-box">
+            <h3>Nhập transcript câu trả lời của bạn:</h3>
+            <p className="speaking-hint">
+              Nói to câu trả lời, sau đó gõ lại nội dung bạn đã nói vào ô bên dưới để AI chấm điểm.
+            </p>
+            <textarea
+              className="writing-input"
+              rows="10"
+              placeholder="Nhập transcript câu trả lời của bạn tại đây..."
+              value={userTranscript}
+              onChange={(e) => setUserAnswers(e.target.value)}
+              disabled={!!score}
+            />
+            {userTranscript.trim().length > 0 && (
+              <p className="word-count-info">
+                Số từ: <strong>{userTranscript.trim().split(/\s+/).filter(Boolean).length}</strong>
+              </p>
+            )}
+          </div>
+
+          {score && (
+            <div className="score-box speaking-score">
+              <h3>Kết quả chấm bài 🎤</h3>
+              {score.overall !== undefined && (
+                <p className="band-score">Band Score: <strong>{Number(score.overall).toFixed(1)}</strong></p>
+              )}
+              {score.fluency_and_coherence !== undefined && (
+                <div className="detailed-scores">
+                  <h4>Chi tiết:</h4>
+                  <ul>
+                    <li>Fluency & Coherence: <strong>{Number(score.fluency_and_coherence).toFixed(1)}</strong></li>
+                    <li>Pronunciation: <strong>{Number(score.pronunciation).toFixed(1)}</strong></li>
+                    <li>Lexical Resource: <strong>{Number(score.lexical_resource).toFixed(1)}</strong></li>
+                    <li>Grammar: <strong>{Number(score.grammar).toFixed(1)}</strong></li>
+                  </ul>
+                </div>
+              )}
+              {score.feedback && <p><strong>Nhận xét:</strong> {score.feedback}</p>}
+              {score.suggestions?.map((s, i) => <p key={i}>💡 {s}</p>)}
+            </div>
+          )}
         </div>
       );
     }
 
-    // Listening/Reading - render questions with options
+    // Reading — split-screen layout
+    if (testType === "reading") {
+      return (
+        <ReadingTestLayout
+          testContent={testContent}
+          userAnswers={userAnswers}
+          onAnswer={handleAnswerSelect}
+          score={score}
+          onSubmit={handleSubmit}
+          loading={loading}
+        />
+      );
+    }
+
+    // Listening — sticky audio layout
+    if (testType === "listening") {
+      return (
+        <ListeningTestLayout
+          testContent={testContent}
+          userAnswers={userAnswers}
+          onAnswer={handleAnswerSelect}
+          score={score}
+          onSubmit={handleSubmit}
+          loading={loading}
+        />
+      );
+    }
+
+    // Fallback for unknown types
     return (
       <div className="objective-test-content">
-        {/* Render sections if available */}
-        {testContent.sections?.map((section, sIdx) => (
-          <div key={sIdx} className="test-section">
-            {section.title && <h3>{section.title}</h3>}
-            {section.media?.audio && (
-              <audio controls src={section.media.audio} className="test-audio" />
-            )}
-            {section.media?.image && (
-              <img src={section.media.image} alt={section.title} className="test-image" />
-            )}
-            {section.content?.passageText && (
-              <div className="passage-text">
-                {typeof section.content.passageText === 'object' ? (
-                  Object.entries(section.content.passageText).map(([key, text]) => (
-                    <p key={key}><strong>{key}:</strong> {text}</p>
-                  ))
-                ) : (
-                  <p>{section.content.passageText}</p>
-                )}
-              </div>
-            )}
-
-            {section.questions?.map((q, qIdx) => {
-              const questionKey = q.public_id || `${sIdx}-${qIdx}`;
-              const userAnswer = userAnswers[questionKey] ?? userAnswers[qIdx] ?? userAnswers[q.question_no];
-              
-              return (
-                <div key={questionKey} className="question-item">
-                  <p>
-                    <strong>Question {q.question_no || qIdx + 1}:</strong> {q.prompt || q.question_text}
-                  </p>
-
-                  {q.options && Array.isArray(q.options) && q.options.length > 0 ? (
-                    <form className="options-form">
-                      {q.options.map((opt, optIdx) => (
-                        <label
-                          key={optIdx}
-                          className={`option-item ${
-                            userAnswer === optIdx || userAnswer === opt ? "selected-answer" : ""
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name={`question-${questionKey}`}
-                            value={optIdx}
-                            checked={userAnswer === optIdx || userAnswer === opt}
-                            onChange={() => handleAnswerSelect(questionKey, optIdx)}
-                          />
-                          <span>{opt}</span>
-                        </label>
-                      ))}
-                    </form>
-                  ) : (
-                    <input
-                      type="text"
-                      className="text-answer-input"
-                      placeholder="Type your answer..."
-                      value={userAnswer || ""}
-                      onChange={(e) => handleAnswerSelect(questionKey, e.target.value)}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-
-        {/* Fallback: render questions directly if no sections */}
-        {(!testContent.sections || testContent.sections.length === 0) && questions.map((q, index) => {
+        {questions.map((q, index) => {
           const questionKey = q.public_id || index;
           const userAnswer = userAnswers[questionKey] ?? userAnswers[index];
-          
           return (
             <div key={questionKey} className="question-item">
-              <p>
-                <strong>Question {q.question_no || index + 1}:</strong> {q.prompt || q.question_text}
-              </p>
-              {q.options && Array.isArray(q.options) && q.options.length > 0 ? (
+              <p><strong>Question {q.question_no || index + 1}:</strong> {q.prompt}</p>
+              {q.options?.length > 0 ? (
                 <form className="options-form">
                   {q.options.map((opt, optIdx) => (
-                    <label
-                      key={optIdx}
-                      className={`option-item ${
-                        userAnswer === optIdx ? "selected-answer" : ""
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name={`question-${questionKey}`}
-                        value={optIdx}
-                        checked={userAnswer === optIdx}
-                        onChange={() => handleAnswerSelectByIndex(index, optIdx)}
-                      />
+                    <label key={optIdx} className={`option-item ${userAnswer === optIdx ? "selected-answer" : ""}`}>
+                      <input type="radio" name={`question-${questionKey}`} checked={userAnswer === optIdx}
+                        onChange={() => handleAnswerSelect(questionKey, optIdx)} />
                       <span>{opt}</span>
                     </label>
                   ))}
                 </form>
               ) : (
-                <input
-                  type="text"
-                  className="text-answer-input"
-                  placeholder="Type your answer..."
-                  value={userAnswer || ""}
-                  onChange={(e) => handleAnswerSelect(questionKey, e.target.value)}
-                />
+                <input type="text" className="text-answer-input" placeholder="Type your answer..."
+                  value={userAnswer || ""} onChange={(e) => handleAnswerSelect(questionKey, e.target.value)} />
               )}
             </div>
           );
@@ -346,40 +360,54 @@ const InputTesting = () => {
 
   if (testContent) {
     return (
-      <div className="input-testing-page">
+      <div className="input-testing-page input-testing-page--exam">
         <Navbar />
         <div className="main-layout">
           <Sidebar />
           <main className="test-content">
-            <h2>
-              {testContent.test_type?.toUpperCase()} - {testContent.name || selectedTest?.name}
-            </h2>
-
-            <button
-              className="back-btn"
-              onClick={() => {
-                setTestContent(null);
-                setSelectedTest(null);
-                setUserAnswers({});
-                setScore(null);
-                window.history.back();
-              }}
-            >
-              ← Back to {selectedSkill}
-            </button>
-
-            {error && <p className="error">{error}</p>}
-            {loading && !score && <p>Loading...</p>}
+            <div className="exam-header">
+              <button
+                className="back-btn"
+                onClick={() => {
+                  setTestContent(null);
+                  setSelectedTest(null);
+                  setUserAnswers({});
+                  setScore(null);
+                }}
+              >
+                ← Back
+              </button>
+              <h2 className="exam-title">
+                {testContent.test_type?.toUpperCase()} — {testContent.name || selectedTest?.name}
+              </h2>
+              {error && <p className="error">{error}</p>}
+              {loading && !score && <p>Loading...</p>}
+            </div>
 
             {renderTestContent()}
 
-            {testContent.test_type !== "writing" && (
+            {testContent.test_type !== "writing" &&
+              testContent.test_type !== "speaking" &&
+              testContent.test_type !== "reading" &&
+              testContent.test_type !== "listening" && (
               <button className="submit-btn" onClick={handleSubmit} disabled={loading}>
                 Submit Test
               </button>
             )}
 
-            {score && testContent.test_type !== "writing" && (
+            {testContent.test_type === "speaking" && !score && (
+              <button
+                className="submit-btn"
+                onClick={handleSubmit}
+                disabled={loading || !(typeof userAnswers === 'string' ? userAnswers : userAnswers.transcript || '').trim()}
+              >
+                {loading ? "Đang chấm..." : "Nộp bài & Chấm điểm AI"}
+              </button>
+            )}
+
+            {score && testContent.test_type !== "writing" &&
+              testContent.test_type !== "reading" &&
+              testContent.test_type !== "listening" && (
               <div className="score-box">
                 <h3>
                   {score.correct !== undefined && score.total !== undefined ? (
@@ -443,34 +471,30 @@ const InputTesting = () => {
           {/* --- Skill selection --- */}
           {!selectedSkill && (
             <div className="skill-grid">
-              {["listening", "reading", "writing", "speaking", "full"].map(
-                (skill) => (
-                  <div key={skill} className="skill-card">
-                    <img
-                      src={`/assets/images/${skill}.jpg`}
-                      alt={skill}
-                      className="skill-img"
-                    />
-                    <h2>{skill.charAt(0).toUpperCase() + skill?.slice(1)}</h2>
-                    <p>Practice your {skill} skill effectively.</p>
-                    <button
-                      className="view-btn"
-                      onClick={() => handleSkillClick(skill)}
-                    >
-                      Detail
-                    </button>
+              {[
+                { key: "listening", label: "Listening", desc: "Train your ear with authentic IELTS audio tracks." },
+                { key: "reading",   label: "Reading",   desc: "Sharpen comprehension with full passage tests." },
+                { key: "writing",   label: "Writing",   desc: "Practice Task 1 & Task 2 with AI feedback." },
+                { key: "speaking",  label: "Speaking",  desc: "Prepare for the speaking exam with guided prompts." },
+              ].map(({ key, label, desc }) => (
+                <div key={key} className="skill-card" onClick={() => handleSkillClick(key)}>
+                  <img src={`/assets/images/${key}.jpg`} alt={label} className="skill-img" />
+                  <div className="skill-card-body">
+                    <h2>{label}</h2>
+                    <p>{desc}</p>
+                    <button className="view-btn">Start Practice</button>
                   </div>
-                )
-              )}
+                </div>
+              ))}
             </div>
           )}
 
           {/* --- Test list --- */}
           {selectedSkill && !testContent && (
             <>
-              {/* <button className="back-btn" onClick={() => window.history.back()}>
-                ← Back to Skill List
-              </button> */}
+              <button className="back-btn" onClick={() => { setSelectedSkill(null); setTestList([]); }}>
+                ← Back to Skills
+              </button>
               <h2 className="skill-header">
                 {selectedSkill.toUpperCase()} TESTS
               </h2>

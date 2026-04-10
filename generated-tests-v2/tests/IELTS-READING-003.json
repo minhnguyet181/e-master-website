@@ -1,0 +1,178 @@
+{
+  "code": "IELTS-READING-003",
+  "name": "Reading Test 04",
+  "test_type": "reading",
+  "duration_minutes": 60,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Reading Passage 3",
+      "passage_text": "{}",
+      "audio_url": null,
+      "image_url": null,
+      "content": {
+        "passageTitle": "Talc Powder",
+        "passageText": {}
+      },
+      "media": null,
+      "questions": [
+        {
+          "prompt": "Answer question 1.",
+          "options": null,
+          "question_no": 1,
+          "question_type": "MATCHING",
+          "correct_answer": "C",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 27
+          }
+        },
+        {
+          "prompt": "Answer question 2.",
+          "options": null,
+          "question_no": 2,
+          "question_type": "MATCHING",
+          "correct_answer": "C",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 28
+          }
+        },
+        {
+          "prompt": "Answer question 3.",
+          "options": null,
+          "question_no": 3,
+          "question_type": "MATCHING",
+          "correct_answer": "B",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 29
+          }
+        },
+        {
+          "prompt": "Answer question 4.",
+          "options": null,
+          "question_no": 4,
+          "question_type": "MATCHING",
+          "correct_answer": "A",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 30
+          }
+        },
+        {
+          "prompt": "Answer question 5.",
+          "options": null,
+          "question_no": 5,
+          "question_type": "MATCHING",
+          "correct_answer": "B",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 31
+          }
+        },
+        {
+          "prompt": "Answer question 6.",
+          "options": null,
+          "question_no": 6,
+          "question_type": "MATCHING",
+          "correct_answer": "C",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 32
+          }
+        },
+        {
+          "prompt": "Complete the gap for question 7 using words from the passage.",
+          "options": null,
+          "question_no": 7,
+          "question_type": "SUMMARY_COMPLETION",
+          "correct_answer": "20",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 33
+          }
+        },
+        {
+          "prompt": "Complete the gap for question 8 using words from the passage.",
+          "options": null,
+          "question_no": 8,
+          "question_type": "SUMMARY_COMPLETION",
+          "correct_answer": "foam",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 34
+          }
+        },
+        {
+          "prompt": "Complete the gap for question 9 using words from the passage.",
+          "options": null,
+          "question_no": 9,
+          "question_type": "SUMMARY_COMPLETION",
+          "correct_answer": "waste water",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 35
+          }
+        },
+        {
+          "prompt": "Complete the gap for question 10 using words from the passage.",
+          "options": null,
+          "question_no": 10,
+          "question_type": "SUMMARY_COMPLETION",
+          "correct_answer": "harmful",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 36
+          }
+        },
+        {
+          "prompt": "Complete the gap for question 11 using words from the passage.",
+          "options": null,
+          "question_no": 11,
+          "question_type": "SUMMARY_COMPLETION",
+          "correct_answer": "biodegrade",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 37
+          }
+        },
+        {
+          "prompt": "Complete the gap for question 12 using words from the passage.",
+          "options": null,
+          "question_no": 12,
+          "question_type": "SUMMARY_COMPLETION",
+          "correct_answer": "droplets",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 38
+          }
+        },
+        {
+          "prompt": "Answer question 13.",
+          "options": null,
+          "question_no": 13,
+          "question_type": "SHORT_ANSWER",
+          "correct_answer": "Lamination and packing",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 39
+          }
+        },
+        {
+          "prompt": "Answer question 14.",
+          "options": null,
+          "question_no": 14,
+          "question_type": "SHORT_ANSWER",
+          "correct_answer": "Grape growers",
+          "points": 1,
+          "metadata": {
+            "source_question_no": 40
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

@@ -1,4 +1,7 @@
-require('dotenv').config();
+const path = require('path');
+// Luôn đọc .env trong thư mục Back-end (tránh mất GEMINI_API_KEY khi chạy node từ thư mục khác)
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
 const express = require('express');
 const cors = require('cors');
 const sequelize = require('./src/config/db');
@@ -6,20 +9,52 @@ const routes = require('./src/routes');
 const { applyTestV2Associations } = require('./src/models/testV2.associations');
 
 const app = express();
-const url = process.env.FRONTEND_URL;
-app.use(cors({
-  origin: url, 
-  credentials: true, 
-}));
+
+const corsAllowed = new Set(
+  [
+    process.env.FRONTEND_URL,
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
+  ].filter(Boolean).map((o) => o.replace(/\/$/, ''))
+);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
+      const normalized = origin.replace(/\/$/, '');
+      if (corsAllowed.has(normalized)) return callback(null, true);
+      if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
 app.use('/e-master', routes);
 
+// Health check endpoint for Docker/load balancer
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
 // Apply associations once at boot (doesn't hit DB)
 applyTestV2Associations();
 
 const shouldSync = String(process.env.DB_SYNC || '').toLowerCase() === 'true';
+
+const _gk = String(process.env.GEMINI_API_KEY || '').trim().replace(/^\uFEFF/, '');
+if (_gk) {
+  console.log(
+    `🔑 GEMINI_API_KEY loaded (len=${_gk.length}, prefix=${_gk.slice(0, 4)}…, starts AIza=${_gk.startsWith('AIza')})`
+  );
+} else {
+  console.warn('⚠️ GEMINI_API_KEY missing — AI onboarding / grading will fail until set in Back-end/.env');
+}
 
 const startServer = async () => {
   try {

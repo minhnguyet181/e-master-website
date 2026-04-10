@@ -76,8 +76,12 @@ exports.gradeTest = async (req, res) => {
     // Update progress (realtime)
     let progress;
     try {
-      progress = await ProgressService.updateProgress(userId, `test_${attempt.test_type}`, 1);
-      sendEvent(userId, 'progress_updated', { type: progress.type, completed: progress.completed, total: progress.total, progress: progress.progress });
+      progress = await ProgressService.recordTestDone(userId, testId, attempt.id, attempt.score_numeric);
+      sendEvent(userId, 'progress_updated', {
+        completed: progress.tasks_completed,
+        total: progress.tasks_total,
+        completion_rate: progress.completion_rate,
+      });
     } catch (e) {
       // ignore progress failures
     }

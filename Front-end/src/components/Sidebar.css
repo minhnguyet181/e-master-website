@@ -1,14 +1,17 @@
 .sidebar {
-  width: 230px;
-  height: 100vh;
+  width: var(--sidebar-w, 230px);
+  height: calc(100vh - var(--navbar-h, 70px));
   position: fixed;
-  top: 70px; /* nếu Navbar cao 70px */
+  top: var(--navbar-h, 70px);
   left: 0;
-  background-color: #ffffff !important; /* ÉP nền trắng */
+  background-color: #ffffff;
   border-right: 1px solid #e5e7eb;
   z-index: 100;
-  padding-top: 20px;
+  padding-top: 16px;
   overflow-y: auto;
+  overflow-x: hidden;
+  transition: width 0.2s ease;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.04);
 }
 
 /* Bỏ margin và bullet của danh sách */

@@ -1,0 +1,82 @@
+{
+  "passageTitle": "Voyage of Going: beyond the blue line 2",
+  "section": "Reading Passage 1",
+  "passageText": {
+    "A": "One feels a certain sympathy for Captain James Cook on the day in 1778 that he “discovered” Hawaii... (truncated for brevity in reasoning, full text will be included below).",
+    "B": "Answers have been slow in coming. But now a startling archaeological find on the island of Éfaté...",
+    "C": "“What we have is a first- or second-generation site containing the graves of some of the Pacific’s first explorers,” says Spriggs...",
+    "D": "Within the span of few centuries the Lapita stretched the boundaries of their world...",
+    "E": "What little is known or surmised about them has been pieced together from fragments...",
+    "F": "Several lines of evidence also undergird Spriggs’s conclusion that this was a community...",
+    "G": "“There is one stubborn question for which archaeology has yet to provide any answers...",
+    "H": "The Lapita’s thrust into the Pacific was eastward, against the prevailing trade winds...",
+    "I": "However they did it, the Lapita spread themselves a third of the way across the Pacific..."
+  },
+  "questions": [
+    {
+      "questionNumber": 1,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "TRUE"
+    },
+    {
+      "questionNumber": 2,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "FALSE"
+    },
+    {
+      "questionNumber": 3,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "FALSE"
+    },
+    {
+      "questionNumber": 4,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "NOT GIVEN"
+    },
+    {
+      "questionNumber": 5,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "TRUE"
+    },
+    {
+      "questionNumber": 6,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "NOT GIVEN"
+    },
+    {
+      "questionNumber": 7,
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "correctAnswer": "FALSE"
+    },
+    {
+      "questionNumber": 8,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "rock"
+    },
+    {
+      "questionNumber": 9,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "teeth"
+    },
+    {
+      "questionNumber": 10,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "descendants"
+    },
+    {
+      "questionNumber": 11,
+      "questionType": "SHORT_ANSWER",
+      "correctAnswer": "canoes"
+    },
+    {
+      "questionNumber": 12,
+      "questionType": "SHORT_ANSWER",
+      "correctAnswer": "trade winds"
+    },
+    {
+      "questionNumber": 13,
+      "questionType": "SHORT_ANSWER",
+      "correctAnswer": "seabirds and turtles"
+    }
+  ]
+}

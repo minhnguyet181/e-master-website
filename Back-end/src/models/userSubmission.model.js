@@ -14,7 +14,7 @@ UserSubmission.init(
     test_id: { type: DataTypes.INTEGER, allowNull: false },
 
     // Lưu câu trả lời dưới dạng object
-    answers: { type: DataTypes.JSONB, allowNull: true },
+    answers: { type: DataTypes.JSON, allowNull: true },
 
     // Với Reading/Listening MCQ
     is_correct: { type: DataTypes.BOOLEAN, defaultValue: false },

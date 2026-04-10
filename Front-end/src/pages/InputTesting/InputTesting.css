@@ -1,167 +1,342 @@
-/* ----- Tổng thể trang ----- */
-
+/* ── Page shell ── */
 .input-testing-page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  margin-top: 70px;
+  background: #f0f4f8;
 }
 
+:root {
+  --sidebar-w: 230px;
+  --sidebar-collapsed-w: 56px;
+  --navbar-h: 70px;
+}
+
+/* ── Main layout: sidebar is position:fixed so we offset with margin ── */
 .main-layout {
   display: flex;
-  /* flex: 1; */
+  flex: 1;
+  margin-top: var(--navbar-h);
+  margin-left: var(--sidebar-w);
+  min-height: calc(100vh - var(--navbar-h));
+  transition: margin-left 0.2s ease;
 }
-.test-content {
-  flex: 1; /* chiếm phần còn lại */
- 
+
+/* ── Exam mode: collapse sidebar to icon-only ── */
+.input-testing-page--exam .main-layout {
+  margin-left: var(--sidebar-collapsed-w);
 }
+
+.input-testing-page--exam .sidebar {
+  width: var(--sidebar-collapsed-w) !important;
+  overflow: hidden;
+}
+
+.input-testing-page--exam .sidebar a span {
+  display: none;
+}
+
+.input-testing-page--exam .sidebar a {
+  justify-content: center;
+  padding: 14px 0;
+  gap: 0;
+}
+
+/* ── Content areas ── */
 .test-container {
-  flex: 1; /* chiếm phần còn lại */
-
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem;
+  overflow-y: auto;
 }
 
-.main-layout > *:first-child {
-  width: 220px;         /* sidebar cố định 220px */
+.test-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: calc(100vh - var(--navbar-h));
+}
+
+/* ── Exam header bar ── */
+.exam-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 1.25rem;
   background: #fff;
-  border-right: 1px solid #ddd;
-}
-/* ✅ Giới hạn độ rộng và tự xuống dòng cho câu hỏi */
-.question-item p {
-  max-width: 800px;         /* Giới hạn chiều rộng */
-  white-space: normal;      /* Cho phép xuống dòng */
-  word-wrap: break-word;    /* Ngắt từ nếu quá dài */
-  overflow-wrap: break-word;
-  line-height: 1.5;
-  text-align: justify; /* Căn đều hai bên */
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
-/* ✅ Làm tương tự cho đáp án nếu cần */
-.question-item li {
-  max-width: 700px;
+.exam-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Page title ── */
+.practice-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin-bottom: 0.5rem;
+}
+
+.practice-subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+/* ── Skill grid — 4 cards horizontal, equal width ── */
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.skill-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.22s, box-shadow 0.22s;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.skill-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(59,111,212,0.18);
+  border-color: #3b6fd4;
+}
+
+.skill-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.skill-card-body {
+  padding: 1.1rem 1.3rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.skill-card h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  color: #1e3a5f;
+}
+
+.skill-card p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0 0 1rem;
+  flex: 1;
+  line-height: 1.55;
+}
+
+.view-btn {
+  padding: 10px 0;
+  background: #3b6fd4;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+}
+
+.view-btn:hover { background: #2d5ab8; }
+
+/* ── Test list ── */
+.skill-header {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 0.5rem 0 1.25rem;
+}
+
+.test-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.25rem;
+}
+
+.test-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  padding: 1.25rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.test-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.11);
+}
+
+.test-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 0;
+}
+
+.test-card p {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0;
+  flex: 1;
+}
+
+.test-card .duration {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.start-btn {
+  margin-top: 0.85rem;
+  padding: 10px 0;
+  background: #3b6fd4;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.start-btn:hover { background: #2d5ab8; }
+
+/* ── Buttons ── */
+.back-btn {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.back-btn:hover {
+  background: #3b6fd4;
+  color: #fff;
+  border-color: #3b6fd4;
+}
+
+.submit-btn {
+  background: #3b6fd4;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submit-btn:hover:not(:disabled) { background: #2d5ab8; }
+.submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ── Misc ── */
+.center { text-align: center; margin-top: 1.5rem; }
+
+.info {
+  color: #94a3b8;
+  font-style: italic;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.error {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.88rem;
+}
+
+/* ── Score box (non-reading/listening) ── */
+.score-box {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.score-icon { font-size: 28px; margin-right: 8px; vertical-align: middle; }
+.score-icon.success { color: #16a34a; }
+.score-icon.medium  { color: #2563eb; }
+.score-icon.fail    { color: #dc2626; }
+
+/* ── Question items (fallback) ── */
+.question-item p {
+  max-width: 800px;
   white-space: normal;
   word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-/* Vùng chứa các nút kỹ năng */
-.skill-options {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  line-height: 1.6;
 }
 
-/* Style mặc định cho các nút */
-.skill-options button {
-  background-color: #f0f0f0;
-  border: 2px solid #ccc;
-  color: #333;
-  padding: 10px 20px;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  width: 100px;
-}
-.test-options button {
-  background-color: #f0f0f0;
-  border: 2px solid #ccc;
-  color: #333;
-  padding: 10px 20px;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-/* Hover */
-.skill-options button:hover, .test-options button:hover {
-  background-color: #4E74A8;
-  color: white;
-  border-color: #4E74A8;
-  transform: translateY(-2px);
-}
-
-/* Khi nút được chọn */
-.skill-options button.active, .test-options button.active {
-  background-color: #0056b3;
-  color: white;
-  border-color: #004a99;
-  transform: scale(1.05);
-}
-
-/* Để responsive (khi màn hình nhỏ) */
-@media (max-width: 600px) {
-  .skill-options {
-    justify-content: center;
-  }
-  .skill-options button {
-    flex: 1 1 40%;
-  }
-}
-.submit-btn {
-  background-color: #4E74A8;
-}
-.back-btn {
-  background-color: #fff;
-  border-radius: 5px;
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-.back-btn:hover {
-  background-color: #4E74A8;
-  color: #fff;
-  cursor: pointer;
-
-}
 .options-form {
   display: flex;
-  flex-direction: column; /* đảm bảo mỗi option 1 dòng */
-  gap: 10px; /* khoảng cách giữa các dòng */
-  margin-top: 10px;
-  width: 100%;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .option-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%; /* mỗi option full chiều ngang */
-  box-sizing: border-box; /* tránh tràn */
+  transition: all 0.15s;
 }
 
-.option-item:hover {
-  background-color: #f0f8ff;
+.option-item:hover { background: #f0f8ff; }
+.option-item.selected-answer { background: #dbeafe; border-color: #3b6fd4; font-weight: 500; }
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .skill-grid { grid-template-columns: repeat(2, 1fr); }
 }
-
-.option-item.selected-answer {
-  background-color: #d1e7ff;
-  border-color: #007bff;
-  font-weight: 500;
+@media (max-width: 768px) {
+  .main-layout { margin-left: 0; }
+  .input-testing-page--exam .main-layout { margin-left: var(--sidebar-collapsed-w); }
+  .test-container { padding: 1.25rem; }
+  .skill-grid { grid-template-columns: repeat(2, 1fr); }
+  .test-grid { grid-template-columns: 1fr; }
 }
-
-.score-icon {
-  font-size: 28px;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-
-.score-icon.success {
-  color: #28a745; /* xanh lá */
-}
-
-.score-icon.medium {
-  color: #007bff; /* xanh dương */
-}
-
-.score-icon.fail {
-  color: #dc3545; /* đỏ */
-}
-
-
-

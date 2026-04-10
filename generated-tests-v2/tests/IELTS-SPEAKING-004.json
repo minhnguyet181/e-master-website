@@ -1,0 +1,72 @@
+{
+  "code": "IELTS-SPEAKING-004",
+  "name": "Speaking Test 04",
+  "test_type": "speaking",
+  "duration_minutes": 15,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 1",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Mobile Phones",
+      "content": {
+        "topic": "Mobile Phones"
+      },
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "How often do you use your mobile phone?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Mobile Phones",
+            "part": "Part 1"
+          }
+        },
+        {
+          "question_no": 2,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "What do you mainly use your phone for?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Mobile Phones",
+            "part": "Part 1"
+          }
+        },
+        {
+          "question_no": 3,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Do you think people use mobile phones too much nowadays?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Mobile Phones",
+            "part": "Part 1"
+          }
+        },
+        {
+          "question_no": 4,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "What was your first mobile phone like?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Mobile Phones",
+            "part": "Part 1"
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

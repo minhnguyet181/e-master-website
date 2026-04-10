@@ -1,0 +1,413 @@
+{
+  "code": "CAM17-LISTENING-T2",
+  "name": "Cambridge IELTS 17 – Listening Test 2",
+  "test_type": "listening",
+  "level": "IELTS",
+  "duration_minutes": 30,
+  "metadata": {
+    "source": "Cambridge IELTS 17",
+    "test_no": 2
+  },
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 1 – Voluntary work in Southoe village",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t2_audio1.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Help with 1 ________ books (times to be arranged)",
+          "options": null,
+          "correct_answer": "collecting",
+          "points": 1
+        },
+        {
+          "question_no": 2,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Help needed to keep 2 ________ of books up to date",
+          "options": null,
+          "correct_answer": "records",
+          "points": 1
+        },
+        {
+          "question_no": 3,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Library is in the 3 ________ Room in the village hall",
+          "options": null,
+          "correct_answer": "West",
+          "points": 1
+        },
+        {
+          "question_no": 4,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Help by providing 4 ________",
+          "options": null,
+          "correct_answer": "transport",
+          "points": 1
+        },
+        {
+          "question_no": 5,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Help with hobbies such as 5 ________",
+          "options": null,
+          "correct_answer": "art",
+          "points": 1
+        },
+        {
+          "question_no": 6,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Taking Mrs Carroll to 6 ________",
+          "options": null,
+          "correct_answer": "hospital",
+          "points": 1
+        },
+        {
+          "question_no": 7,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Work in the 7 ________ at Mr Selsbury's house",
+          "options": null,
+          "correct_answer": "garden",
+          "points": 1
+        },
+        {
+          "question_no": 8,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "19 Oct – 8 ________ event at Village hall",
+          "options": null,
+          "correct_answer": "quiz",
+          "points": 1
+        },
+        {
+          "question_no": 9,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "18 Nov dance – checking 9 ________",
+          "options": null,
+          "correct_answer": "tickets",
+          "points": 1
+        },
+        {
+          "question_no": 10,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "31 Dec New Year's Eve party – designing the 10 ________",
+          "options": null,
+          "correct_answer": "poster",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 2,
+      "title": "Part 2 – Oniton Hall",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t2_audio2.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 11,
+          "question_type": "MCQ",
+          "prompt": "Many past owners made changes to",
+          "options": [
+            "the gardens.",
+            "the house.",
+            "the farm."
+          ],
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 12,
+          "question_type": "MCQ",
+          "prompt": "Sir Edward Downes built Oniton Hall because he wanted",
+          "options": [
+            "a place for discussing politics.",
+            "a place to display his wealth.",
+            "a place for artists and writers."
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 13,
+          "question_type": "MCQ",
+          "prompt": "Visitors can learn about the work of servants in the past from",
+          "options": [
+            "audio guides.",
+            "photographs.",
+            "people in costume."
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 14,
+          "question_type": "MCQ",
+          "prompt": "What is new for children at Oniton Hall?",
+          "options": [
+            "clothes for dressing up",
+            "mini tractors",
+            "the adventure playground"
+          ],
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 15,
+          "question_type": "MATCHING",
+          "prompt": "dairy – activity",
+          "options": null,
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 16,
+          "question_type": "MATCHING",
+          "prompt": "large barn – activity",
+          "options": null,
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 17,
+          "question_type": "MATCHING",
+          "prompt": "small barn – activity",
+          "options": null,
+          "correct_answer": "F",
+          "points": 1
+        },
+        {
+          "question_no": 18,
+          "question_type": "MATCHING",
+          "prompt": "stables – activity",
+          "options": null,
+          "correct_answer": "G",
+          "points": 1
+        },
+        {
+          "question_no": 19,
+          "question_type": "MATCHING",
+          "prompt": "shed – activity",
+          "options": null,
+          "correct_answer": "H",
+          "points": 1
+        },
+        {
+          "question_no": 20,
+          "question_type": "MATCHING",
+          "prompt": "parkland – activity",
+          "options": null,
+          "correct_answer": "E",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 3,
+      "title": "Part 3 – Romeo and Juliet review",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t2_audio3.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 21,
+          "question_type": "MCQ_MULTI",
+          "prompt": "Which TWO things do the students agree they need to include in their reviews? (Choose TWO: A–E)",
+          "options": [
+            "analysis of the text",
+            "a summary of the plot",
+            "a description of the theatre",
+            "a personal reaction",
+            "a reference to particular scenes"
+          ],
+          "correct_answer": "D|E",
+          "points": 1
+        },
+        {
+          "question_no": 22,
+          "question_type": "MCQ_MULTI",
+          "prompt": "(Second answer for Q21)",
+          "options": [
+            "analysis of the text",
+            "a summary of the plot",
+            "a description of the theatre",
+            "a personal reaction",
+            "a reference to particular scenes"
+          ],
+          "correct_answer": "D|E",
+          "points": 1
+        },
+        {
+          "question_no": 23,
+          "question_type": "MATCHING",
+          "prompt": "the set – opinion",
+          "options": null,
+          "correct_answer": "D",
+          "points": 1
+        },
+        {
+          "question_no": 24,
+          "question_type": "MATCHING",
+          "prompt": "the lighting – opinion",
+          "options": null,
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 25,
+          "question_type": "MATCHING",
+          "prompt": "the costume design – opinion",
+          "options": null,
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 26,
+          "question_type": "MATCHING",
+          "prompt": "the music – opinion",
+          "options": null,
+          "correct_answer": "E",
+          "points": 1
+        },
+        {
+          "question_no": 27,
+          "question_type": "MATCHING",
+          "prompt": "the actors' delivery – opinion",
+          "options": null,
+          "correct_answer": "F",
+          "points": 1
+        },
+        {
+          "question_no": 28,
+          "question_type": "MCQ",
+          "prompt": "The students think the story of Romeo and Juliet is still relevant for young people today because",
+          "options": [
+            "it illustrates how easily conflict can start.",
+            "it deals with problems that families experience.",
+            "it teaches them about relationships."
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 29,
+          "question_type": "MCQ",
+          "prompt": "The students found watching Romeo and Juliet in another language",
+          "options": [
+            "frustrating.",
+            "demanding.",
+            "moving."
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 30,
+          "question_type": "MCQ",
+          "prompt": "Why do the students think Shakespeare's plays have such international appeal?",
+          "options": [
+            "The stories are exciting.",
+            "There are recognisable characters.",
+            "They can be interpreted in many ways."
+          ],
+          "correct_answer": "C",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 4,
+      "title": "Part 4 – Digital technology and the Icelandic language",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t2_audio4.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 31,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Has approximately 31 ________ speakers",
+          "options": null,
+          "correct_answer": "321,000",
+          "points": 1
+        },
+        {
+          "question_no": 32,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Has a 32 ________ that is still growing",
+          "options": null,
+          "correct_answer": "vocabulary",
+          "points": 1
+        },
+        {
+          "question_no": 33,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Has its own words for computer-based concepts, such as web browser and 33 ________",
+          "options": null,
+          "correct_answer": "podcast",
+          "points": 1
+        },
+        {
+          "question_no": 34,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Young speakers are big users of digital technology, such as 34 ________",
+          "options": null,
+          "correct_answer": "smartphones",
+          "points": 1
+        },
+        {
+          "question_no": 35,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Young speakers are becoming 35 ________ very quickly",
+          "options": null,
+          "correct_answer": "bilingual",
+          "points": 1
+        },
+        {
+          "question_no": 36,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Having discussions using only English while in the 36 ________ at school",
+          "options": null,
+          "correct_answer": "playground",
+          "points": 1
+        },
+        {
+          "question_no": 37,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Better able to identify the content of a 37 ________ in English than Icelandic",
+          "options": null,
+          "correct_answer": "picture",
+          "points": 1
+        },
+        {
+          "question_no": 38,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Technology companies write very little in Icelandic because of how complicated its 38 ________ is",
+          "options": null,
+          "correct_answer": "grammar",
+          "points": 1
+        },
+        {
+          "question_no": 39,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Government is worried that young Icelanders may lose their 39 ________ as Icelanders",
+          "options": null,
+          "correct_answer": "identity",
+          "points": 1
+        },
+        {
+          "question_no": 40,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Worried about the consequences of children not being 40 ________ in either Icelandic or English",
+          "options": null,
+          "correct_answer": "fluent",
+          "points": 1
+        }
+      ]
+    }
+  ]
+}

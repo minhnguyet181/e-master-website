@@ -1,0 +1,23 @@
+{
+  "code": "IELTS-SPEAKING-005",
+  "name": "Speaking Test 05",
+  "test_type": "speaking",
+  "duration_minutes": 15,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 2",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Describe a piece of technology you find useful.",
+      "content": {
+        "topic": "Describe a piece of technology you find useful."
+      },
+      "media": null,
+      "questions": []
+    }
+  ],
+  "metadata": {}
+}

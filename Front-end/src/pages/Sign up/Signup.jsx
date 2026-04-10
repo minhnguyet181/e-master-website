@@ -42,8 +42,7 @@ export default function SignUp() {
                     console.warn('Could not save user to localStorage', err);
                 }
 
-                const redirectTo = location && location.state && location.state.redirectTo ? location.state.redirectTo : '/user/generate-plan';
-                navigate(redirectTo);
+                navigate('/login', { state: { message: 'Account created successfully! Please sign in.' } });
             } else {
                 const msg = resp && resp.message ? resp.message : 'Signup failed';
                 setError(msg);

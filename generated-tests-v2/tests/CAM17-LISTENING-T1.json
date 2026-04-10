@@ -1,0 +1,449 @@
+{
+  "code": "CAM17-LISTENING-T1",
+  "name": "Cambridge IELTS 17 – Listening Test 1",
+  "test_type": "listening",
+  "level": "IELTS",
+  "duration_minutes": 30,
+  "metadata": {
+    "source": "Cambridge IELTS 17",
+    "test_no": 1
+  },
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 1 – Buckworth Conservation Group",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t1_audio1.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Making sure the beach does not have 1 ________ on it",
+          "options": null,
+          "correct_answer": "litter",
+          "points": 1
+        },
+        {
+          "question_no": 2,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "No 2 ________ on the beach",
+          "options": null,
+          "correct_answer": "dogs",
+          "points": 1
+        },
+        {
+          "question_no": 3,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Next task is taking action to attract 3 ________ to the nature reserve",
+          "options": null,
+          "correct_answer": "insects",
+          "points": 1
+        },
+        {
+          "question_no": 4,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Identifying types of 4 ________",
+          "options": null,
+          "correct_answer": "butterflies",
+          "points": 1
+        },
+        {
+          "question_no": 5,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Building a new 5 ________",
+          "options": null,
+          "correct_answer": "wall",
+          "points": 1
+        },
+        {
+          "question_no": 6,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Walk across the sands and reach the 6 ________",
+          "options": null,
+          "correct_answer": "island",
+          "points": 1
+        },
+        {
+          "question_no": 7,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Wear appropriate 7 ________",
+          "options": null,
+          "correct_answer": "boots",
+          "points": 1
+        },
+        {
+          "question_no": 8,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Woodwork session suitable for 8 ________ to participate in",
+          "options": null,
+          "correct_answer": "beginners",
+          "points": 1
+        },
+        {
+          "question_no": 9,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Making 9 ________ out of wood",
+          "options": null,
+          "correct_answer": "spoons",
+          "points": 1
+        },
+        {
+          "question_no": 10,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Cost of session (no camping): 10 £________",
+          "options": null,
+          "correct_answer": "35",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 2,
+      "title": "Part 2 – Boat trip round Tasmania",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t1_audio2.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 11,
+          "question_type": "MCQ",
+          "prompt": "What is the maximum number of people who can stand on each side of the boat?",
+          "options": [
+            "9",
+            "15",
+            "18"
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 12,
+          "question_type": "MCQ",
+          "prompt": "What colour are the tour boats?",
+          "options": [
+            "dark red",
+            "jet black",
+            "light green"
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 13,
+          "question_type": "MCQ",
+          "prompt": "Which lunchbox is suitable for someone who doesn't eat meat or fish?",
+          "options": [
+            "Lunchbox 1",
+            "Lunchbox 2",
+            "Lunchbox 3"
+          ],
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 14,
+          "question_type": "MCQ",
+          "prompt": "What should people do with their litter?",
+          "options": [
+            "take it home",
+            "hand it to a member of staff",
+            "put it in the bins provided on the boat"
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 15,
+          "question_type": "MCQ_MULTI",
+          "prompt": "Which TWO features of the lighthouse does Lou mention? (Choose TWO: A–E)",
+          "options": [
+            "why it was built",
+            "who built it",
+            "how long it took to build",
+            "who staffed it",
+            "what it was built with"
+          ],
+          "correct_answer": "A|D",
+          "points": 1
+        },
+        {
+          "question_no": 16,
+          "question_type": "MCQ_MULTI",
+          "prompt": "(Second answer for Q15)",
+          "options": [
+            "why it was built",
+            "who built it",
+            "how long it took to build",
+            "who staffed it",
+            "what it was built with"
+          ],
+          "correct_answer": "A|D",
+          "points": 1
+        },
+        {
+          "question_no": 17,
+          "question_type": "MCQ_MULTI",
+          "prompt": "Which TWO types of creature might come close to the boat? (Choose TWO: A–E)",
+          "options": [
+            "sea eagles",
+            "fur seals",
+            "dolphins",
+            "whales",
+            "penguins"
+          ],
+          "correct_answer": "B|C",
+          "points": 1
+        },
+        {
+          "question_no": 18,
+          "question_type": "MCQ_MULTI",
+          "prompt": "(Second answer for Q17)",
+          "options": [
+            "sea eagles",
+            "fur seals",
+            "dolphins",
+            "whales",
+            "penguins"
+          ],
+          "correct_answer": "B|C",
+          "points": 1
+        },
+        {
+          "question_no": 19,
+          "question_type": "MCQ_MULTI",
+          "prompt": "Which TWO points does Lou make about the caves? (Choose TWO: A–E)",
+          "options": [
+            "Only large tourist boats can visit them.",
+            "The entrances to them are often blocked.",
+            "It is too dangerous for individuals to go near them.",
+            "Someone will explain what is inside them.",
+            "They cannot be reached on foot."
+          ],
+          "correct_answer": "D|E",
+          "points": 1
+        },
+        {
+          "question_no": 20,
+          "question_type": "MCQ_MULTI",
+          "prompt": "(Second answer for Q19)",
+          "options": [
+            "Only large tourist boats can visit them.",
+            "The entrances to them are often blocked.",
+            "It is too dangerous for individuals to go near them.",
+            "Someone will explain what is inside them.",
+            "They cannot be reached on foot."
+          ],
+          "correct_answer": "D|E",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 3,
+      "title": "Part 3 – Work experience for veterinary science students",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t1_audio3.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 21,
+          "question_type": "MCQ",
+          "prompt": "What problem did both Diana and Tim have when arranging their work experience?",
+          "options": [
+            "making initial contact with suitable farms",
+            "organising transport to and from the farm",
+            "finding a placement for the required length of time"
+          ],
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 22,
+          "question_type": "MCQ",
+          "prompt": "Tim was pleased to be able to help",
+          "options": [
+            "a lamb that had a broken leg.",
+            "a sheep that was having difficulty giving birth.",
+            "a newly born lamb that was having trouble feeding."
+          ],
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 23,
+          "question_type": "MCQ",
+          "prompt": "Diana says the sheep on her farm",
+          "options": [
+            "were of various different varieties.",
+            "were mainly reared for their meat.",
+            "had better quality wool than sheep on the hills."
+          ],
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 24,
+          "question_type": "MCQ",
+          "prompt": "What did the students learn about adding supplements to chicken feed?",
+          "options": [
+            "These should only be given if specially needed.",
+            "It is worth paying extra for the most effective ones.",
+            "The amount given at one time should be limited."
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 25,
+          "question_type": "MCQ",
+          "prompt": "What happened when Diana was working with dairy cows?",
+          "options": [
+            "She identified some cows incorrectly.",
+            "She accidentally threw some milk away.",
+            "She made a mistake when storing milk."
+          ],
+          "correct_answer": "B",
+          "points": 1
+        },
+        {
+          "question_no": 26,
+          "question_type": "MCQ",
+          "prompt": "What did both farmers mention about vets and farming?",
+          "options": [
+            "Vets are failing to cope with some aspects of animal health.",
+            "There needs to be a fundamental change in the training of vets.",
+            "Some jobs could be done by the farmer rather than by a vet."
+          ],
+          "correct_answer": "C",
+          "points": 1
+        },
+        {
+          "question_no": 27,
+          "question_type": "MATCHING",
+          "prompt": "Medical terminology – opinion",
+          "options": null,
+          "correct_answer": "A",
+          "points": 1
+        },
+        {
+          "question_no": 28,
+          "question_type": "MATCHING",
+          "prompt": "Diet and nutrition – opinion",
+          "options": null,
+          "correct_answer": "E",
+          "points": 1
+        },
+        {
+          "question_no": 29,
+          "question_type": "MATCHING",
+          "prompt": "Animal disease – opinion",
+          "options": null,
+          "correct_answer": "F",
+          "points": 1
+        },
+        {
+          "question_no": 30,
+          "question_type": "MATCHING",
+          "prompt": "Wildlife medication – opinion",
+          "options": null,
+          "correct_answer": "C",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 4,
+      "title": "Part 4 – Labyrinths",
+      "audio_url": "/audio/cam17/ELT_IELTS17_t1_audio4.mp3",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 31,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Mazes are a type of 31 ________",
+          "options": null,
+          "correct_answer": "puzzle",
+          "points": 1
+        },
+        {
+          "question_no": 32,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "32 ________ is needed to navigate through a maze",
+          "options": null,
+          "correct_answer": "logic",
+          "points": 1
+        },
+        {
+          "question_no": 33,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "The word \"maze\" is derived from a word meaning a feeling of 33 ________",
+          "options": null,
+          "correct_answer": "confusion",
+          "points": 1
+        },
+        {
+          "question_no": 34,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Labyrinths have frequently been used in 34 ________ and prayer",
+          "options": null,
+          "correct_answer": "meditation",
+          "points": 1
+        },
+        {
+          "question_no": 35,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Ancient carvings on 35 ________ have been found across many cultures",
+          "options": null,
+          "correct_answer": "stone",
+          "points": 1
+        },
+        {
+          "question_no": 36,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Ancient Greeks used the symbol on 36 ________",
+          "options": null,
+          "correct_answer": "coins",
+          "points": 1
+        },
+        {
+          "question_no": 37,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "The largest surviving turf labyrinth once had a big 37 ________ at its centre",
+          "options": null,
+          "correct_answer": "tree",
+          "points": 1
+        },
+        {
+          "question_no": 38,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Walking a maze can reduce a person's 38 ________ rate",
+          "options": null,
+          "correct_answer": "breathing",
+          "points": 1
+        },
+        {
+          "question_no": 39,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Patients who can't walk can use \"finger labyrinths\" made from 39 ________",
+          "options": null,
+          "correct_answer": "paper",
+          "points": 1
+        },
+        {
+          "question_no": 40,
+          "question_type": "NOTE_COMPLETION",
+          "prompt": "Research has shown that Alzheimer's sufferers experience less 40 ________",
+          "options": null,
+          "correct_answer": "anxiety",
+          "points": 1
+        }
+      ]
+    }
+  ]
+}

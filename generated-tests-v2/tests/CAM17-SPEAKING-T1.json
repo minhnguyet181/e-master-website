@@ -1,0 +1,120 @@
+{
+  "code": "CAM17-SPEAKING-T1",
+  "name": "Cambridge IELTS 17 – Speaking Test 1",
+  "test_type": "speaking",
+  "level": "IELTS",
+  "duration_minutes": 14,
+  "metadata": {
+    "source": "Cambridge IELTS 17",
+    "test_no": 1
+  },
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 1 – History",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "SPEAKING",
+          "prompt": "What did you study in history lessons when you were at school?",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        },
+        {
+          "question_no": 2,
+          "question_type": "SPEAKING",
+          "prompt": "Did you enjoy studying history at school? [Why/Why not?]",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        },
+        {
+          "question_no": 3,
+          "question_type": "SPEAKING",
+          "prompt": "How often do you watch TV programmes about history now? [Why/Why not?]",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        },
+        {
+          "question_no": 4,
+          "question_type": "SPEAKING",
+          "prompt": "What period in history would you like to learn more about? [Why?]",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 2,
+      "title": "Part 2 – Describe a neighbourhood",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 5,
+          "question_type": "SPEAKING_LONG",
+          "prompt": "Describe the neighbourhood you lived in when you were a child. You should say: where in your town/city the neighbourhood was; what kind of people lived there; what it was like to live in this neighbourhood; and explain whether you would like to live in this neighbourhood in the future.",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        }
+      ]
+    },
+    {
+      "section_no": 3,
+      "title": "Part 3 – Neighbours & Facilities in cities",
+      "passage_text": null,
+      "content": null,
+      "media": null,
+      "questions": [
+        {
+          "question_no": 6,
+          "question_type": "SPEAKING",
+          "prompt": "What sort of things can neighbours do to help each other?",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        },
+        {
+          "question_no": 7,
+          "question_type": "SPEAKING",
+          "prompt": "How well do people generally know their neighbours in your country?",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        },
+        {
+          "question_no": 8,
+          "question_type": "SPEAKING",
+          "prompt": "How important do you think it is to have good neighbours?",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        },
+        {
+          "question_no": 9,
+          "question_type": "SPEAKING",
+          "prompt": "Which facilities are most important to people living in cities?",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        },
+        {
+          "question_no": 10,
+          "question_type": "SPEAKING",
+          "prompt": "How does shopping in small local shops differ from shopping in large city centre shops?",
+          "options": null,
+          "correct_answer": null,
+          "points": 1
+        }
+      ]
+    }
+  ]
+}

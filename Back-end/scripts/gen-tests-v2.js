@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * Generate "tests v2" JSON format from current Front-end/public/data/tests.json + files.
+ * Generate "tests v2" JSON format from Front-end/public/data/tests.json + files.
  *
- * Output:
- *  - generated-tests-v2/catalog.json
- *  - generated-tests-v2/tests/<CODE>.json
+ * Each JSON file = 1 test (1 section for reading/listening).
+ * Reading: passage stored in section.passage_text (object or string)
+ * Listening: audio stored in section.audio_url
  *
  * Usage (from Back-end/):
  *  node scripts/gen-tests-v2.js
@@ -20,14 +20,59 @@ function writeJson(p, obj) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
   fs.writeFileSync(p, JSON.stringify(obj, null, 2), 'utf8');
 }
-
 function makeCode(skill, idx) {
   return `IELTS-${skill.toUpperCase()}-${String(idx).padStart(3, '0')}`;
 }
 
+/** displayNo = 1..N trong đề (sau khi remap); không dùng questionNumber gốc Cambridge trong UI */
+function inferReadingPromptAndOptions(q, displayNo) {
+  const n = displayNo;
+  const qType = (q.questionType || '').toUpperCase();
+  if (q.questionText && String(q.questionText).trim()) {
+    return { prompt: q.questionText, options: q.options || null };
+  }
+  if (qType === 'TRUE_FALSE_NOT_GIVEN' || qType === 'TFNG') {
+    return {
+      prompt: `Statement ${n}`,
+      options: ['TRUE', 'FALSE', 'NOT GIVEN'],
+    };
+  }
+  if (qType === 'YES_NO_NOT_GIVEN' || qType === 'YNNG') {
+    return {
+      prompt: `Statement ${n}`,
+      options: ['YES', 'NO', 'NOT GIVEN'],
+    };
+  }
+  if (qType === 'PARAGRAPH_MATCH' || qType === 'MATCHING_PARAGRAPHS') {
+    return {
+      prompt: `Which paragraph contains the information for question ${n}?`,
+      options: null,
+    };
+  }
+  if (qType === 'MULTIPLE_CHOICE' || qType === 'MCQ') {
+    return {
+      prompt: `Choose the best answer for question ${n}.`,
+      options: q.options || ['A', 'B', 'C', 'D'],
+    };
+  }
+  if (qType === 'SUMMARY_COMPLETION') {
+    return {
+      prompt: `Complete the gap for question ${n} using words from the passage.`,
+      options: null,
+    };
+  }
+  return {
+    prompt: `Answer question ${n}.`,
+    options: q.options || null,
+  };
+}
+
 function normalizeListening(fileJson, code, name) {
-  // current listening file: {sectionNumber, sectionTitle, audio, image, questions:[{questionNumber,questionType,questionText,correctAnswer}]}
   const sectionNo = fileJson.sectionNumber || 1;
+  // audio path relative to /data/
+  const audioUrl = fileJson.audio ? `/data/${fileJson.audio}` : null;
+  const imageUrl = fileJson.image ? `/data/${fileJson.image}` : null;
+
   return {
     code,
     name,
@@ -38,16 +83,20 @@ function normalizeListening(fileJson, code, name) {
       {
         section_no: sectionNo,
         title: fileJson.sectionTitle || `Section ${sectionNo}`,
-        media: { audio: fileJson.audio || null, image: fileJson.image || null },
+        // Store audio/image directly on section for easy access
+        audio_url: audioUrl,
+        image_url: imageUrl,
+        passage_text: null,
         content: null,
-        questions: (fileJson.questions || []).map((q) => ({
-          question_no: q.questionNumber,
-          question_type: q.questionType || 'UNKNOWN',
+        media: { audio: audioUrl, image: imageUrl },
+        questions: (fileJson.questions || []).map((q, idx) => ({
+          question_no: idx + 1,
+          question_type: q.questionType || 'TABLE_COMPLETION',
           prompt: q.questionText || null,
           options: q.options || null,
           correct_answer: q.correctAnswer ?? null,
           points: q.points ?? 1,
-          metadata: {},
+          metadata: { source_question_no: q.questionNumber ?? idx + 1 },
         })),
       },
     ],
@@ -56,6 +105,9 @@ function normalizeListening(fileJson, code, name) {
 }
 
 function normalizeReading(fileJson, code, name) {
+  // passageText can be object {A: "...", B: "..."} or plain string
+  const passageText = fileJson.passageText || null;
+
   return {
     code,
     name,
@@ -66,19 +118,23 @@ function normalizeReading(fileJson, code, name) {
       {
         section_no: 1,
         title: fileJson.section || 'Reading Passage',
-        media: null,
+        // Store passage directly on section
+        passage_text: typeof passageText === 'object' ? JSON.stringify(passageText) : passageText,
+        audio_url: null,
+        image_url: null,
         content: {
           passageTitle: fileJson.passageTitle || null,
-          passageText: fileJson.passageText || null,
+          // Keep object form for FE rendering
+          passageText: passageText,
         },
-        questions: (fileJson.questions || []).map((q) => ({
-          question_no: q.questionNumber,
+        media: null,
+        questions: (fileJson.questions || []).map((q, idx) => ({
+          ...inferReadingPromptAndOptions(q, idx + 1),
+          question_no: idx + 1,
           question_type: q.questionType || 'UNKNOWN',
-          prompt: q.questionText || null,
-          options: q.options || null,
           correct_answer: q.correctAnswer ?? null,
           points: q.points ?? 1,
-          metadata: {},
+          metadata: { source_question_no: q.questionNumber ?? idx + 1 },
         })),
       },
     ],
@@ -87,24 +143,30 @@ function normalizeReading(fileJson, code, name) {
 }
 
 function normalizeWriting(fileJson, code, name) {
-  const taskType = fileJson.task_type || fileJson.taskType || 'Writing';
-  const minWords = /task\s*1/i.test(taskType) ? 150 : 250;
+  const taskType = fileJson.task_type || fileJson.taskType || 'task2';
+  const isTask1 = /task\s*1/i.test(taskType);
+  const minWords = isTask1 ? 150 : 250;
   return {
     code,
     name,
     test_type: 'writing',
-    duration_minutes: /task\s*1/i.test(taskType) ? 20 : 40,
+    task_type: taskType,
+    duration_minutes: isTask1 ? 20 : 40,
     level: 'IELTS',
     sections: [
       {
         section_no: 1,
         title: taskType,
-        media: { image: fileJson.media || null },
+        passage_text: null,
+        audio_url: null,
+        image_url: fileJson.media || null,
+        prompt: fileJson.question || null,
         content: {
           task_type: taskType,
           title: fileJson.title || null,
           question: fileJson.question || null,
         },
+        media: { image: fileJson.media || null },
         questions: [
           {
             question_no: 1,
@@ -113,7 +175,7 @@ function normalizeWriting(fileJson, code, name) {
             options: null,
             correct_answer: null,
             points: minWords,
-            metadata: { band_rubric: 'ielts_writing_v1' },
+            metadata: { band_rubric: 'ielts_writing_v1', sample_answer: fileJson.sample_answer || null },
           },
         ],
       },
@@ -123,7 +185,7 @@ function normalizeWriting(fileJson, code, name) {
 }
 
 function normalizeSpeaking(fileJson, code, name) {
-  const part = fileJson.part || 'Speaking';
+  const part = fileJson.part || 'Speaking Part 1';
   const topic = fileJson.topic || null;
   return {
     code,
@@ -135,12 +197,16 @@ function normalizeSpeaking(fileJson, code, name) {
       {
         section_no: 1,
         title: part,
-        media: null,
+        passage_text: null,
+        audio_url: null,
+        image_url: null,
+        prompt: topic,
         content: { topic },
+        media: null,
         questions: (fileJson.questions || []).map((p, i) => ({
           question_no: i + 1,
           question_type: 'SPEAKING_PROMPT',
-          prompt: p,
+          prompt: typeof p === 'string' ? p : p.question || p.prompt || '',
           options: null,
           correct_answer: null,
           points: 0,
@@ -193,6 +259,7 @@ function main() {
         code,
         name,
         test_type: normalized.test_type,
+        task_type: normalized.task_type || null,
         level: normalized.level || 'IELTS',
         duration_minutes: normalized.duration_minutes || 60,
         source: 'static',
@@ -203,8 +270,7 @@ function main() {
   }
 
   writeJson(path.join(outDir, 'catalog.json'), outCatalog);
-  console.log('✅ Generated tests v2 at:', outDir);
+  console.log(`✅ Generated ${outCatalog.tests.length} tests at: ${outDir}`);
 }
 
 main();
-

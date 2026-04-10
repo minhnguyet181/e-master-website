@@ -50,7 +50,6 @@ class TestService {
           required: false,
           include: [{ model: TestQuestion, as: 'questions', required: false }],
         },
-        // Also include questions without a section (e.g. single prompt tests)
         { model: TestQuestion, as: 'questions', required: false },
       ],
       order: [
@@ -60,7 +59,34 @@ class TestService {
       ],
     });
     if (!test) throw new Error('Test not found');
-    return test;
+
+    // Normalize sections: expose passage_text, audio_url, image_url at top level of each section
+    const plain = test.toJSON();
+    if (plain.sections) {
+      plain.sections = plain.sections.map(s => {
+        // Parse passage_text if stored as JSON string (object form)
+        let passageText = s.passage_text;
+        if (passageText && typeof passageText === 'string') {
+          try { passageText = JSON.parse(passageText); } catch (_) {}
+        }
+
+        return {
+          ...s,
+          passage_text: passageText,
+          content: {
+            ...(s.content || {}),
+            passageTitle: s.content?.passageTitle || null,
+            passageText: passageText || s.content?.passageText || null,
+          },
+          media: {
+            ...(s.media || {}),
+            audio: s.audio_url || s.media?.audio || null,
+            image: s.image_url || s.media?.image || null,
+          },
+        };
+      });
+    }
+    return plain;
   }
 }
 

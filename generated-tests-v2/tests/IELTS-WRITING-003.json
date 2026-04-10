@@ -1,0 +1,41 @@
+{
+  "code": "IELTS-WRITING-003",
+  "name": "Writing Test 03",
+  "test_type": "writing",
+  "task_type": "Task 1 Academic",
+  "duration_minutes": 20,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Task 1 Academic",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": "image/writingtest3.jpg",
+      "prompt": "The graph below shows the number of people using public transport in a European city between 2000 and 2020. Summarise the information and identify the main trends.",
+      "content": {
+        "task_type": "Task 1 Academic",
+        "title": "Line Graph – Transport Use",
+        "question": "The graph below shows the number of people using public transport in a European city between 2000 and 2020. Summarise the information and identify the main trends."
+      },
+      "media": {
+        "image": "image/writingtest3.jpg"
+      },
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "WRITING_TASK",
+          "prompt": "The graph below shows the number of people using public transport in a European city between 2000 and 2020. Summarise the information and identify the main trends.",
+          "options": null,
+          "correct_answer": null,
+          "points": 150,
+          "metadata": {
+            "band_rubric": "ielts_writing_v1",
+            "sample_answer": null
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

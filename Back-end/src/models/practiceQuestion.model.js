@@ -49,7 +49,7 @@ PracticeQuestion.init(
     },
 
     options: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Các lựa chọn (nếu là multiple choice). Format: ["A", "B", "C", "D"]'
     },

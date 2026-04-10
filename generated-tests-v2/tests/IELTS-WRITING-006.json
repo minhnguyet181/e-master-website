@@ -1,0 +1,41 @@
+{
+  "code": "IELTS-WRITING-006",
+  "name": "Writing Test 06",
+  "test_type": "writing",
+  "task_type": "Task 2",
+  "duration_minutes": 40,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Task 2",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Some people think individuals should take responsibility for reducing waste, while others believe it is the duty of the government. Discuss both views and give your opinion.",
+      "content": {
+        "task_type": "Task 2",
+        "title": "Environmental Issues",
+        "question": "Some people think individuals should take responsibility for reducing waste, while others believe it is the duty of the government. Discuss both views and give your opinion."
+      },
+      "media": {
+        "image": null
+      },
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "WRITING_TASK",
+          "prompt": "Some people think individuals should take responsibility for reducing waste, while others believe it is the duty of the government. Discuss both views and give your opinion.",
+          "options": null,
+          "correct_answer": null,
+          "points": 250,
+          "metadata": {
+            "band_rubric": "ielts_writing_v1",
+            "sample_answer": null
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

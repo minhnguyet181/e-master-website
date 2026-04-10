@@ -1,0 +1,72 @@
+{
+  "code": "IELTS-SPEAKING-006",
+  "name": "Speaking Test 06",
+  "test_type": "speaking",
+  "duration_minutes": 15,
+  "level": "IELTS",
+  "sections": [
+    {
+      "section_no": 1,
+      "title": "Part 3",
+      "passage_text": null,
+      "audio_url": null,
+      "image_url": null,
+      "prompt": "Technology & Society",
+      "content": {
+        "topic": "Technology & Society"
+      },
+      "media": null,
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "How has technology changed education?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Technology & Society",
+            "part": "Part 3"
+          }
+        },
+        {
+          "question_no": 2,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "Do you think older people have difficulties using technology?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Technology & Society",
+            "part": "Part 3"
+          }
+        },
+        {
+          "question_no": 3,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "What are the disadvantages of relying too much on technology?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Technology & Society",
+            "part": "Part 3"
+          }
+        },
+        {
+          "question_no": 4,
+          "question_type": "SPEAKING_PROMPT",
+          "prompt": "How do you think technology will change in the next 20 years?",
+          "options": null,
+          "correct_answer": null,
+          "points": 0,
+          "metadata": {
+            "topic": "Technology & Society",
+            "part": "Part 3"
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {}
+}

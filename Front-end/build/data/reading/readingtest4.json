@@ -1,0 +1,77 @@
+{
+  "passageTitle": "Talc Powder",
+  "section": "Reading Passage 3",
+  "passageText": {},
+  "questions": [
+    {
+      "questionNumber": 27,
+      "questionType": "MATCHING",
+      "correctAnswer": "C"
+    },
+    {
+      "questionNumber": 28,
+      "questionType": "MATCHING",
+      "correctAnswer": "C"
+    },
+    {
+      "questionNumber": 29,
+      "questionType": "MATCHING",
+      "correctAnswer": "B"
+    },
+    {
+      "questionNumber": 30,
+      "questionType": "MATCHING",
+      "correctAnswer": "A"
+    },
+    {
+      "questionNumber": 31,
+      "questionType": "MATCHING",
+      "correctAnswer": "B"
+    },
+    {
+      "questionNumber": 32,
+      "questionType": "MATCHING",
+      "correctAnswer": "C"
+    },
+    {
+      "questionNumber": 33,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "20"
+    },
+    {
+      "questionNumber": 34,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "foam"
+    },
+    {
+      "questionNumber": 35,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "waste water"
+    },
+    {
+      "questionNumber": 36,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "harmful"
+    },
+    {
+      "questionNumber": 37,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "biodegrade"
+    },
+    {
+      "questionNumber": 38,
+      "questionType": "SUMMARY_COMPLETION",
+      "correctAnswer": "droplets"
+    },
+    {
+      "questionNumber": 39,
+      "questionType": "SHORT_ANSWER",
+      "correctAnswer": "Lamination and packing"
+    },
+    {
+      "questionNumber": 40,
+      "questionType": "SHORT_ANSWER",
+      "correctAnswer": "Grape growers"
+    }
+  ]
+}

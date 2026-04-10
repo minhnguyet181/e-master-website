@@ -33,7 +33,7 @@ UserPracticeAttempt.init(
 
     // Submission
     answers: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: false,
       comment: 'Câu trả lời của user. Format: {1: "A", 2: "B", ...}'
     },
@@ -83,19 +83,19 @@ UserPracticeAttempt.init(
     },
 
     weak_areas: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Các lĩnh vực yếu. Format: ["vocabulary", "grammar"]'
     },
 
     strong_areas: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Các lĩnh vực mạnh. Format: ["reading_comprehension"]'
     },
 
     recommendations: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Gợi ý cải thiện. Format: ["Practice more vocabulary", "Focus on grammar"]'
     },

@@ -87,19 +87,19 @@ PracticeMaterial.init(
 
     // Metadata
     tags: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Tags để search'
     },
 
     keywords: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Keywords quan trọng'
     },
 
     metadata: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true,
       comment: 'Metadata bổ sung'
     },
