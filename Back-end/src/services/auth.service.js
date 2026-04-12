@@ -13,7 +13,7 @@ if (!JWT_SECRET) {
 }
 
 function signToken(user) {
-  return jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
+  return jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
 }
 
 async function register({ username, email, password }) {

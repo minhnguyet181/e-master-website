@@ -45,7 +45,7 @@ const ListeningTestLayout = ({ testContent, userAnswers, onAnswer, score, onSubm
   const totalQuestions = sections.reduce((sum, s) => sum + (s.questions || []).length, 0);
 
   const renderQuestion = (q, idx) => {
-    const key = q.public_id || `${activeSection}-${idx}`;
+    const key = q.__answerKey || q.public_id || `${activeSection}-${idx}`;
     const answer = userAnswers[key] ?? userAnswers[q.question_no] ?? "";
     const isAnswered = answer !== "" && answer !== undefined && answer !== null;
 

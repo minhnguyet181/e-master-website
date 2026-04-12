@@ -59,6 +59,11 @@
   height: calc(100vh - var(--navbar-h));
 }
 
+/* Writing needs page scrolling for long prompt + essay area */
+.test-content--writing {
+  overflow-y: auto;
+}
+
 /* ── Exam header bar ── */
 .exam-header {
   display: flex;
@@ -339,4 +344,49 @@
   .test-container { padding: 1.25rem; }
   .skill-grid { grid-template-columns: repeat(2, 1fr); }
   .test-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Writing layout ── */
+.writing-test-layout {
+  max-width: 1100px;
+  margin: 1.25rem auto 2rem;
+  padding: 0 1rem 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.writing-prompt-box,
+.writing-answer-box {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  margin-top: 1rem;
+}
+
+.task1-image {
+  margin: 0.75rem 0 1rem;
+}
+
+.task1-image-img {
+  width: 100%;
+  max-width: 760px;
+  max-height: 520px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  display: block;
+  background: #fff;
+}
+
+.writing-input {
+  width: 100%;
+  min-height: 460px;
+  resize: vertical;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  font-size: 0.96rem;
+  line-height: 1.6;
+  box-sizing: border-box;
 }

@@ -16,6 +16,13 @@ import Onboarding from '../pages/Onboarding/Onboarding.jsx';
 import Profile from '../pages/Profile/Profile.jsx';
 import Logout from '../pages/Logout/Logout.jsx';
 import LogoutSuccess from '../pages/Logout/LogoutSuccess.jsx';
+import AdminUpload from '../pages/AdminUpload/AdminUpload.jsx';
+import AdminDashboard from '../pages/Admin/AdminDashboard.jsx';
+import AdminStudyMaterials from '../pages/Admin/AdminStudyMaterials.jsx';
+import AdminTips from '../pages/Admin/AdminTips.jsx';
+import AdminTests from '../pages/Admin/AdminTests.jsx';
+import AdminPractice from '../pages/Admin/AdminPractice.jsx';
+import AdminBookImport from '../pages/Admin/AdminBookImport.jsx';
 
 
 export default function App() {
@@ -38,6 +45,13 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/logout/success" element={<LogoutSuccess />} />
+      <Route path="/admin/upload" element={<AdminUpload />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin/resources" element={<AdminStudyMaterials />} />
+      <Route path="/admin/tips" element={<AdminTips />} />
+      <Route path="/admin/tests" element={<AdminTests />} />
+      <Route path="/admin/practice" element={<AdminPractice />} />
+      <Route path="/admin/import-book" element={<AdminBookImport />} />
     </Routes>
   );
 }
