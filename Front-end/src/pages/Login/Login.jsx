@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { login } from '../../services/authService';
-import api from '../../api/api';
 import './Login.css';
 
 const GoogleIcon = () => (
@@ -33,32 +32,14 @@ export default function Login() {
       const result = await login({ username, password });
       if (result.success) {
         console.log('Login successful:', result.user);
-        // Ensure token saved before making protected calls
         const token = result.token || localStorage.getItem('token');
         if (!token) {
           setError('Login succeeded but no token received. Please try again or contact support.');
           setLoading(false);
           return;
         }
-
-        // After login, check whether the user already has a generated plan / progress
-        try {
-          const progressResp = await api.progress.getProgress();
-          // if we get data, route to dashboard/progress
-          navigate('/dashboard');
-        } catch (pErr) {
-          // if 404 -> no progress/plan yet, redirect to generate-plan
-          if (pErr.response?.status === 404) {
-            navigate('/user/generate-plan');
-          } else if (pErr.response?.status === 401 || pErr.response?.status === 403) {
-            // session issue - force login
-            setError('Session error. Please login again.');
-            localStorage.removeItem('token');
-          } else {
-            // other errors - go to dashboard as fallback
-            navigate('/dashboard');
-          }
-        }
+        const userRole = String(result?.user?.role || '').toLowerCase();
+        navigate(userRole === 'admin' ? '/admin' : '/dashboard');
       } else {
         setError(result.message || 'Login failed');
       }
@@ -71,93 +52,95 @@ export default function Login() {
   };
 
   return (
-    <div className="login-container">
-      <h1 className="login-title">
-        <span className="title-bar"></span>Login
-      </h1>
-      
-      <button className="google-btn">
-        <GoogleIcon />
-        Continue with Google
-      </button>
-
-      <div className="divider">
-        <div className="divider-line"></div>
-        <span className="divider-text">Or enter your account</span>
-        <div className="divider-line"></div>
-      </div>
-
-      <form onSubmit={handleSubmit} className="login-form">
-        {error && <div className="error-message" style={{color: '#d32f2f', marginBottom: '1rem', padding: '0.5rem', backgroundColor: '#ffebee', borderRadius: '4px'}}>{error}</div>}
+    <div className="login-page">
+      <div className="login-container">
+        <h1 className="login-title">
+          <span className="title-bar"></span>Login
+        </h1>
         
-        <div className="form-group">
-          <label htmlFor="username" className="form-label">
-            User Name or Email
-          </label>
-          <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="form-input"
-            required
-            aria-label="User Name or Email"
-          />
+        <button className="google-btn">
+          <GoogleIcon />
+          Continue with Google
+        </button>
+
+        <div className="divider">
+          <div className="divider-line"></div>
+          <span className="divider-text">Or enter your account</span>
+          <div className="divider-line"></div>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="password" className="form-label">
-            Password
-          </label>
-          <div className="password-input-wrapper">
+        <form onSubmit={handleSubmit} className="login-form">
+          {error && <div className="error-message" style={{color: '#d32f2f', marginBottom: '1rem', padding: '0.5rem', backgroundColor: '#ffebee', borderRadius: '4px'}}>{error}</div>}
+          
+          <div className="form-group">
+            <label htmlFor="username" className="form-label">
+              User Name or Email
+            </label>
             <input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="form-input"
               required
-              aria-label="Password"
+              aria-label="User Name or Email"
             />
-            <button
-              type="button"
-              className="password-toggle-btn"
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              <FontAwesomeIcon icon={faEye} />
-            </button>
           </div>
-        </div>
 
-        <div className="form-options">
-          <div className="remember-me">
-            <input
-              id="rememberMe"
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            <label htmlFor="rememberMe">
-              Remember me
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">
+              Password
             </label>
+            <div className="password-input-wrapper">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-input"
+                required
+                aria-label="Password"
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                <FontAwesomeIcon icon={faEye} />
+              </button>
+            </div>
           </div>
-          <a href="#" className="forgot-password">
-            Forgot password?
-          </a>
-        </div>
 
-        <button type="submit" className="submit-btn" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      
-      <p className="signup-link">
-        Haven't had an account?{' '}
-        <Link to="/signup">
-          Sign up here
-        </Link>
-      </p>
+          <div className="form-options">
+            <div className="remember-me">
+              <input
+                id="rememberMe"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <label htmlFor="rememberMe">
+                Remember me
+              </label>
+            </div>
+            <a href="#" className="forgot-password">
+              Forgot password?
+            </a>
+          </div>
+
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+        
+        <p className="signup-link">
+          Haven't had an account?{' '}
+          <Link to="/signup">
+            Sign up here
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

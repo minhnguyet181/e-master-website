@@ -23,35 +23,40 @@ import AdminTips from '../pages/Admin/AdminTips.jsx';
 import AdminTests from '../pages/Admin/AdminTests.jsx';
 import AdminPractice from '../pages/Admin/AdminPractice.jsx';
 import AdminBookImport from '../pages/Admin/AdminBookImport.jsx';
-
+import ProtectedRoute from '../components/ProtectedRoute.jsx';
 
 export default function App() {
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" element={<Homepage />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/landing" element={<Landingpage />} />
-      <Route path="/building-roadmap" element={<BuildingRoadmap />} />
-      <Route path="/roadmap" element={<Roadmap />} />
-      <Route path="/resources" element={<Resources />} />
-      <Route path="/mycourse" element={<MyCourse />} />
-      <Route path="/assistant" element={<AIChat />} />
-      <Route path="/input-testing" element={<InputTesting />} />
-      <Route path="/practice-test" element={<InputTesting />} />
-      <Route path="/schedule" element={<Schedule />} />
-      <Route path="/user/generate-plan" element={<Onboarding />} />
-      <Route path="/profile" element={<Profile />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/logout/success" element={<LogoutSuccess />} />
-      <Route path="/admin/upload" element={<AdminUpload />} />
-      <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/admin/resources" element={<AdminStudyMaterials />} />
-      <Route path="/admin/tips" element={<AdminTips />} />
-      <Route path="/admin/tests" element={<AdminTests />} />
-      <Route path="/admin/practice" element={<AdminPractice />} />
-      <Route path="/admin/import-book" element={<AdminBookImport />} />
+
+      {/* User routes */}
+      <Route path="/dashboard" element={<ProtectedRoute forbidAdmin><Dashboard /></ProtectedRoute>} />
+      <Route path="/building-roadmap" element={<ProtectedRoute forbidAdmin><BuildingRoadmap /></ProtectedRoute>} />
+      <Route path="/roadmap" element={<ProtectedRoute forbidAdmin><Roadmap /></ProtectedRoute>} />
+      <Route path="/resources" element={<ProtectedRoute forbidAdmin><Resources /></ProtectedRoute>} />
+      <Route path="/mycourse" element={<ProtectedRoute forbidAdmin><MyCourse /></ProtectedRoute>} />
+      <Route path="/assistant" element={<ProtectedRoute forbidAdmin><AIChat /></ProtectedRoute>} />
+      <Route path="/input-testing" element={<ProtectedRoute forbidAdmin><InputTesting /></ProtectedRoute>} />
+      <Route path="/practice-test" element={<ProtectedRoute forbidAdmin><InputTesting /></ProtectedRoute>} />
+      <Route path="/schedule" element={<ProtectedRoute forbidAdmin><Schedule /></ProtectedRoute>} />
+      <Route path="/user/generate-plan" element={<ProtectedRoute forbidAdmin><Onboarding /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute forbidAdmin><Profile /></ProtectedRoute>} />
+
+      {/* Admin routes */}
+      <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
+      <Route path="/admin/upload" element={<ProtectedRoute requireAdmin><AdminUpload /></ProtectedRoute>} />
+      <Route path="/admin/resources" element={<ProtectedRoute requireAdmin><AdminStudyMaterials /></ProtectedRoute>} />
+      <Route path="/admin/tips" element={<ProtectedRoute requireAdmin><AdminTips /></ProtectedRoute>} />
+      <Route path="/admin/tests" element={<ProtectedRoute requireAdmin><AdminTests /></ProtectedRoute>} />
+      <Route path="/admin/practice" element={<ProtectedRoute requireAdmin><AdminPractice /></ProtectedRoute>} />
+      <Route path="/admin/import-book" element={<ProtectedRoute requireAdmin><AdminBookImport /></ProtectedRoute>} />
     </Routes>
   );
 }

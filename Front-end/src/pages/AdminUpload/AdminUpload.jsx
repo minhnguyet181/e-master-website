@@ -161,7 +161,7 @@ export default function AdminUpload() {
           {/* Header */}
           <div className="admin-upload-header">
             <h1>📥 Admin — Upload Tài liệu</h1>
-            <p>Upload file PDF, AI sẽ tự động phân tích và tạo tài liệu học tập có cấu trúc.</p>
+            <p>Upload file PDF — hệ thống trích xuất toàn bộ text bằng pdf-parse và gói JSON theo loại tài liệu (không dùng AI mặc định).</p>
           </div>
 
           {/* Category tabs */}
@@ -191,7 +191,7 @@ export default function AdminUpload() {
                   <label>Kỳ thi (tuỳ chọn)</label>
                   <select value={exam} onChange={e => setExam(e.target.value)} disabled={step === 'parsing'}>
                     {EXAM_OPTIONS.map(o => (
-                      <option key={o} value={o}>{o || '— AI tự suy luận —'}</option>
+                      <option key={o} value={o}>{o || '— Tự động —'}</option>
                     ))}
                   </select>
                 </div>
@@ -199,7 +199,7 @@ export default function AdminUpload() {
                   <label>Kỹ năng (tuỳ chọn)</label>
                   <select value={skill} onChange={e => setSkill(e.target.value)} disabled={step === 'parsing'}>
                     {SKILL_OPTIONS.map(o => (
-                      <option key={o} value={o}>{o || '— AI tự suy luận —'}</option>
+                      <option key={o} value={o}>{o || '— Tự động —'}</option>
                     ))}
                   </select>
                 </div>
@@ -240,7 +240,7 @@ export default function AdminUpload() {
               {step === 'parsing' ? (
                 <div className="loading-state">
                   <div className="spinner" />
-                  <span>AI đang phân tích PDF… có thể mất 30–60 giây</span>
+                  <span>Đang trích xuất nội dung PDF…</span>
                 </div>
               ) : (
                 <button
@@ -248,7 +248,7 @@ export default function AdminUpload() {
                   onClick={handleParse}
                   disabled={!file || step === 'parsing'}
                 >
-                  🤖 Phân tích bằng AI
+                  📄 Trích xuất PDF
                 </button>
               )}
             </div>
@@ -281,15 +281,15 @@ export default function AdminUpload() {
               )}
 
               {preview.content?.en && (
-                <div className="preview-content-box">
-                  <h4>Nội dung tiếng Anh</h4>
-                  <p>{preview.content.en.slice(0, 800)}{preview.content.en.length > 800 ? '…' : ''}</p>
+                <div className="preview-content-box preview-content-box--full">
+                  <h4>Nội dung tiếng Anh ({preview.content.en.length.toLocaleString()} ký tự)</h4>
+                  <p style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{preview.content.en}</p>
                 </div>
               )}
               {preview.content?.vi && (
-                <div className="preview-content-box">
-                  <h4>Nội dung tiếng Việt</h4>
-                  <p>{preview.content.vi.slice(0, 400)}{preview.content.vi.length > 400 ? '…' : ''}</p>
+                <div className="preview-content-box preview-content-box--full">
+                  <h4>Nội dung tiếng Việt ({preview.content.vi.length.toLocaleString()} ký tự)</h4>
+                  <p style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{preview.content.vi}</p>
                 </div>
               )}
 

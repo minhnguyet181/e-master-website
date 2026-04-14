@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Admin.css';
 
@@ -14,6 +14,13 @@ const NAV = [
 export default function AdminLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.body.classList.add('admin-page-body');
+    return () => {
+      document.body.classList.remove('admin-page-body');
+    };
+  }, []);
 
   const isActive = (path, exact) =>
     exact ? location.pathname === path : location.pathname.startsWith(path);

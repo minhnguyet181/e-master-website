@@ -7,6 +7,11 @@ const { Op } = require('sequelize');
 const { buildDbRecord, buildCompositeKey } = require('../../scripts/resource-import');
 const { validateResourceJSON } = require('../utils/resource-schema');
 const { buildResourcePrompt, extractJSON, splitIntoChunks, callAI, CHUNK_SIZE } = require('../../scripts/pdf-to-resource');
+const { buildResourceFromPdfText } = require('../utils/resource-pdf-parse');
+
+const RESOURCE_PARSE_USE_AI = ['1', 'true', 'yes', 'on'].includes(
+  String(process.env.RESOURCE_PARSE_USE_AI || '').toLowerCase()
+);
 
 // ── Category config ───────────────────────────────────────────────────────────
 const CATEGORY_MAP = {
@@ -83,7 +88,15 @@ exports.parsePdf = async (req, res) => {
     }
 
     let result;
-    if (pdfText.length > CHUNK_SIZE) {
+
+    if (!RESOURCE_PARSE_USE_AI) {
+      result = buildResourceFromPdfText(pdfText, {
+        category,
+        exam_type: opts.exam,
+        skill: opts.skill,
+        originalFilename: req.file.originalname,
+      });
+    } else if (pdfText.length > CHUNK_SIZE) {
       const chunks = splitIntoChunks(pdfText);
       const results = [];
       for (const chunk of chunks) {
@@ -106,14 +119,17 @@ exports.parsePdf = async (req, res) => {
       result = extractJSON(raw);
     }
 
-    if (!result) throw new Error('AI returned no valid JSON');
+    if (!result) throw new Error(RESOURCE_PARSE_USE_AI ? 'AI returned no valid JSON' : 'Failed to build resource JSON');
 
     // Mirror taxonomy → top-level
     if (!result.resource_type && result.taxonomy?.resource_type) result.resource_type = result.taxonomy.resource_type;
     if (!result.skill && result.taxonomy?.skill) result.skill = result.taxonomy.skill;
 
     if (!result.content?.en || result.content.en.trim() === '') {
-      return res.status(422).json({ success: false, error: 'content.en is empty after AI parse' });
+      return res.status(422).json({
+        success: false,
+        error: RESOURCE_PARSE_USE_AI ? 'content.en is empty after AI parse' : 'content.en is empty after PDF parse',
+      });
     }
 
     const validation = validateResourceJSON(result);

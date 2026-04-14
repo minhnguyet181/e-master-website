@@ -27,6 +27,7 @@ const Test = require('../models/test.model');
 const TestSection = require('../models/testSection.model');
 const TestQuestion = require('../models/testQuestion.model');
 const { applyTestV2Associations } = require('../models/testV2.associations');
+const NO_AI_IMPORT = ['1', 'true', 'yes', 'on'].includes(String(process.env.NO_AI_IMPORT || '').toLowerCase());
 
 // ── AI helpers ────────────────────────────────────────────────────────────────
 
@@ -35,6 +36,14 @@ function normalizeGeminiKey(raw) {
   let k = String(raw).trim();
   if (k.charCodeAt(0) === 0xfeff) k = k.slice(1).trim();
   if ((k.startsWith('"') && k.endsWith('"')) || (k.startsWith("'") && k.endsWith("'"))) k = k.slice(1, -1).trim();
+  const fromUrl = k.match(/[?&]key=([^&]+)/);
+  if (fromUrl) {
+    try {
+      k = decodeURIComponent(fromUrl[1]);
+    } catch {
+      k = fromUrl[1];
+    }
+  }
   if (k.startsWith('yAIza')) k = k.slice(1);
   return k.trim();
 }
@@ -72,17 +81,35 @@ async function callGemini(prompt) {
 }
 
 async function callAI(prompt) {
-  try { return await callGemini(prompt); }
-  catch (err) {
-    if (process.env.OPENAI_API_KEY) {
-      const res = await axios.post(
-        process.env.OPENAI_API_URL || 'https://api.openai.com/v1/chat/completions',
-        { model: process.env.OPENAI_MODEL || 'gpt-4o', messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 8192 },
-        { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.OPENAI_API_KEY}` }, timeout: 120000 }
-      );
-      return res.data?.choices?.[0]?.message?.content || '';
+  try {
+    return await callGemini(prompt);
+  } catch (err) {
+    const geminiStatus = err.response?.status;
+    const geminiMsg = err.response?.data?.error?.message || err.message;
+    const hasOpenAIKey = !!String(process.env.OPENAI_API_KEY || '').trim();
+    const shouldFallbackToOpenAI =
+      !normalizeGeminiKey(process.env.GEMINI_API_KEY) ||
+      geminiStatus === 429 ||
+      geminiStatus === 500 ||
+      geminiStatus === 502 ||
+      geminiStatus === 503;
+
+    if (hasOpenAIKey && shouldFallbackToOpenAI) {
+      try {
+        const res = await axios.post(
+          process.env.OPENAI_API_URL || 'https://api.openai.com/v1/chat/completions',
+          { model: process.env.OPENAI_MODEL || 'gpt-4o', messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 8192 },
+          { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.OPENAI_API_KEY}` }, timeout: 120000 }
+        );
+        return res.data?.choices?.[0]?.message?.content || '';
+      } catch (openAIError) {
+        const openAIStatus = openAIError.response?.status;
+        const openAIMsg = openAIError.response?.data?.error?.message || openAIError.message;
+        throw new Error(`Gemini failed (${geminiStatus || 'no-status'}): ${geminiMsg}; OpenAI fallback failed (${openAIStatus || 'no-status'}): ${openAIMsg}`);
+      }
     }
-    throw err;
+
+    throw new Error(`Gemini failed (${geminiStatus || 'no-status'}): ${geminiMsg}`);
   }
 }
 
@@ -219,6 +246,210 @@ PDF TEXT (${skill.toUpperCase()} section):
 ---
 ${text.slice(0, 20000)}
 ---${answerSection}`;
+}
+
+function extractAnswerMap(answerKeyText = '') {
+  const map = {};
+  if (!answerKeyText) return map;
+  const lines = answerKeyText
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  for (const line of lines) {
+    const m = line.match(/^(\d+)\s*[\).\:-]?\s*(.+)$/);
+    if (!m) continue;
+    const qNo = Number(m[1]);
+    const answer = m[2].trim();
+    if (qNo && answer) map[qNo] = answer;
+  }
+  return map;
+}
+
+function splitBlocksByHeader(text, headerRegex) {
+  const normalized = String(text || '');
+  const matches = [...normalized.matchAll(headerRegex)];
+  if (!matches.length) return [{ title: null, body: normalized }];
+
+  const blocks = [];
+  for (let i = 0; i < matches.length; i++) {
+    const cur = matches[i];
+    const start = cur.index ?? 0;
+    const end = i + 1 < matches.length ? (matches[i + 1].index ?? normalized.length) : normalized.length;
+    blocks.push({
+      title: cur[0].trim(),
+      body: normalized.slice(start, end).trim(),
+    });
+  }
+  return blocks;
+}
+
+function extractQuestionsFromText(text, answerMap, defaultType) {
+  const lines = String(text || '')
+    .split(/\r?\n/)
+    .map((l) => l.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+
+  const questions = [];
+  let current = null;
+
+  for (const line of lines) {
+    const qMatch = line.match(/^(\d{1,3})\s*[\).\:-]\s*(.+)$/);
+    if (qMatch) {
+      if (current) questions.push(current);
+      const qNo = Number(qMatch[1]);
+      current = {
+        question_no: qNo,
+        question_type: defaultType,
+        prompt: qMatch[2].trim(),
+        options: null,
+        correct_answer: answerMap[qNo] || null,
+        points: 1,
+        metadata: {},
+      };
+      continue;
+    }
+
+    const optionMatch = line.match(/^([A-D])\s*[\).\:-]\s*(.+)$/i);
+    if (optionMatch && current) {
+      if (!Array.isArray(current.options)) current.options = [];
+      current.options.push(`${optionMatch[1].toUpperCase()}. ${optionMatch[2]}`);
+      if (current.question_type === 'FILL_IN_THE_BLANK') {
+        current.question_type = 'MULTIPLE_CHOICE';
+      }
+      continue;
+    }
+
+    if (current) {
+      current.prompt = `${current.prompt} ${line}`.trim();
+    }
+  }
+
+  if (current) questions.push(current);
+
+  if (!questions.length) {
+    const fallbackPrompt = lines.slice(0, 40).join(' ').slice(0, 1200) || 'Question content extracted from PDF';
+    questions.push({
+      question_no: 1,
+      question_type: defaultType,
+      prompt: fallbackPrompt,
+      options: null,
+      correct_answer: answerMap[1] || null,
+      points: 1,
+      metadata: { generated: 'rule_based_fallback' },
+    });
+  }
+
+  return questions;
+}
+
+function buildRuleBasedTestJSON(skill, text, code, name, answerKeyText) {
+  const answerMap = extractAnswerMap(answerKeyText);
+  const base = {
+    code,
+    name,
+    level: 'IELTS',
+    metadata: { parser: 'rule_based_pdf_parse' },
+  };
+
+  if (skill === 'reading') {
+    const blocks = splitBlocksByHeader(text, /(Passage\s+\d+|READING\s+PASSAGE\s+\d+)/gi);
+    return {
+      ...base,
+      test_type: 'reading',
+      duration_minutes: 60,
+      sections: blocks.map((b, idx) => ({
+        section_no: idx + 1,
+        title: b.title || `Passage ${idx + 1}`,
+        passage_text: b.body || null,
+        audio_url: null,
+        image_url: null,
+        content: { passageTitle: b.title || `Passage ${idx + 1}`, passageText: b.body || '' },
+        media: null,
+        questions: extractQuestionsFromText(b.body, answerMap, 'FILL_IN_THE_BLANK'),
+      })),
+    };
+  }
+
+  if (skill === 'listening') {
+    const blocks = splitBlocksByHeader(text, /(Section\s+\d+|LISTENING\s+SECTION\s+\d+)/gi);
+    return {
+      ...base,
+      test_type: 'listening',
+      duration_minutes: 30,
+      sections: blocks.map((b, idx) => ({
+        section_no: idx + 1,
+        title: b.title || `Section ${idx + 1}`,
+        passage_text: null,
+        audio_url: null,
+        image_url: null,
+        content: null,
+        media: null,
+        questions: extractQuestionsFromText(b.body, answerMap, 'FILL_IN_THE_BLANK'),
+      })),
+    };
+  }
+
+  if (skill === 'writing') {
+    const task1 = text.match(/Task\s*1[\s\S]*?(?=Task\s*2|$)/i)?.[0]?.trim() || null;
+    const task2 = text.match(/Task\s*2[\s\S]*$/i)?.[0]?.trim() || null;
+    const sections = [];
+
+    if (task1) {
+      sections.push({
+        section_no: 1,
+        title: 'Task 1',
+        passage_text: null,
+        audio_url: null,
+        image_url: null,
+        content: { task_type: 'task1', question: task1.slice(0, 4000) },
+        media: null,
+        questions: [{ question_no: 1, question_type: 'WRITING_TASK', prompt: task1.slice(0, 4000), options: null, correct_answer: null, points: 150, metadata: {} }],
+      });
+    }
+    if (task2) {
+      sections.push({
+        section_no: 2,
+        title: 'Task 2',
+        passage_text: null,
+        audio_url: null,
+        image_url: null,
+        content: { task_type: 'task2', question: task2.slice(0, 4000) },
+        media: null,
+        questions: [{ question_no: 1, question_type: 'WRITING_TASK', prompt: task2.slice(0, 4000), options: null, correct_answer: null, points: 250, metadata: {} }],
+      });
+    }
+    if (!sections.length) {
+      sections.push({
+        section_no: 1,
+        title: 'Writing Task',
+        passage_text: null,
+        audio_url: null,
+        image_url: null,
+        content: { task_type: 'task', question: text.slice(0, 4000) },
+        media: null,
+        questions: [{ question_no: 1, question_type: 'WRITING_TASK', prompt: text.slice(0, 4000), options: null, correct_answer: null, points: 200, metadata: {} }],
+      });
+    }
+    return { ...base, test_type: 'writing', duration_minutes: 60, sections };
+  }
+
+  const blocks = splitBlocksByHeader(text, /(Part\s+\d+|SPEAKING\s+PART\s+\d+)/gi);
+  return {
+    ...base,
+    test_type: 'speaking',
+    duration_minutes: 15,
+    sections: blocks.map((b, idx) => ({
+      section_no: idx + 1,
+      title: b.title || `Part ${idx + 1}`,
+      passage_text: null,
+      audio_url: null,
+      image_url: null,
+      content: { topic: (b.body || '').slice(0, 200) || `Part ${idx + 1}` },
+      media: null,
+      questions: extractQuestionsFromText(b.body, answerMap, 'SPEAKING_PROMPT'),
+    })),
+  };
 }
 
 // ── Audio mapping ─────────────────────────────────────────────────────────────
@@ -381,15 +612,32 @@ exports.importBook = async (req, res) => {
         const code = `${examType}-T${testNo}-${skill.toUpperCase().slice(0, 4)}`;
         const name = `${bookName} – Test ${testNo} – ${skill.charAt(0).toUpperCase() + skill.slice(1)}`;
 
-        send('progress', { step: 'ai', message: `AI parsing Test ${testNo} ${skill}…`, testNo, skill });
+        send('progress', {
+          step: 'ai',
+          message: NO_AI_IMPORT
+            ? `Rule-based parsing Test ${testNo} ${skill} (NO_AI_IMPORT enabled)…`
+            : `AI parsing Test ${testNo} ${skill}…`,
+          testNo,
+          skill
+        });
 
         try {
-          const prompt = buildSkillPrompt(skill, skillText, code, name, answerKeyText);
-          const raw = await callAI(prompt);
-          const parsed = extractJSON(raw);
+          let parsed = null;
+          if (NO_AI_IMPORT) {
+            parsed = buildRuleBasedTestJSON(skill, skillText, code, name, answerKeyText);
+          } else {
+            const prompt = buildSkillPrompt(skill, skillText, code, name, answerKeyText);
+            const raw = await callAI(prompt);
+            parsed = extractJSON(raw);
+          }
 
           if (!parsed) {
-            send('progress', { step: 'warn', message: `Test ${testNo} ${skill}: AI returned no valid JSON`, testNo, skill });
+            send('progress', {
+              step: 'warn',
+              message: `Test ${testNo} ${skill}: parser returned no valid JSON`,
+              testNo,
+              skill
+            });
             continue;
           }
 

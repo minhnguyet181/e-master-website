@@ -113,14 +113,14 @@ export default function UploadModal({ category, categoryLabel, isTest, onClose, 
                   <div className="form-group">
                     <label>Kỳ thi</label>
                     <select value={examType} onChange={e => setExamType(e.target.value)}>
-                      <option value="">— AI tự suy luận —</option>
+                      <option value="">— Tự động (general) —</option>
                       {EXAMS.map(e => <option key={e} value={e}>{e}</option>)}
                     </select>
                   </div>
                   <div className="form-group">
                     <label>Kỹ năng</label>
                     <select value={skill} onChange={e => setSkill(e.target.value)}>
-                      <option value="">— AI tự suy luận —</option>
+                      <option value="">— Tự động (general) —</option>
                       {SKILLS.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
@@ -163,7 +163,7 @@ export default function UploadModal({ category, categoryLabel, isTest, onClose, 
               {step === 'parsing' && (
                 <div className="loading-state">
                   <div className="spinner" />
-                  <span>AI đang phân tích PDF… (30–60 giây)</span>
+                  <span>Đang trích xuất nội dung PDF (pdf-parse)…</span>
                 </div>
               )}
 
@@ -180,9 +180,14 @@ export default function UploadModal({ category, categoryLabel, isTest, onClose, 
                   <p className="preview-title">{preview.title}</p>
                   {preview.summary && <p className="preview-summary">{preview.summary}</p>}
                   {preview.content?.en && (
-                    <div className="preview-content-box">
-                      {preview.content.en.slice(0, 600)}{preview.content.en.length > 600 ? '…' : ''}
-                    </div>
+                    <>
+                      <p style={{ fontSize: '0.75rem', color: '#64748b', margin: '0 0 0.35rem' }}>
+                        Nội dung đầy đủ ({preview.content.en.length.toLocaleString()} ký tự) — cuộn để xem
+                      </p>
+                      <div className="preview-content-box preview-content-box--full">
+                        {preview.content.en}
+                      </div>
+                    </>
                   )}
                 </div>
               )}
@@ -203,7 +208,7 @@ export default function UploadModal({ category, categoryLabel, isTest, onClose, 
             </button>
             {step === 'idle' && (
               <button className="btn-primary" onClick={handleParse} disabled={!pdfFile}>
-                🤖 Phân tích PDF
+                📄 Trích xuất PDF
               </button>
             )}
             {step === 'preview' && (

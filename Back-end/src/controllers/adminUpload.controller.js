@@ -10,7 +10,12 @@
 const { buildResourcePrompt, extractJSON, splitIntoChunks, callAI, CHUNK_SIZE } = require('../../scripts/pdf-to-resource');
 const { buildDbRecord, buildCompositeKey } = require('../../scripts/resource-import');
 const { validateResourceJSON } = require('../utils/resource-schema');
+const { buildResourceFromPdfText } = require('../utils/resource-pdf-parse');
 const Resource = require('../models/resource.model');
+
+const RESOURCE_PARSE_USE_AI = ['1', 'true', 'yes', 'on'].includes(
+  String(process.env.RESOURCE_PARSE_USE_AI || '').toLowerCase()
+);
 
 // ── Category → taxonomy hint mapping ─────────────────────────────────────────
 
@@ -50,7 +55,14 @@ async function parsePdfToResource(pdfBuffer, opts = {}) {
 
   let result;
 
-  if (pdfText.length > CHUNK_SIZE) {
+  if (!RESOURCE_PARSE_USE_AI) {
+    result = buildResourceFromPdfText(pdfText, {
+      category: opts.categoryHint || 'study_material',
+      exam_type: opts.exam,
+      skill: opts.skill,
+      originalFilename: opts.originalFilename,
+    });
+  } else if (pdfText.length > CHUNK_SIZE) {
     const chunks = splitIntoChunks(pdfText);
     const results = [];
     for (const chunk of chunks) {
@@ -73,7 +85,7 @@ async function parsePdfToResource(pdfBuffer, opts = {}) {
     result = extractJSON(raw);
   }
 
-  if (!result) throw new Error('AI returned no valid JSON');
+  if (!result) throw new Error(RESOURCE_PARSE_USE_AI ? 'AI returned no valid JSON' : 'Failed to build resource JSON');
 
   if (opts.type) { result.resource_type = opts.type; if (result.taxonomy) result.taxonomy.resource_type = opts.type; }
   if (opts.skill) { result.skill = opts.skill; if (result.taxonomy) result.taxonomy.skill = opts.skill; }
@@ -83,7 +95,7 @@ async function parsePdfToResource(pdfBuffer, opts = {}) {
   if (!result.skill && result.taxonomy?.skill) result.skill = result.taxonomy.skill;
 
   if (!result.content?.en || result.content.en.trim() === '') {
-    throw new Error('content.en is empty after AI parse');
+    throw new Error(RESOURCE_PARSE_USE_AI ? 'content.en is empty after AI parse' : 'content.en is empty after PDF parse');
   }
 
   return result;
@@ -110,6 +122,8 @@ exports.uploadPdf = async (req, res) => {
       type: hint.resource_type || undefined,
       exam: req.body.exam || undefined,
       skill: req.body.skill || undefined,
+      categoryHint: category,
+      originalFilename: req.file.originalname,
     };
 
     const resourceJson = await parsePdfToResource(req.file.buffer, opts);

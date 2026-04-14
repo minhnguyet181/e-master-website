@@ -348,8 +348,12 @@
   border-radius: 10px;
   padding: 1rem;
   margin-bottom: 1.25rem;
-  max-height: 260px;
+  max-height: min(50vh, 420px);
   overflow-y: auto;
+}
+
+.preview-content-box--full {
+  max-height: min(55vh, 480px);
 }
 
 .preview-content-box h4 {

@@ -33,6 +33,8 @@ services:
       # Trong network Docker, MySQL service luôn là cổng 3306 (3307 chỉ là map ra máy host)
       DB_HOST: mysql
       DB_PORT: 3306
+      NO_AI_IMPORT: ${NO_AI_IMPORT:-true}
+      RESOURCE_PARSE_USE_AI: ${RESOURCE_PARSE_USE_AI:-false}
     ports:
       - "1818:1818"
     depends_on:
