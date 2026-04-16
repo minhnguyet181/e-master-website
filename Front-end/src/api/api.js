@@ -66,6 +66,10 @@ const api = {
     getWeeklyTasks: () => axiosClient.get("/progress/weekly"),
     updateProgress: (progress) => axiosClient.post("/progress/update", progress),
   },
+
+  copilot: {
+    getInsights: () => axiosClient.get("/copilot/insights"),
+  },
 };
 
 export default api;

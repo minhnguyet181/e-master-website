@@ -1,5 +1,9 @@
 import api from '../api/api';
 
+function extractUserFromResponse(response) {
+  return response?.data?.user || response?.data?.data?.user || null;
+}
+
 export async function login({ username, password }) {
   try {
 
@@ -23,7 +27,7 @@ export async function login({ username, password }) {
       console.debug('authService.login: no token found in response', response?.data);
     }
 
-    return { success: true, user: response.data.user, token };
+    return { success: true, user: extractUserFromResponse(response), token };
   } catch (error) {
     return { 
       success: false, 
@@ -48,7 +52,7 @@ export async function signup({ username, email, password }) {
       console.debug('authService.signup: no token found in response', response?.data);
     }
 
-    return { success: true, user: response.data.user, token };
+    return { success: true, user: extractUserFromResponse(response), token };
   } catch (error) {
     return { 
       success: false, 

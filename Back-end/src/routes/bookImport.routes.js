@@ -4,7 +4,11 @@ const multer = require('multer');
 const router = express.Router();
 const auth = require('./middlewares/auth.middleware');
 const requireAdmin = require('./middlewares/admin.middleware');
-const { importBook } = require('../controllers/bookImport.controller');
+const {
+  importBook,
+  importBookQueued,
+  getBookImportJobStatus,
+} = require('../controllers/bookImport.controller');
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -26,5 +30,15 @@ router.post('/admin/import-book', auth, requireAdmin,
   ]),
   importBook
 );
+
+router.post('/admin/import-book/queue', auth, requireAdmin,
+  upload.fields([
+    { name: 'pdf', maxCount: 1 },
+    { name: 'audioZip', maxCount: 1 },
+  ]),
+  importBookQueued
+);
+
+router.get('/admin/import-book/jobs/:jobId', auth, requireAdmin, getBookImportJobStatus);
 
 module.exports = router;

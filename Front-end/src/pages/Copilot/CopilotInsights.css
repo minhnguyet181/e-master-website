@@ -1,0 +1,167 @@
+.copilot-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.copilot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.copilot-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.copilot-header p {
+  margin: 6px 0 0;
+  color: #64748b;
+}
+
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.risk-low {
+  color: #047857;
+  background: #d1fae5;
+}
+
+.risk-medium {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.risk-high {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.risk-unknown {
+  color: #334155;
+  background: #e2e8f0;
+}
+
+.copilot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.copilot-metric {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.copilot-metric h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.copilot-metric p {
+  margin: 8px 0 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.copilot-section {
+  margin-top: 20px;
+}
+
+.copilot-section h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.copilot-table {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.copilot-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.copilot-row:first-child {
+  border-top: 0;
+}
+
+.copilot-head {
+  background: #f8fafc;
+  font-weight: 700;
+}
+
+.action-list {
+  display: grid;
+  gap: 12px;
+}
+
+.action-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.action-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-card p {
+  margin: 8px 0;
+}
+
+.priority-high {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.priority-medium {
+  color: #92400e;
+  font-weight: 700;
+}
+
+.priority-low {
+  color: #047857;
+  font-weight: 700;
+}
+
+.copilot-state {
+  padding: 20px;
+  text-align: center;
+}
+
+.copilot-error {
+  padding: 12px;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+@media (max-width: 1100px) {
+  .copilot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

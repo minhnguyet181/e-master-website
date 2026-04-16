@@ -7,6 +7,8 @@ const cors = require('cors');
 const sequelize = require('./src/config/db');
 const routes = require('./src/routes');
 const { applyTestV2Associations } = require('./src/models/testV2.associations');
+const { isQueueEnabled, registerWorkers, getQueues } = require('./src/services/queue.service');
+const { processGradingJob, processBookImportJob } = require('./src/services/jobProcessor.service');
 
 const app = express();
 
@@ -65,6 +67,14 @@ const startServer = async () => {
     if (shouldSync) {
       await sequelize.sync();
       console.log('✅ Database synced (DB_SYNC=true)');
+    }
+
+    if (isQueueEnabled) {
+      getQueues();
+      registerWorkers({ processGradingJob, processBookImportJob });
+      console.log('✅ BullMQ workers initialized');
+    } else {
+      console.log('ℹ️ Queue mode disabled (set QUEUE_ENABLED=true to enable BullMQ)');
     }
 
     app.listen(1818, () => console.log('🚀 Server running on port 1818'));

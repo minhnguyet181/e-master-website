@@ -12,5 +12,6 @@ router.get('/test/:id/correct-answers', authenticate, TestController.getCorrectA
 router.get('/test/:id/answers', authenticate, TestController.getCorrectAnswers);
 router.get('/test/:id/test', authenticate, TestController.getTestWithQuestions);
 router.post('/test/grade', authenticate, TestController.gradeTest);
+router.get('/test/grade/jobs/:jobId', authenticate, TestController.getGradeJobStatus);
 
 module.exports = router;

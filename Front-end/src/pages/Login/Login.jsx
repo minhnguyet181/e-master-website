@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { jwtDecode } from 'jwt-decode';
 import { login } from '../../services/authService';
 import './Login.css';
 
@@ -23,6 +24,16 @@ export default function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const getRoleFromToken = (token) => {
+    if (!token) return '';
+    try {
+      const decoded = jwtDecode(token);
+      return String(decoded?.role || '').toLowerCase();
+    } catch (decodeError) {
+      return '';
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -38,7 +49,7 @@ export default function Login() {
           setLoading(false);
           return;
         }
-        const userRole = String(result?.user?.role || '').toLowerCase();
+        const userRole = String(result?.user?.role || getRoleFromToken(token)).toLowerCase();
         navigate(userRole === 'admin' ? '/admin' : '/dashboard');
       } else {
         setError(result.message || 'Login failed');

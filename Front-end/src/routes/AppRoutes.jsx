@@ -14,6 +14,7 @@ import BuildingRoadmap from '../pages/BuildingRoadMap/BuildingRoadMap.jsx';
 import Schedule from "../pages/Schedule/Schedule.jsx";
 import Onboarding from '../pages/Onboarding/Onboarding.jsx';
 import Profile from '../pages/Profile/Profile.jsx';
+import CopilotInsights from '../pages/Copilot/CopilotInsights.jsx';
 import Logout from '../pages/Logout/Logout.jsx';
 import LogoutSuccess from '../pages/Logout/LogoutSuccess.jsx';
 import AdminUpload from '../pages/AdminUpload/AdminUpload.jsx';
@@ -48,6 +49,7 @@ export default function App() {
       <Route path="/schedule" element={<ProtectedRoute forbidAdmin><Schedule /></ProtectedRoute>} />
       <Route path="/user/generate-plan" element={<ProtectedRoute forbidAdmin><Onboarding /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute forbidAdmin><Profile /></ProtectedRoute>} />
+      <Route path="/copilot" element={<ProtectedRoute forbidAdmin><CopilotInsights /></ProtectedRoute>} />
 
       {/* Admin routes */}
       <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />

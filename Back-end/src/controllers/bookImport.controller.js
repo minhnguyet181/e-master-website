@@ -27,6 +27,7 @@ const Test = require('../models/test.model');
 const TestSection = require('../models/testSection.model');
 const TestQuestion = require('../models/testQuestion.model');
 const { applyTestV2Associations } = require('../models/testV2.associations');
+const { isQueueEnabled, getQueues } = require('../services/queue.service');
 const NO_AI_IMPORT = ['1', 'true', 'yes', 'on'].includes(String(process.env.NO_AI_IMPORT || '').toLowerCase());
 
 // ── AI helpers ────────────────────────────────────────────────────────────────
@@ -532,155 +533,228 @@ function sendProgress(res, data) {
   res.write(`data: ${JSON.stringify(data)}\n\n`);
 }
 
+async function processBookImport({ pdfBuffer, audioZipBuffer, bookName, examType, skills, onProgress = () => {} }) {
+  const send = async (type, payload) => onProgress({ type, ...payload });
+
+  if (!pdfBuffer) {
+    throw new Error('No PDF file uploaded');
+  }
+  const finalBookName = bookName || 'Cambridge IELTS';
+  const finalExamType = examType || 'IELTS';
+  const requestedSkills = skills && skills.length
+    ? skills
+    : ['reading', 'listening', 'writing', 'speaking'];
+
+  await send('start', { message: `Processing "${finalBookName}"...` });
+
+  await send('progress', { step: 'pdf', message: 'Parsing PDF text...' });
+  const pdfData = await pdfParse(pdfBuffer);
+  const fullText = pdfData.text;
+  await send('progress', { step: 'pdf', message: `Extracted ${fullText.length} characters from PDF` });
+
+  // Extract audio from ZIP (if provided)
+  let audioMap = {};
+  if (audioZipBuffer) {
+    await send('progress', { step: 'audio', message: 'Extracting audio ZIP...' });
+    const zip = new AdmZip(audioZipBuffer);
+    const audioEntries = zip.getEntries().filter(e =>
+      /\.(mp3|m4a|ogg|wav|aac)$/i.test(e.entryName) &&
+      /Test\s*\d+\s*[-–]?\s*Section\s*\d+/i.test(e.entryName)
+    );
+    audioMap = mapAudioFiles(audioEntries);
+    const testNos = Object.keys(audioMap).map(Number).sort((a, b) => a - b);
+    await send('progress', { step: 'audio', message: `Mapped audio for tests: ${testNos.join(', ') || 'none'} (${audioEntries.length} files)` });
+  } else {
+    await send('progress', { step: 'audio', message: 'No audio ZIP provided - listening sections will have no audio_url' });
+  }
+
+  const testChunks = splitByTest(fullText);
+  const testsToProcess = testChunks || [{ testNo: 1, text: fullText }];
+  await send('progress', { step: 'split', message: `Detected ${testsToProcess.length} test(s) in PDF` });
+
+  const results = [];
+  let totalImported = 0;
+
+  for (const { testNo, text: testText } of testsToProcess) {
+    await send('progress', { step: 'test', message: `Processing Test ${testNo}...`, testNo });
+
+    const skillSections = splitBySkill(testText);
+    const answerKeyText = skillSections.answerKey || '';
+
+    for (const skill of requestedSkills) {
+      const skillText = skillSections[skill] || (skill === 'reading' ? testText : null);
+      if (!skillText || skillText.trim().length < 100) {
+        await send('progress', { step: 'skip', message: `Test ${testNo} ${skill}: no content found, skipping`, testNo, skill });
+        continue;
+      }
+
+      const code = `${finalExamType}-T${testNo}-${skill.toUpperCase().slice(0, 4)}`;
+      const name = `${finalBookName} - Test ${testNo} - ${skill.charAt(0).toUpperCase() + skill.slice(1)}`;
+
+      await send('progress', {
+        step: 'ai',
+        message: NO_AI_IMPORT
+          ? `Rule-based parsing Test ${testNo} ${skill} (NO_AI_IMPORT enabled)...`
+          : `AI parsing Test ${testNo} ${skill}...`,
+        testNo,
+        skill
+      });
+
+      try {
+        let parsed = null;
+        if (NO_AI_IMPORT) {
+          parsed = buildRuleBasedTestJSON(skill, skillText, code, name, answerKeyText);
+        } else {
+          const prompt = buildSkillPrompt(skill, skillText, code, name, answerKeyText);
+          const raw = await callAI(prompt);
+          parsed = extractJSON(raw);
+        }
+
+        if (!parsed) {
+          await send('progress', {
+            step: 'warn',
+            message: `Test ${testNo} ${skill}: parser returned no valid JSON`,
+            testNo,
+            skill
+          });
+          continue;
+        }
+
+        if (skill === 'listening' && audioMap[testNo]) {
+          for (const section of (parsed.sections || [])) {
+            const audioEntry = audioMap[testNo][section.section_no];
+            if (audioEntry) {
+              section.audio_url = `/audio/${finalBookName.replace(/\s+/g, '_')}/Test_${testNo}_Section_${section.section_no}.mp3`;
+              section.media = { ...(section.media || {}), audio: section.audio_url, filename: audioEntry.name };
+            }
+          }
+        }
+
+        parsed.metadata = { ...(parsed.metadata || {}), book: finalBookName, exam_type: finalExamType, test_no: testNo };
+
+        await send('progress', { step: 'import', message: `Importing Test ${testNo} ${skill} to DB...`, testNo, skill });
+        const dbId = await importTestJSON(parsed);
+        totalImported += 1;
+        results.push({ testNo, skill, code, dbId, status: 'ok' });
+        await send('progress', { step: 'done_skill', message: `Test ${testNo} ${skill} imported (id=${dbId})`, testNo, skill, dbId });
+      } catch (err) {
+        await send('progress', { step: 'error_skill', message: `Test ${testNo} ${skill}: ${err.message}`, testNo, skill });
+        results.push({ testNo, skill, code, status: 'error', error: err.message });
+      }
+
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+  }
+
+  return {
+    message: `Import complete: ${totalImported} tests imported`,
+    totalImported,
+    results,
+  };
+}
+
+exports.processBookImport = processBookImport;
+
 // ── Main controller ───────────────────────────────────────────────────────────
 
-/**
- * POST /e-master/admin/import-book
- * multipart: file (ZIP), bookName, examType (IELTS|TOEIC), skills (comma-separated, default all)
- *
- * Uses SSE to stream progress back to client.
- */
 exports.importBook = async (req, res) => {
-  // Set up SSE
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders();
 
   const send = (type, payload) => sendProgress(res, { type, ...payload });
-
   try {
     const pdfFile = req.files?.pdf?.[0];
     const audioZipFile = req.files?.audioZip?.[0];
-
-    if (!pdfFile) { send('error', { message: 'No PDF file uploaded' }); return res.end(); }
-
-    const bookName = req.body.bookName || 'Cambridge IELTS';
-    const examType = req.body.examType || 'IELTS';
-    const requestedSkills = req.body.skills
-      ? req.body.skills.split(',').map(s => s.trim().toLowerCase())
-      : ['reading', 'listening', 'writing', 'speaking'];
-
-    send('start', { message: `Processing "${bookName}"…` });
-
-    // 1. Parse PDF
-    send('progress', { step: 'pdf', message: 'Parsing PDF text…' });
-    const pdfData = await pdfParse(pdfFile.buffer);
-    const fullText = pdfData.text;
-    send('progress', { step: 'pdf', message: `Extracted ${fullText.length} characters from PDF` });
-
-    // 2. Extract audio from ZIP (if provided)
-    let audioMap = {};
-    if (audioZipFile) {
-      send('progress', { step: 'audio', message: 'Extracting audio ZIP…' });
-      const zip = new AdmZip(audioZipFile.buffer);
-      const audioEntries = zip.getEntries().filter(e =>
-        /\.(mp3|m4a|ogg|wav|aac)$/i.test(e.entryName) &&
-        /Test\s*\d+\s*[-–]?\s*Section\s*\d+/i.test(e.entryName)
-      );
-      audioMap = mapAudioFiles(audioEntries);
-      const testNos = Object.keys(audioMap).map(Number).sort((a, b) => a - b);
-      send('progress', { step: 'audio', message: `Mapped audio for tests: ${testNos.join(', ') || 'none'} (${audioEntries.length} files)` });
-    } else {
-      send('progress', { step: 'audio', message: 'No audio ZIP provided — listening sections will have no audio_url' });
-    }
-
-    // 3. Split PDF by test
-    const testChunks = splitByTest(fullText);
-    const testsToProcess = testChunks || [{ testNo: 1, text: fullText }];
-    send('progress', { step: 'split', message: `Detected ${testsToProcess.length} test(s) in PDF` });
-
-    // 5. Process each test — associations already applied at server boot
-    // DO NOT call applyTestV2Associations() here — it causes duplicate alias errors
-
-    const results = [];
-    let totalImported = 0;
-
-    for (const { testNo, text: testText } of testsToProcess) {
-      send('progress', { step: 'test', message: `Processing Test ${testNo}…`, testNo });
-
-      const skillSections = splitBySkill(testText);
-      const answerKeyText = skillSections.answerKey || '';
-
-      for (const skill of requestedSkills) {
-        const skillText = skillSections[skill] || (skill === 'reading' ? testText : null);
-        if (!skillText || skillText.trim().length < 100) {
-          send('progress', { step: 'skip', message: `Test ${testNo} ${skill}: no content found, skipping`, testNo, skill });
-          continue;
-        }
-
-        const code = `${examType}-T${testNo}-${skill.toUpperCase().slice(0, 4)}`;
-        const name = `${bookName} – Test ${testNo} – ${skill.charAt(0).toUpperCase() + skill.slice(1)}`;
-
-        send('progress', {
-          step: 'ai',
-          message: NO_AI_IMPORT
-            ? `Rule-based parsing Test ${testNo} ${skill} (NO_AI_IMPORT enabled)…`
-            : `AI parsing Test ${testNo} ${skill}…`,
-          testNo,
-          skill
-        });
-
-        try {
-          let parsed = null;
-          if (NO_AI_IMPORT) {
-            parsed = buildRuleBasedTestJSON(skill, skillText, code, name, answerKeyText);
-          } else {
-            const prompt = buildSkillPrompt(skill, skillText, code, name, answerKeyText);
-            const raw = await callAI(prompt);
-            parsed = extractJSON(raw);
-          }
-
-          if (!parsed) {
-            send('progress', {
-              step: 'warn',
-              message: `Test ${testNo} ${skill}: parser returned no valid JSON`,
-              testNo,
-              skill
-            });
-            continue;
-          }
-
-          // Inject audio URLs for listening sections
-          if (skill === 'listening' && audioMap[testNo]) {
-            for (const section of (parsed.sections || [])) {
-              const audioEntry = audioMap[testNo][section.section_no];
-              if (audioEntry) {
-                // Store audio filename in audio_url — in production this would be a CDN URL
-                section.audio_url = `/audio/${bookName.replace(/\s+/g, '_')}/Test_${testNo}_Section_${section.section_no}.mp3`;
-                section.media = { ...(section.media || {}), audio: section.audio_url, filename: audioEntry.name };
-              }
-            }
-          }
-
-          parsed.metadata = { ...(parsed.metadata || {}), book: bookName, exam_type: examType, test_no: testNo };
-
-          send('progress', { step: 'import', message: `Importing Test ${testNo} ${skill} to DB…`, testNo, skill });
-          const dbId = await importTestJSON(parsed);
-          totalImported++;
-          results.push({ testNo, skill, code, dbId, status: 'ok' });
-          send('progress', { step: 'done_skill', message: `✅ Test ${testNo} ${skill} imported (id=${dbId})`, testNo, skill, dbId });
-
-        } catch (err) {
-          send('progress', { step: 'error_skill', message: `❌ Test ${testNo} ${skill}: ${err.message}`, testNo, skill });
-          results.push({ testNo, skill, code, status: 'error', error: err.message });
-        }
-
-        // Throttle AI calls
-        await new Promise(r => setTimeout(r, 1500));
-      }
-    }
-
-    send('done', {
-      message: `Import complete: ${totalImported} tests imported`,
-      totalImported,
-      results,
+    const result = await processBookImport({
+      pdfBuffer: pdfFile?.buffer,
+      audioZipBuffer: audioZipFile?.buffer,
+      bookName: req.body.bookName,
+      examType: req.body.examType,
+      skills: req.body.skills
+        ? req.body.skills.split(',').map((s) => s.trim().toLowerCase())
+        : undefined,
+      onProgress: async (payload) => send(payload.type, payload),
     });
-
+    send('done', result);
   } catch (err) {
     console.error('[bookImport]', err.message);
     send('error', { message: err.message });
   }
 
   res.end();
+};
+
+exports.importBookQueued = async (req, res) => {
+  try {
+    if (!isQueueEnabled) {
+      return res.status(400).json({ success: false, message: 'Queue mode is disabled. Set QUEUE_ENABLED=true.' });
+    }
+    const { bookImportQueue } = getQueues() || {};
+    if (!bookImportQueue) {
+      return res.status(503).json({ success: false, message: 'Book import queue unavailable' });
+    }
+
+    const pdfFile = req.files?.pdf?.[0];
+    const audioZipFile = req.files?.audioZip?.[0];
+    if (!pdfFile) {
+      return res.status(400).json({ success: false, message: 'No PDF file uploaded' });
+    }
+
+    const requestedSkills = req.body.skills
+      ? req.body.skills.split(',').map((s) => s.trim().toLowerCase())
+      : ['reading', 'listening', 'writing', 'speaking'];
+
+    const job = await bookImportQueue.add(
+      'book-import',
+      {
+        pdfBase64: pdfFile.buffer.toString('base64'),
+        audioZipBase64: audioZipFile?.buffer?.toString('base64') || null,
+        options: {
+          bookName: req.body.bookName || 'Cambridge IELTS',
+          examType: req.body.examType || 'IELTS',
+          skills: requestedSkills,
+        },
+      },
+      {
+        removeOnComplete: { age: 24 * 3600, count: 1000 },
+        removeOnFail: { age: 7 * 24 * 3600, count: 1000 },
+      }
+    );
+
+    return res.status(202).json({
+      success: true,
+      message: 'Book import has been queued',
+      job_id: job.id,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getBookImportJobStatus = async (req, res) => {
+  try {
+    if (!isQueueEnabled) {
+      return res.status(400).json({ success: false, message: 'Queue mode is disabled. Set QUEUE_ENABLED=true.' });
+    }
+    const { bookImportQueue } = getQueues() || {};
+    if (!bookImportQueue) {
+      return res.status(503).json({ success: false, message: 'Book import queue unavailable' });
+    }
+
+    const job = await bookImportQueue.getJob(req.params.jobId);
+    if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
+    const state = await job.getState();
+    return res.status(200).json({
+      success: true,
+      job_id: job.id,
+      state,
+      progress: job.progress || null,
+      result: job.returnvalue || null,
+      failed_reason: job.failedReason || null,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };

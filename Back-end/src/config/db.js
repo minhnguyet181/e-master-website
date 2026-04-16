@@ -11,7 +11,14 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST || 'localhost',
     port: Number(process.env.DB_PORT) || 3306,
     dialect: 'mysql',
-    logging: false,
+    benchmark: true,
+    logging: (sql, timingMs) => {
+      const queryLogEnabled = String(process.env.DB_QUERY_LOG || '').toLowerCase() === 'true';
+      const slowThresholdMs = Number(process.env.DB_SLOW_QUERY_MS || 200);
+      if (queryLogEnabled || (typeof timingMs === 'number' && timingMs >= slowThresholdMs)) {
+        console.log(`[sql] ${timingMs || 0}ms ${sql}`);
+      }
+    },
     timezone: '+07:00',
     define: {
       charset: 'utf8mb4',
