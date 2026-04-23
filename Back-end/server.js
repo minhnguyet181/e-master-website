@@ -37,7 +37,8 @@ app.use(
   })
 );
 
-app.use(express.json());
+// Default 100kb is too small for admin import-resource (large PDF-derived content JSON).
+app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '15mb' }));
 
 app.use('/e-master', routes);
 

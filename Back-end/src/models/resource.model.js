@@ -35,7 +35,7 @@ Resource.init(
     },
 
     content: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT('medium'),
       allowNull: false,
       comment: 'Nội dung đầy đủ của tài liệu (dùng để chatbot tham khảo)'
     },

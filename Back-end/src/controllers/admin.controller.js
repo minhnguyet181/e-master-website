@@ -13,6 +13,82 @@ const RESOURCE_PARSE_USE_AI = ['1', 'true', 'yes', 'on'].includes(
   String(process.env.RESOURCE_PARSE_USE_AI || '').toLowerCase()
 );
 
+const pdfParse = require('pdf-parse');
+
+/**
+ * Parse PDF buffer → validated resource JSON (shared by parse-pdf and batch-import).
+ * @param {Buffer} buffer
+ * @param {{ category?: string, resource_type?: string, skill?: string, exam_type?: string, originalFilename?: string }} meta
+ */
+async function parsePdfBufferToResourceJson(buffer, meta) {
+  const category = meta.category || 'study_material';
+  const opts = {
+    type: meta.resource_type || undefined,
+    skill: meta.skill || undefined,
+    exam: meta.exam_type || undefined,
+  };
+
+  const data = await pdfParse(buffer);
+  const pdfText = data.text;
+
+  if (!pdfText || pdfText.trim().length === 0) {
+    throw Object.assign(new Error('Could not extract text from PDF'), { code: 'EMPTY_PDF' });
+  }
+
+  let result;
+
+  if (!RESOURCE_PARSE_USE_AI) {
+    result = buildResourceFromPdfText(pdfText, {
+      category,
+      exam_type: opts.exam,
+      skill: opts.skill,
+      originalFilename: meta.originalFilename,
+    });
+  } else if (pdfText.length > CHUNK_SIZE) {
+    const chunks = splitIntoChunks(pdfText);
+    const results = [];
+    for (const chunk of chunks) {
+      const raw = await callAI(buildResourcePrompt(chunk, opts));
+      const parsed = extractJSON(raw);
+      if (parsed) results.push(parsed);
+    }
+    if (!results.length) throw new Error('AI returned no valid JSON');
+    result = results[0];
+    if (results.length > 1) {
+      result.content = {
+        en: results.map(r => r.content?.en).filter(Boolean).join('\n\n'),
+        vi: results.map(r => r.content?.vi).filter(Boolean).join('\n\n') || null,
+      };
+      const allTags = results.flatMap(r => r.taxonomy?.tags || []);
+      if (result.taxonomy) result.taxonomy.tags = [...new Set(allTags)].slice(0, 20);
+    }
+  } else {
+    const raw = await callAI(buildResourcePrompt(pdfText, opts));
+    result = extractJSON(raw);
+  }
+
+  if (!result) throw new Error(RESOURCE_PARSE_USE_AI ? 'AI returned no valid JSON' : 'Failed to build resource JSON');
+
+  if (!result.resource_type && result.taxonomy?.resource_type) result.resource_type = result.taxonomy.resource_type;
+  if (!result.skill && result.taxonomy?.skill) result.skill = result.taxonomy.skill;
+
+  if (!result.content?.en || result.content.en.trim() === '') {
+    throw Object.assign(
+      new Error(RESOURCE_PARSE_USE_AI ? 'content.en is empty after AI parse' : 'content.en is empty after PDF parse'),
+      { code: 'EMPTY_CONTENT' }
+    );
+  }
+
+  const validation = validateResourceJSON(result);
+  if (!validation.valid) {
+    const e = new Error('Schema validation failed');
+    e.details = validation.errors;
+    throw e;
+  }
+
+  return result;
+}
+
 // ── Category config ───────────────────────────────────────────────────────────
 const CATEGORY_MAP = {
   study_material: { label: 'Tài liệu học', resource_types: ['grammar_rule', 'vocabulary', 'article', 'reference', 'example'] },
@@ -73,73 +149,85 @@ exports.parsePdf = async (req, res) => {
     if (!req.file) return res.status(400).json({ success: false, error: 'No PDF uploaded' });
 
     const category = req.body.category || 'study_material';
-    const opts = {
-      type: req.body.resource_type || undefined,
-      skill: req.body.skill || undefined,
-      exam: req.body.exam_type || undefined,
-    };
-
-    const pdfParse = require('pdf-parse');
-    const data = await pdfParse(req.file.buffer);
-    const pdfText = data.text;
-
-    if (!pdfText || pdfText.trim().length === 0) {
-      return res.status(422).json({ success: false, error: 'Could not extract text from PDF' });
-    }
-
-    let result;
-
-    if (!RESOURCE_PARSE_USE_AI) {
-      result = buildResourceFromPdfText(pdfText, {
-        category,
-        exam_type: opts.exam,
-        skill: opts.skill,
-        originalFilename: req.file.originalname,
-      });
-    } else if (pdfText.length > CHUNK_SIZE) {
-      const chunks = splitIntoChunks(pdfText);
-      const results = [];
-      for (const chunk of chunks) {
-        const raw = await callAI(buildResourcePrompt(chunk, opts));
-        const parsed = extractJSON(raw);
-        if (parsed) results.push(parsed);
-      }
-      if (!results.length) throw new Error('AI returned no valid JSON');
-      result = results[0];
-      if (results.length > 1) {
-        result.content = {
-          en: results.map(r => r.content?.en).filter(Boolean).join('\n\n'),
-          vi: results.map(r => r.content?.vi).filter(Boolean).join('\n\n') || null,
-        };
-        const allTags = results.flatMap(r => r.taxonomy?.tags || []);
-        if (result.taxonomy) result.taxonomy.tags = [...new Set(allTags)].slice(0, 20);
-      }
-    } else {
-      const raw = await callAI(buildResourcePrompt(pdfText, opts));
-      result = extractJSON(raw);
-    }
-
-    if (!result) throw new Error(RESOURCE_PARSE_USE_AI ? 'AI returned no valid JSON' : 'Failed to build resource JSON');
-
-    // Mirror taxonomy → top-level
-    if (!result.resource_type && result.taxonomy?.resource_type) result.resource_type = result.taxonomy.resource_type;
-    if (!result.skill && result.taxonomy?.skill) result.skill = result.taxonomy.skill;
-
-    if (!result.content?.en || result.content.en.trim() === '') {
-      return res.status(422).json({
-        success: false,
-        error: RESOURCE_PARSE_USE_AI ? 'content.en is empty after AI parse' : 'content.en is empty after PDF parse',
-      });
-    }
-
-    const validation = validateResourceJSON(result);
-    if (!validation.valid) {
-      return res.status(422).json({ success: false, error: 'Schema validation failed', details: validation.errors });
-    }
+    const result = await parsePdfBufferToResourceJson(req.file.buffer, {
+      category,
+      resource_type: req.body.resource_type,
+      skill: req.body.skill,
+      exam_type: req.body.exam_type,
+      originalFilename: req.file.originalname,
+    });
 
     return res.json({ success: true, category, resourceJson: result });
   } catch (err) {
     console.error('[admin] parsePdf:', err.message);
+    if (err.code === 'EMPTY_PDF' || err.code === 'EMPTY_CONTENT') {
+      return res.status(422).json({ success: false, error: err.message });
+    }
+    if (err.message === 'Schema validation failed' && err.details) {
+      return res.status(422).json({ success: false, error: err.message, details: err.details });
+    }
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+// ── Batch: parse many PDFs → upsert each resource ─────────────────────────────
+exports.batchImportPdfs = async (req, res) => {
+  try {
+    const files = req.files;
+    if (!files || !files.length) {
+      return res.status(400).json({ success: false, error: 'No PDF files uploaded' });
+    }
+
+    const category = req.body.category || 'study_material';
+    const meta = {
+      category,
+      resource_type: req.body.resource_type,
+      skill: req.body.skill,
+      exam_type: req.body.exam_type,
+    };
+
+    const results = [];
+    let ok = 0;
+    let fail = 0;
+
+    for (const file of files) {
+      try {
+        const resourceJson = await parsePdfBufferToResourceJson(file.buffer, {
+          ...meta,
+          originalFilename: file.originalname,
+        });
+
+        const record = buildDbRecord(resourceJson);
+        const compositeKey = buildCompositeKey(resourceJson);
+        const [resource, created] = await Resource.findOrCreate({
+          where: compositeKey,
+          defaults: record,
+        });
+        if (!created) await resource.update(record);
+
+        ok += 1;
+        results.push({
+          originalname: file.originalname,
+          ok: true,
+          action: created ? 'created' : 'updated',
+          id: resource.id,
+          title: resource.title,
+        });
+      } catch (err) {
+        fail += 1;
+        const row = {
+          originalname: file.originalname,
+          ok: false,
+          error: err.message,
+        };
+        if (err.details) row.details = err.details;
+        results.push(row);
+      }
+    }
+
+    return res.json({ success: true, results, summary: { ok, fail } });
+  } catch (err) {
+    console.error('[admin] batchImportPdfs:', err.message);
     return res.status(500).json({ success: false, error: err.message });
   }
 };

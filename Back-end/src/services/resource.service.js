@@ -12,6 +12,10 @@ const Resource = require('../models/resource.model');
 const User = require('../models/user.model');
 const { Op } = require('sequelize');
 const { profileOperation } = require('../utils/queryProfiler');
+const { sanitizeStoredContentField } = require('../utils/strip-resource-promo');
+
+/** List/search responses omit full body — content can be very large (e.g. imported PDFs). */
+const LIST_ATTRS = { exclude: ['content'] };
 
 /**
  * Parse band string thành số để so sánh
@@ -123,6 +127,7 @@ async function getResourcesByBand(filters = {}, pagination = {}) {
         'resource.findAndCountAll',
         () => Resource.findAndCountAll({
           where: whereClause,
+          attributes: LIST_ATTRS,
           order,
           limit,
           offset,
@@ -160,6 +165,7 @@ async function getResourcesByBand(filters = {}, pagination = {}) {
         'resource.findAll.bandChunk',
         () => Resource.findAll({
           where: whereClause,
+          attributes: LIST_ATTRS,
           order,
           limit: chunkSize,
           offset: scanOffset,
@@ -276,9 +282,12 @@ async function getResourceById(resourceId, incrementView = true) {
       await resource.save();
     }
 
+    const plain = resource.get({ plain: true });
+    if (plain.content) plain.content = sanitizeStoredContentField(plain.content);
+
     return {
       success: true,
-      resource
+      resource: plain
     };
 
   } catch (error) {
@@ -317,6 +326,7 @@ async function searchResources(query, filters = {}, pagination = {}) {
       'resource.search.findAndCountAll',
       () => Resource.findAndCountAll({
         where: whereClause,
+        attributes: LIST_ATTRS,
         order,
         limit: band ? 500 : limit,
         offset: band ? 0 : offset,

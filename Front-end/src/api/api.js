@@ -70,6 +70,15 @@ const api = {
   copilot: {
     getInsights: () => axiosClient.get("/copilot/insights"),
   },
+
+  /** Learning library (admin-imported resources in `resources` table) */
+  resources: {
+    /** Personalized list (auth): respects user band when set */
+    list: (params) => axiosClient.get("/resources", { params }),
+    /** Full catalog (no band filter): `band` query omitted → all active items */
+    listAll: (params) => axiosClient.get("/resources/by-band", { params }),
+    getById: (id) => axiosClient.get(`/resources/${id}`),
+  },
 };
 
 export default api;

@@ -23,6 +23,7 @@ router.get('/admin/stats', ctrl.getStats);
 router.get('/admin/resources', ctrl.listResources);
 router.get('/admin/resources/:id', ctrl.getResource);
 router.post('/admin/parse-pdf', upload.single('file'), ctrl.parsePdf);
+router.post('/admin/batch-import-pdfs', upload.array('files', 25), ctrl.batchImportPdfs);
 router.post('/admin/import-resource', ctrl.importResource);
 router.put('/admin/resources/:id', ctrl.updateResource);
 router.delete('/admin/resources/:id', ctrl.deleteResource);

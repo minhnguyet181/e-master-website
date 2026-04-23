@@ -20,6 +20,7 @@ const path = require('path');
 const sequelize = require('../src/config/db');
 const Resource = require('../src/models/resource.model');
 const { validateResourceJSON } = require('../src/utils/resource-schema');
+const { sanitizeBilingualContent, stripEmbeddedPromoFooters } = require('../src/utils/strip-resource-promo');
 
 // ─── Pure helper functions (exported for testing) ────────────────────────────
 
@@ -75,11 +76,18 @@ function buildCompositeKey(r) {
 function buildDbRecord(r) {
   const taxonomy = r.taxonomy || {};
 
-  const summary = buildSummary(r.summary, r.content);
+  let contentField = r.content;
+  if (contentField && typeof contentField === 'object') {
+    contentField = sanitizeBilingualContent(contentField);
+  } else if (typeof contentField === 'string') {
+    contentField = stripEmbeddedPromoFooters(contentField);
+  }
+
+  const summary = buildSummary(r.summary, typeof contentField === 'object' ? contentField : r.content);
 
   return {
     title: r.title,
-    content: typeof r.content === 'object' ? JSON.stringify(r.content) : r.content,
+    content: typeof contentField === 'object' ? JSON.stringify(contentField) : contentField,
     summary,
     resource_type: taxonomy.resource_type || r.resource_type || null,
     skill: taxonomy.skill || r.skill || null,

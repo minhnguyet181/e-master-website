@@ -3,6 +3,8 @@
  * Output matches resource-schema validation expectations.
  */
 
+const { stripEmbeddedPromoFooters } = require('./strip-resource-promo');
+
 const MAX_BODY = 200000;
 
 const CATEGORY_DEFAULTS = {
@@ -82,9 +84,11 @@ function buildResourceFromPdfText(pdfText, opts = {}) {
   const text = normalizeText(pdfText);
   if (!text) throw new Error('Empty text after normalization');
 
-  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+  const stripped = stripEmbeddedPromoFooters(text);
+  const lines = stripped.split('\n').map((l) => l.trim()).filter(Boolean);
   const title = guessTitle(lines, opts.originalFilename);
-  const body = text.length > MAX_BODY ? `${text.slice(0, MAX_BODY)}\n\n[… truncated …]` : text;
+  const body =
+    stripped.length > MAX_BODY ? `${stripped.slice(0, MAX_BODY)}\n\n[… truncated …]` : stripped;
 
   const examType = pickExamType(opts.exam_type);
   const skill = pickSkill(opts.skill);
