@@ -60,8 +60,48 @@ const InputTesting = () => {
   const [score, setScore] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [gradingJob, setGradingJob] = useState(null);
   const [visibleExtra, setVisibleExtra] = useState(6);
   const [testList, setTestList] = useState([]);
+
+  const gradeTestWithQueueSupport = async ({ testId, answers }) => {
+    const res = await api.test.gradeTest({ testId, answers });
+
+    // Queue mode: backend returns 202 { success, job_id }
+    if (res.status === 202 && res.data?.job_id) {
+      const jobId = res.data.job_id;
+      setGradingJob({ jobId, state: "queued" });
+
+      const startedAt = Date.now();
+      const timeoutMs = 5 * 60 * 1000; // 5 minutes
+
+      // Simple polling loop (no SSE on FE yet)
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        if (Date.now() - startedAt > timeoutMs) {
+          throw new Error("Grading is taking too long. Please try again later.");
+        }
+
+        await new Promise((r) => setTimeout(r, 1500));
+        const st = await api.test.getGradeJobStatus(jobId);
+        const state = st.data?.state;
+        setGradingJob({ jobId, state });
+
+        if (state === "completed") {
+          setGradingJob(null);
+          return st.data?.result;
+        }
+        if (state === "failed") {
+          setGradingJob(null);
+          const reason = st.data?.failed_reason || "Grading job failed";
+          throw new Error(reason);
+        }
+      }
+    }
+
+    // Synchronous mode: backend returns handleResponse(...) with payload in res.data.data
+    return res.data?.data || res.data;
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -235,6 +275,7 @@ const InputTesting = () => {
 
     setLoading(true);
     setError("");
+    setGradingJob(null);
 
     try {
       // Normalize answers per test type
@@ -267,8 +308,8 @@ const InputTesting = () => {
             });
           });
 
-          const partRes = await api.test.gradeTest({ testId: partId, answers: partAnswers });
-          const partResult = partRes.data?.data?.result || partRes.data?.data || partRes.data;
+          const partPayload = await gradeTestWithQueueSupport({ testId: partId, answers: partAnswers });
+          const partResult = partPayload?.result || partPayload;
           correct += Number(partResult.correct || 0);
           total += Number(partResult.total || 0);
           if (Array.isArray(partResult.detail)) {
@@ -281,8 +322,8 @@ const InputTesting = () => {
         return;
       }
 
-      const res = await api.test.gradeTest({ testId, answers });
-      const result = res.data?.data?.result || res.data?.data || res.data;
+      const payload = await gradeTestWithQueueSupport({ testId, answers });
+      const result = payload?.result || payload;
 
       if (result.correct !== undefined && result.total !== undefined) {
         setScore({ correct: result.correct, total: result.total, score: result.score, ...result });
@@ -293,7 +334,7 @@ const InputTesting = () => {
       }
     } catch (err) {
       console.error("❌ Error grading test:", err);
-      setError(err.response?.data?.message || "Cannot grade test");
+      setError(err.response?.data?.message || err.message || "Cannot grade test");
     } finally {
       setLoading(false);
     }
@@ -505,6 +546,11 @@ const InputTesting = () => {
               </h2>
               {error && <p className="error">{error}</p>}
               {loading && !score && <p>Loading...</p>}
+              {gradingJob?.jobId && (
+                <p style={{ marginTop: 6, color: "#6b7280" }}>
+                  AI grading: {gradingJob.state || "queued"} (job #{gradingJob.jobId})
+                </p>
+              )}
             </div>
 
             {renderTestContent()}

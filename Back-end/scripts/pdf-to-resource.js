@@ -86,32 +86,8 @@ async function callGemini(prompt, maxTokens = 8192) {
   }
 }
 
-async function callOpenAI(prompt, maxTokens = 8192) {
-  const key = process.env.OPENAI_API_KEY;
-  if (!key) throw new Error('OPENAI_API_KEY not set in .env');
-  const model = process.env.OPENAI_MODEL || 'gpt-4o';
-  const url = process.env.OPENAI_API_URL || 'https://api.openai.com/v1/chat/completions';
-
-  const res = await axios.post(url, {
-    model,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.1,
-    max_tokens: maxTokens,
-  }, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` }, timeout: 120000 });
-
-  return res.data?.choices?.[0]?.message?.content || '';
-}
-
 async function callAI(prompt, maxTokens = 8192) {
-  try {
-    return await callGemini(prompt, maxTokens);
-  } catch (err) {
-    if (process.env.OPENAI_API_KEY) {
-      console.warn('  ⚠️  Gemini failed, falling back to OpenAI...');
-      return callOpenAI(prompt, maxTokens);
-    }
-    throw err;
-  }
+  return callGemini(prompt, maxTokens);
 }
 
 // ── prompt builder ────────────────────────────────────────────────────────────

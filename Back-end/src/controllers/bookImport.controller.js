@@ -87,29 +87,6 @@ async function callAI(prompt) {
   } catch (err) {
     const geminiStatus = err.response?.status;
     const geminiMsg = err.response?.data?.error?.message || err.message;
-    const hasOpenAIKey = !!String(process.env.OPENAI_API_KEY || '').trim();
-    const shouldFallbackToOpenAI =
-      !normalizeGeminiKey(process.env.GEMINI_API_KEY) ||
-      geminiStatus === 429 ||
-      geminiStatus === 500 ||
-      geminiStatus === 502 ||
-      geminiStatus === 503;
-
-    if (hasOpenAIKey && shouldFallbackToOpenAI) {
-      try {
-        const res = await axios.post(
-          process.env.OPENAI_API_URL || 'https://api.openai.com/v1/chat/completions',
-          { model: process.env.OPENAI_MODEL || 'gpt-4o', messages: [{ role: 'user', content: prompt }], temperature: 0.1, max_tokens: 8192 },
-          { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.OPENAI_API_KEY}` }, timeout: 120000 }
-        );
-        return res.data?.choices?.[0]?.message?.content || '';
-      } catch (openAIError) {
-        const openAIStatus = openAIError.response?.status;
-        const openAIMsg = openAIError.response?.data?.error?.message || openAIError.message;
-        throw new Error(`Gemini failed (${geminiStatus || 'no-status'}): ${geminiMsg}; OpenAI fallback failed (${openAIStatus || 'no-status'}): ${openAIMsg}`);
-      }
-    }
-
     throw new Error(`Gemini failed (${geminiStatus || 'no-status'}): ${geminiMsg}`);
   }
 }

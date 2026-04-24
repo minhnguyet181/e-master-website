@@ -375,6 +375,7 @@ const PhonemeCard = ({ phoneme, categoryType }) => {
 
 const Resources = () => {
   const [openSections, setOpenSections] = useState({
+    recommended: true,
     library: true,
     practice: true,
     pronunciation: false,
@@ -389,6 +390,29 @@ const Resources = () => {
   const [detailRes, setDetailRes] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState('');
+
+  const [recLoading, setRecLoading] = useState(true);
+  const [recError, setRecError] = useState('');
+  const [recommended, setRecommended] = useState(null);
+
+  const loadRecommended = useCallback(async () => {
+    setRecLoading(true);
+    setRecError('');
+    try {
+      const { data } = await api.learningPath.recommendations();
+      if (data.success && data.data?.success) {
+        setRecommended(data.data);
+      } else if (data.success && data.data) {
+        setRecommended(data.data);
+      } else {
+        setRecError(data.message || 'Không tải được gợi ý theo lộ trình.');
+      }
+    } catch (e) {
+      setRecError(e.response?.data?.message || e.message || 'Lỗi khi tải gợi ý theo lộ trình.');
+    } finally {
+      setRecLoading(false);
+    }
+  }, []);
 
   const loadLibrary = useCallback(async () => {
     setLibLoading(true);
@@ -409,7 +433,8 @@ const Resources = () => {
 
   useEffect(() => {
     loadLibrary();
-  }, [loadLibrary]);
+    loadRecommended();
+  }, [loadLibrary, loadRecommended]);
 
   const openResourceDetail = async (id) => {
     setDetailRes(null);
@@ -455,6 +480,45 @@ const Resources = () => {
         <h1>Learning Resources</h1>
         <p>Your gateway to mastering English skills.</p>
       </header>
+
+      <Section
+        title="Gợi ý theo lộ trình của bạn"
+        icon={<span className="lib-section-emoji" aria-hidden>🎯</span>}
+        isOpen={openSections.recommended}
+        onToggle={() => toggleSection('recommended')}
+      >
+        {recLoading && <p className="lib-hint">Đang tải gợi ý theo lộ trình…</p>}
+        {recError && !recLoading && <p className="lib-error" role="alert">{recError}</p>}
+        {!recLoading && !recError && recommended?.milestone && (
+          <>
+            <p className="lib-hint">
+              Milestone hiện tại: <strong>{recommended.milestone.band || `#${(recommended.milestone_index || 0) + 1}`}</strong>
+            </p>
+            {Array.isArray(recommended.milestone.resources) && recommended.milestone.resources.length > 0 ? (
+              <ul className="lib-card-list">
+                {recommended.milestone.resources.map((r) => (
+                  <li key={r.id} className="lib-card">
+                    <div className="lib-card-main">
+                      <h4 className="lib-card-title">{r.title}</h4>
+                      {r.summary && <p className="lib-card-summary">{r.summary}</p>}
+                      <div className="lib-card-meta">
+                        {r.resource_type && <span className="lib-badge">{r.resource_type}</span>}
+                        {r.skill && <span className="lib-badge lib-badge-skill">{r.skill}</span>}
+                        {r.level && <span className="lib-badge">{r.level}</span>}
+                      </div>
+                    </div>
+                    <button type="button" className="lib-read-btn" onClick={() => openResourceDetail(r.id)}>
+                      Đọc
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="lib-hint">Chưa có tài liệu được gợi ý cho milestone này.</p>
+            )}
+          </>
+        )}
+      </Section>
 
       <Section
         title="Thư viện tài liệu"

@@ -19,6 +19,8 @@ const adminUploadRoutes = require('./adminUpload.routes');
 const adminRoutes = require('./admin.routes');
 const bookImportRoutes = require('./bookImport.routes');
 const studyCopilotRoutes = require('./studyCopilot.routes');
+const dailyPlanRoutes = require('./dailyPlan.routes');
+const learningPathRoutes = require('./learningPath.routes');
 
 router.use('/', authRoutes);
 router.use('/', userRoutes);
@@ -36,6 +38,8 @@ router.use('/', adminUploadRoutes);
 router.use('/', adminRoutes);
 router.use('/', bookImportRoutes);
 router.use('/', studyCopilotRoutes);
+router.use('/', dailyPlanRoutes);
+router.use('/', learningPathRoutes);
 
 router.get('/', (req, res) => res.send('🌍 E-Master API Running!'));
 

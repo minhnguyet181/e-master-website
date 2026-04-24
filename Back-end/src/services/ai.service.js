@@ -2,6 +2,8 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 const axios = require('axios');
+const AICache = require('../models/aiCache.model');
+const { hashJsonStable } = require('../utils/hashUtils');
 
 /** Chuẩn hóa key: trim, bỏ BOM UTF-8, bỏ ngoặc, không dùng URL làm key; sửa typo thừa "y" trước AIza */
 function normalizeGeminiApiKey(raw) {
@@ -30,12 +32,45 @@ const GEMINI_KEY = normalizeGeminiApiKey(process.env.GEMINI_API_KEY);
 const HF_TOKEN = process.env.HF_TOKEN || '';
 /** Model: gemini-1.5-flash ổn định với API key thường; đổi qua GEMINI_MODEL nếu cần */
 const GEMINI_MODEL = (process.env.GEMINI_MODEL || 'gemini-1.5-flash').trim();
+const AI_CACHE_TTL_MINUTES = Number(process.env.AI_CACHE_TTL_MINUTES || 60);
+
+async function getValidAICache(cacheKey) {
+  const now = new Date();
+  const row = await AICache.findOne({ where: { cache_key: cacheKey } });
+  if (!row) return null;
+  if (row.expires_at && row.expires_at <= now) return null;
+  row.hit_count += 1;
+  await row.save();
+  return row;
+}
+
+async function saveAICache({ cacheKey, cacheType, model, promptHash, resultText }) {
+  const ttlMs = Math.max(AI_CACHE_TTL_MINUTES, 0) * 60 * 1000;
+  const expiresAt = ttlMs > 0 ? new Date(Date.now() + ttlMs) : null;
+  await AICache.create({
+    cache_key: cacheKey,
+    cache_type: cacheType,
+    model: model || null,
+    prompt_hash: promptHash,
+    result_text: resultText,
+    expires_at: expiresAt,
+  });
+}
 
 /**
  * Helper: clean and try to parse JSON within AI text
  */
 function tryParseJSONFromText(text) {
   if (!text || typeof text !== 'string') return text;
+  // Prefer fenced ```json blocks if present
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fenced && fenced[1]) {
+    try {
+      return JSON.parse(fenced[1].trim());
+    } catch {
+      // fall through to outermost braces extraction
+    }
+  }
   const start = text.indexOf('{');
   const end = text.lastIndexOf('}');
   if (start !== -1 && end !== -1) {
@@ -48,6 +83,14 @@ function tryParseJSONFromText(text) {
     }
   }
   return text;
+}
+
+function safeParseJsonObject(maybeText) {
+  if (maybeText && typeof maybeText === 'object') return { ok: true, value: maybeText };
+  if (typeof maybeText !== 'string') return { ok: false, value: null, raw: maybeText };
+  const parsed = tryParseJSONFromText(maybeText);
+  if (parsed && typeof parsed === 'object') return { ok: true, value: parsed };
+  return { ok: false, value: null, raw: maybeText };
 }
 
 /* ---------- Gemini call with retry logic ---------- */
@@ -214,11 +257,26 @@ Instructions:
 
 Return ONLY the JSON object. No other text.`;
 
+  const promptHash = hashJsonStable({ type: 'learning_plan', prompt, model: GEMINI_MODEL });
+  const cacheKey = `learning_plan:${promptHash}:${GEMINI_MODEL}`;
+  try {
+    const cached = await getValidAICache(cacheKey);
+    if (cached) return cached.result_text;
+  } catch {
+    // ignore cache failures
+  }
+
   let raw;
   if (GEMINI_KEY) raw = await callGemini(prompt, 1200);
   else if (HF_TOKEN) raw = await callHuggingFaceText('google/flan-t5-large', prompt);
   else throw new Error('No AI provider configured');
   const cleaned = raw.replace(/```json|```/g, "").trim();
+
+  try {
+    await saveAICache({ cacheKey, cacheType: 'learning_plan', model: GEMINI_MODEL, promptHash, resultText: cleaned });
+  } catch {
+    // ignore
+  }
 
   return cleaned;
 }
@@ -340,13 +398,28 @@ ${message}
 
 Respond naturally and helpfully:`;
 
+  const promptHash = hashJsonStable({ type: 'chat', prompt, model: GEMINI_MODEL });
+  const cacheKey = `chat:${promptHash}:${GEMINI_MODEL}`;
+  try {
+    const cached = await getValidAICache(cacheKey);
+    if (cached) return String(cached.result_text || '').trim();
+  } catch {
+    // ignore
+  }
+
   let raw;
   if (GEMINI_KEY) raw = await callGemini(prompt, 500);
   else if (HF_TOKEN) raw = await callHuggingFaceText('google/flan-t5-large', prompt);
   else throw new Error('No AI provider configured for chatAssistant');
 
   // for chat we return raw text (not necessarily JSON)
-  return raw.trim();
+  const out = raw.trim();
+  try {
+    await saveAICache({ cacheKey, cacheType: 'chat', model: GEMINI_MODEL, promptHash, resultText: out });
+  } catch {
+    // ignore
+  }
+  return out;
 }
 
 module.exports = {
@@ -355,5 +428,6 @@ module.exports = {
   gradeSpeaking,
   chatAssistant,
   transcribeAudioHF,
-  callGemini // Export để dùng trong placementTest.service.js
+  callGemini, // Export để dùng trong placementTest.service.js
+  safeParseJsonObject,
 };

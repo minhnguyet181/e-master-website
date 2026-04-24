@@ -56,6 +56,7 @@ const api = {
   getTest: id => axiosClient.get(`/test/${id}/test`),
   getCorrectAnswers: id => axiosClient.get(`/test/${id}/answers`),
   gradeTest: data => axiosClient.post(`/test/grade`, data),
+  getGradeJobStatus: (jobId) => axiosClient.get(`/test/grade/jobs/${jobId}`),
   /** Same as gradeTest — dùng cho resourceService / màn hình gọi submit theo tên cũ */
   submitTest: (testId, answers) =>
     axiosClient.post(`/test/grade`, { testId, answers }),
@@ -67,8 +68,22 @@ const api = {
     updateProgress: (progress) => axiosClient.post("/progress/update", progress),
   },
 
+  dailyPlan: {
+    getToday: () => axiosClient.get("/daily-plan/today"),
+    completeTask: (task_id, plan_date) => axiosClient.post("/daily-plan/complete", { task_id, plan_date }),
+    getStreak: () => axiosClient.get("/daily-plan/streak"),
+  },
+
   copilot: {
     getInsights: () => axiosClient.get("/copilot/insights"),
+  },
+
+  learningPath: {
+    generate: () => axiosClient.post("/learning-path/generate"),
+    get: () => axiosClient.get("/learning-path"),
+    completeMilestone: (learningPathId, milestone_index) =>
+      axiosClient.post(`/learning-path/${learningPathId}/milestones/complete`, { milestone_index }),
+    recommendations: () => axiosClient.get("/learning-path/recommendations"),
   },
 
   /** Learning library (admin-imported resources in `resources` table) */

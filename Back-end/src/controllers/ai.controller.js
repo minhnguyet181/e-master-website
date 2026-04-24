@@ -2,6 +2,42 @@
 const AIService = require('../services/ai.service');
 const { handleResponse, handleError } = require('./base.controller');
 
+function safeKeyMeta(raw) {
+  const s = String(raw || '').trim().replace(/^\uFEFF/, '');
+  if (!s) return { configured: false };
+  return {
+    configured: true,
+    length: s.length,
+    prefix: s.slice(0, 4),
+    startsWithAIza: s.startsWith('AIza'),
+  };
+}
+
+exports.getAIConfig = async (req, res) => {
+  try {
+    const keyMeta = safeKeyMeta(process.env.GEMINI_API_KEY);
+    const model = String(process.env.GEMINI_MODEL || 'gemini-1.5-flash').trim();
+    const hfConfigured = !!String(process.env.HF_TOKEN || '').trim();
+
+    return handleResponse(
+      res,
+      {
+        provider: 'gemini',
+        gemini: {
+          api_key: keyMeta,
+          model,
+        },
+        huggingface: {
+          configured: hfConfigured,
+        },
+      },
+      'AI config'
+    );
+  } catch (err) {
+    return handleError(res, err);
+  }
+};
+
 exports.gradeWriting = async (req, res) => {
   try {
     const result = await AIService.gradeWriting(req.body.essay);
