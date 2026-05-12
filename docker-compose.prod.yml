@@ -18,5 +18,5 @@ services:
     image: ${DOCKER_REGISTRY}/emaster-frontend:${IMAGE_TAG:-latest}
     build: null
     ports:
+      # TLS terminate tại reverse proxy ngoài container (xem Front-end/nginx.conf)
       - "80:80"
-      - "443:443"

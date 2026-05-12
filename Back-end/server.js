@@ -86,11 +86,9 @@ const shouldSync = String(process.env.DB_SYNC || '').toLowerCase() === 'true';
 
 const _gk = String(process.env.GEMINI_API_KEY || '').trim().replace(/^\uFEFF/, '');
 if (_gk) {
-  console.log(
-    `🔑 GEMINI_API_KEY loaded (len=${_gk.length}, prefix=${_gk.slice(0, 4)}…, starts AIza=${_gk.startsWith('AIza')})`
-  );
+  console.log('GEMINI_API_KEY: configured');
 } else {
-  console.warn('⚠️ GEMINI_API_KEY missing — AI onboarding / grading will fail until set in Back-end/.env');
+  console.warn('GEMINI_API_KEY missing — AI features need Back-end/.env');
 }
 
 const startServer = async () => {
