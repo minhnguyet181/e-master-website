@@ -35,7 +35,7 @@ Resource.init(
     },
 
     content: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT('medium'),
       allowNull: false,
       comment: 'Nội dung đầy đủ của tài liệu (dùng để chatbot tham khảo)'
     },
@@ -48,13 +48,25 @@ Resource.init(
 
     // ========== Classification ==========
     resource_type: {
-      type: DataTypes.ENUM('video', 'tip', 'grammar_rule', 'vocabulary', 'template', 'example'),
+      type: DataTypes.STRING(50),
       allowNull: false,
-      comment: 'Loại tài liệu: video, tip, grammar_rule, vocabulary, template, example'
+      comment: 'Loại tài liệu: grammar_rule, vocabulary, ielts_tip, toeic_tip, reference, example, template, article'
+    },
+
+    exam_type: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      comment: 'Loại kỳ thi: IELTS, TOEIC, general'
+    },
+
+    topic: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      comment: 'Chủ đề tự do của tài liệu'
     },
 
     skill: {
-      type: DataTypes.ENUM('reading', 'listening', 'writing', 'speaking', 'vocabulary', 'grammar', 'general'),
+      type: DataTypes.STRING(30),
       allowNull: false,
       comment: 'Kỹ năng liên quan'
     },
@@ -173,7 +185,9 @@ Resource.init(
       { fields: ['level'] },
       { fields: ['is_active'] },
       { fields: ['is_featured'] },
-      { fields: ['view_count'] }
+      { fields: ['view_count'] },
+      { fields: ['exam_type'] },
+      { fields: ['topic'] }
     ]
   }
 );

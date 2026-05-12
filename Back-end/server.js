@@ -4,9 +4,12 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const express = require('express');
 const cors = require('cors');
+const crypto = require('crypto');
 const sequelize = require('./src/config/db');
 const routes = require('./src/routes');
 const { applyTestV2Associations } = require('./src/models/testV2.associations');
+const { isQueueEnabled, registerWorkers, getQueues } = require('./src/services/queue.service');
+const { processGradingJob, processBookImportJob } = require('./src/services/jobProcessor.service');
 
 const app = express();
 
@@ -35,12 +38,40 @@ app.use(
   })
 );
 
-app.use(express.json());
+// Default 100kb is too small for admin import-resource (large PDF-derived content JSON).
+app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '15mb' }));
+
+// Request id for tracing
+app.use((req, res, next) => {
+  const id = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  req.id = id;
+  res.setHeader('X-Request-Id', id);
+  next();
+});
 
 app.use('/e-master', routes);
 
 // Health check endpoint for Docker/load balancer
-app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+app.get('/health', async (req, res) => {
+  try {
+    await sequelize.authenticate();
+    return res.status(200).json({ status: 'ok', db: 'ok' });
+  } catch (e) {
+    return res.status(500).json({ status: 'degraded', db: 'fail', message: e.message });
+  }
+});
+
+// AI env-only health (does not call provider)
+app.get('/health/ai', (req, res) => {
+  const key = String(process.env.GEMINI_API_KEY || '').trim().replace(/^\uFEFF/, '');
+  const model = String(process.env.GEMINI_MODEL || 'gemini-1.5-flash').trim();
+  return res.status(200).json({
+    status: key ? 'ok' : 'degraded',
+    provider: 'gemini',
+    gemini_api_key_configured: !!key,
+    gemini_model: model,
+  });
+});
 
 // Apply associations once at boot (doesn't hit DB)
 applyTestV2Associations();
@@ -65,6 +96,14 @@ const startServer = async () => {
     if (shouldSync) {
       await sequelize.sync();
       console.log('✅ Database synced (DB_SYNC=true)');
+    }
+
+    if (isQueueEnabled) {
+      getQueues();
+      registerWorkers({ processGradingJob, processBookImportJob });
+      console.log('✅ BullMQ workers initialized');
+    } else {
+      console.log('ℹ️ Queue mode disabled (set QUEUE_ENABLED=true to enable BullMQ)');
     }
 
     app.listen(1818, () => console.log('🚀 Server running on port 1818'));

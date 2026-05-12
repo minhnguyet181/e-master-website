@@ -10,7 +10,10 @@
 
 const User = require('../models/user.model');
 const Resource = require('../models/resource.model');
-const { generateLearningPlan } = require('./ai.service');
+const { generateLearningPlan, safeParseJsonObject } = require('./ai.service');
+const LearningPath = require('../models/learningPath.model');
+const LearningPathWeek = require('../models/learningPathWeek.model');
+const LearningPathProgress = require('../models/learningPathProgress.model');
 const { Op } = require('sequelize');
 
 /**
@@ -183,8 +186,9 @@ async function generateLearningPathFromBands(userId, options = {}) {
       learningPurpose: user.reason || 'General improvement'
     });
     
-    // Ensure aiPlan is an object
-    const planObject = typeof aiPlan === 'string' ? JSON.parse(aiPlan) : aiPlan;
+    // Ensure aiPlan is an object (never throw due to bad AI output)
+    const parsed = safeParseJsonObject(aiPlan);
+    const planObject = parsed.ok ? parsed.value : { raw: String(parsed.raw || aiPlan || '') };
     
     // Generate resources for each milestone
     console.log('📚 Generating resources for each milestone...');
@@ -245,8 +249,47 @@ async function generateLearningPathFromBands(userId, options = {}) {
       ai_plan: planObject,
       generated_at: new Date()
     };
-    
-    // Save to user's ai_recommendation
+
+    // Persist to DB (learning_paths + learning_path_weeks + progress)
+    // Deactivate older active paths for this user
+    await LearningPath.update({ status: 'paused' }, { where: { user_id: userId, status: 'active' } });
+
+    const lpRow = await LearningPath.create({
+      user_id: userId,
+      title: `Learning path: ${currentBand} → ${targetBand}`,
+      current_band: currentBand,
+      target_band: targetBand,
+      estimated_weeks: totalWeeks,
+      ai_generated_plan: learningPath, // store full snapshot (milestones/resources + ai plan)
+      status: 'active',
+      generated_at: new Date(),
+    });
+
+    // Create weeks from ai_plan.weekly_plan if available, else create a minimal 4-week shell
+    const weeklyPlan = Array.isArray(planObject?.weekly_plan) ? planObject.weekly_plan : [];
+    const weeksToCreate = weeklyPlan.length ? weeklyPlan.slice(0, 8) : Array.from({ length: 4 }).map((_, i) => ({ week: i + 1, goals: [], skills_focus: [] }));
+    for (const w of weeksToCreate) {
+      await LearningPathWeek.create({
+        learning_path_id: lpRow.id,
+        week_number: Number(w.week || w.week_number || 1),
+        focus_skills: w.skills_focus || w.focus_skills || null,
+        goals: w.goals || null,
+        resource_ids: (milestonesWithResources[0]?.resources || []).map((r) => r.id).slice(0, 5),
+        test_ids: null,
+        min_completion_rate: 0.7,
+      });
+    }
+
+    await LearningPathProgress.create({
+      user_id: userId,
+      learning_path_id: lpRow.id,
+      current_milestone_index: 0,
+      completed_milestone_indexes: [],
+      completion_rate: 0,
+      last_activity_at: new Date(),
+    });
+
+    // Backward-compat: also store snapshot in user.ai_recommendation for existing UI endpoints
     user.ai_recommendation = JSON.stringify(learningPath);
     await user.save();
     
@@ -258,6 +301,7 @@ async function generateLearningPathFromBands(userId, options = {}) {
     return {
       success: true,
       learning_path: learningPath,
+      learning_path_id: lpRow.id,
       message: `Learning path generated from ${currentBand} to ${targetBand}`
     };
     
@@ -279,25 +323,26 @@ async function generateLearningPathFromBands(userId, options = {}) {
 async function getLearningPath(userId) {
   try {
     const user = await User.findByPk(userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
-    
-    if (!user.ai_recommendation) {
+    if (!user) throw new Error('User not found');
+
+    const active = await LearningPath.findOne({ where: { user_id: userId, status: 'active' }, order: [['id', 'DESC']] });
+    if (active) {
+      const progress = await LearningPathProgress.findOne({ where: { user_id: userId, learning_path_id: active.id } });
       return {
-        success: false,
-        message: 'No learning path found. Please generate learning path first.'
+        success: true,
+        learning_path: active.ai_generated_plan || null,
+        learning_path_id: active.id,
+        progress: progress ? progress.toJSON() : null,
       };
     }
-    
-    const learningPath = typeof user.ai_recommendation === 'string' 
-      ? JSON.parse(user.ai_recommendation)
-      : user.ai_recommendation;
-    
-    return {
-      success: true,
-      learning_path: learningPath
-    };
+
+    // Fallback to legacy blob on user
+    if (!user.ai_recommendation) {
+      return { success: false, message: 'No learning path found. Please generate learning path first.' };
+    }
+    const legacyParsed = safeParseJsonObject(user.ai_recommendation);
+    if (!legacyParsed.ok) return { success: true, learning_path: { raw: String(user.ai_recommendation) } };
+    return { success: true, learning_path: legacyParsed.value };
     
   } catch (error) {
     console.error('❌ Error getting learning path:', error.message);
@@ -308,10 +353,47 @@ async function getLearningPath(userId) {
   }
 }
 
+async function completeMilestone({ userId, learningPathId, milestoneIndex }) {
+  const progress = await LearningPathProgress.findOne({ where: { user_id: userId, learning_path_id: learningPathId } });
+  if (!progress) throw new Error('Learning path progress not found');
+  const done = new Set(Array.isArray(progress.completed_milestone_indexes) ? progress.completed_milestone_indexes : []);
+  done.add(Number(milestoneIndex));
+
+  const active = await LearningPath.findByPk(learningPathId);
+  const total = Number(active?.ai_generated_plan?.total_milestones || active?.ai_generated_plan?.learning_path?.total_milestones || 0) || 0;
+  const completionRate = total > 0 ? Number((done.size / total).toFixed(2)) : 0;
+
+  progress.completed_milestone_indexes = Array.from(done).sort((a, b) => a - b);
+  progress.current_milestone_index = Math.max(progress.current_milestone_index, Number(milestoneIndex) + 1);
+  progress.completion_rate = completionRate;
+  progress.last_activity_at = new Date();
+  await progress.save();
+  return progress;
+}
+
+async function getRecommendationsForCurrentMilestone(userId) {
+  const active = await LearningPath.findOne({ where: { user_id: userId, status: 'active' }, order: [['id', 'DESC']] });
+  if (!active) return { success: false, message: 'No active learning path' };
+
+  const progress = await LearningPathProgress.findOne({ where: { user_id: userId, learning_path_id: active.id } });
+  const idx = Number(progress?.current_milestone_index || 0);
+  const lp = active.ai_generated_plan || {};
+  const milestones = lp.milestones || lp.learning_path?.milestones || [];
+  const current = milestones[idx] || milestones[milestones.length - 1] || null;
+  return {
+    success: true,
+    learning_path_id: active.id,
+    milestone_index: idx,
+    milestone: current,
+  };
+}
+
 module.exports = {
   generateLearningPathFromBands,
   getLearningPath,
   generateMilestones,
-  getResourcesForBand
+  getResourcesForBand,
+  completeMilestone,
+  getRecommendationsForCurrentMilestone,
 };
 

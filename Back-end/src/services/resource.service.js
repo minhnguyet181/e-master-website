@@ -11,6 +11,11 @@
 const Resource = require('../models/resource.model');
 const User = require('../models/user.model');
 const { Op } = require('sequelize');
+const { profileOperation } = require('../utils/queryProfiler');
+const { sanitizeStoredContentField } = require('../utils/strip-resource-promo');
+
+/** List/search responses omit full body — content can be very large (e.g. imported PDFs). */
+const LIST_ATTRS = { exclude: ['content'] };
 
 /**
  * Parse band string thành số để so sánh
@@ -81,9 +86,24 @@ function isResourceSuitableForBand(resourceLevel, userBand) {
  * @param {number} offset - Offset
  * @returns {Promise<Object>} - Filtered resources
  */
-async function getResourcesByBand(filters = {}, limit = 20, offset = 0) {
+function sanitizeSort(sortBy = 'featured') {
+  const sortMap = {
+    featured: [['is_featured', 'DESC'], ['view_count', 'DESC'], ['created_at', 'DESC']],
+    newest: [['created_at', 'DESC']],
+    oldest: [['created_at', 'ASC']],
+    popular: [['view_count', 'DESC'], ['created_at', 'DESC']],
+    rating: [['average_rating', 'DESC'], ['view_count', 'DESC']],
+  };
+  return sortMap[sortBy] || sortMap.featured;
+}
+
+async function getResourcesByBand(filters = {}, pagination = {}) {
   try {
-    const { band, skill, type } = filters;
+    const { band, skill, type, examType, topic } = filters;
+    const page = Math.max(parseInt(pagination.page || 1, 10), 1);
+    const limit = Math.min(Math.max(parseInt(pagination.limit || 20, 10), 1), 100);
+    const offset = (page - 1) * limit;
+    const order = sanitizeSort(pagination.sortBy);
 
     const whereClause = {
       is_active: true
@@ -99,34 +119,88 @@ async function getResourcesByBand(filters = {}, limit = 20, offset = 0) {
       whereClause.resource_type = type;
     }
 
-    // Get all active resources first
-    const allResources = await Resource.findAll({
-      where: whereClause,
-      order: [['is_featured', 'DESC'], ['view_count', 'DESC']]
-    });
+    if (examType) whereClause.exam_type = examType;
+    if (topic) whereClause.topic = topic;
 
-    // Filter by band nếu có
-    let filteredResources = allResources;
-    if (band) {
-      filteredResources = allResources.filter(resource => 
-        isResourceSuitableForBand(resource.level, band)
+    if (!band) {
+      const result = await profileOperation(
+        'resource.findAndCountAll',
+        () => Resource.findAndCountAll({
+          where: whereClause,
+          attributes: LIST_ATTRS,
+          order,
+          limit,
+          offset,
+        }),
+        { page, limit, sort: pagination.sortBy || 'featured', hasBandFilter: false }
       );
+
+      return {
+        success: true,
+        resources: result.rows,
+        total: result.count,
+        page,
+        limit,
+        hasMore: page * limit < result.count,
+        filter_applied: {
+          band: 'all',
+          skill: skill || 'all',
+          type: type || 'all',
+          examType: examType || 'all',
+          topic: topic || 'all',
+          sort: pagination.sortBy || 'featured',
+        }
+      };
     }
 
-    // Apply pagination
-    const paginatedResources = filteredResources.slice(offset, offset + limit);
+    // Band filter currently relies on application logic. Keep memory bounded by scanning in chunks.
+    const chunkSize = 200;
+    let scanOffset = 0;
+    let matchedTotal = 0;
+    const pagedRows = [];
+    let hasMoreRows = true;
+
+    while (hasMoreRows) {
+      const chunk = await profileOperation(
+        'resource.findAll.bandChunk',
+        () => Resource.findAll({
+          where: whereClause,
+          attributes: LIST_ATTRS,
+          order,
+          limit: chunkSize,
+          offset: scanOffset,
+        }),
+        { scanOffset, chunkSize, band }
+      );
+
+      if (!chunk.length) break;
+      scanOffset += chunk.length;
+      hasMoreRows = chunk.length === chunkSize;
+
+      for (const resource of chunk) {
+        if (!isResourceSuitableForBand(resource.level, band)) continue;
+        matchedTotal += 1;
+
+        if (matchedTotal > offset && pagedRows.length < limit) {
+          pagedRows.push(resource);
+        }
+      }
+    }
 
     return {
       success: true,
-      resources: paginatedResources,
-      total: filteredResources.length,
+      resources: pagedRows,
+      total: matchedTotal,
+      page,
       limit,
-      offset,
-      hasMore: (offset + limit) < filteredResources.length,
+      hasMore: page * limit < matchedTotal,
       filter_applied: {
         band: band || 'all',
         skill: skill || 'all',
-        type: type || 'all'
+        type: type || 'all',
+        examType: examType || 'all',
+        topic: topic || 'all',
+        sort: pagination.sortBy || 'featured',
       }
     };
 
@@ -149,7 +223,7 @@ async function getResourcesByBand(filters = {}, limit = 20, offset = 0) {
  * @param {number} limit - Limit
  * @returns {Promise<Object>} - Resources
  */
-async function getResourcesForUser(userId, options = {}, limit = 20) {
+async function getResourcesForUser(userId, options = {}, pagination = {}) {
   try {
     const user = await User.findByPk(userId);
     if (!user) {
@@ -173,10 +247,15 @@ async function getResourcesForUser(userId, options = {}, limit = 20) {
       {
         band: bandToUse,
         skill: options.skill,
-        type: options.type
+        type: options.type,
+        examType: options.examType,
+        topic: options.topic,
       },
-      limit,
-      options.offset || 0
+      {
+        page: pagination.page,
+        limit: pagination.limit,
+        sortBy: pagination.sortBy,
+      }
     );
 
   } catch (error) {
@@ -203,9 +282,12 @@ async function getResourceById(resourceId, incrementView = true) {
       await resource.save();
     }
 
+    const plain = resource.get({ plain: true });
+    if (plain.content) plain.content = sanitizeStoredContentField(plain.content);
+
     return {
       success: true,
-      resource
+      resource: plain
     };
 
   } catch (error) {
@@ -219,36 +301,54 @@ async function getResourceById(resourceId, incrementView = true) {
 /**
  * Search resources với band filtering
  */
-async function searchResources(query, filters = {}, limit = 20) {
+async function searchResources(query, filters = {}, pagination = {}) {
   try {
-    const { band, skill, type } = filters;
+    const { band, skill, type, examType, topic } = filters;
+    const page = Math.max(parseInt(pagination.page || 1, 10), 1);
+    const limit = Math.min(Math.max(parseInt(pagination.limit || 20, 10), 1), 100);
+    const offset = (page - 1) * limit;
+    const order = sanitizeSort(pagination.sortBy);
 
     const whereClause = {
       is_active: true,
       [Op.or]: [
-        { title: { [Op.iLike]: `%${query}%` } },
-        { content: { [Op.iLike]: `%${query}%` } }
+        { title: { [Op.like]: `%${query}%` } },
+        { content: { [Op.like]: `%${query}%` } }
       ]
     };
 
     if (skill) whereClause.skill = skill;
     if (type) whereClause.resource_type = type;
+    if (examType) whereClause.exam_type = examType;
+    if (topic) whereClause.topic = topic;
 
-    const allResources = await Resource.findAll({
-      where: whereClause,
-      order: [['is_featured', 'DESC'], ['view_count', 'DESC']]
-    });
+    const result = await profileOperation(
+      'resource.search.findAndCountAll',
+      () => Resource.findAndCountAll({
+        where: whereClause,
+        attributes: LIST_ATTRS,
+        order,
+        limit: band ? 500 : limit,
+        offset: band ? 0 : offset,
+      }),
+      { queryLength: query.length, page, limit, band: !!band }
+    );
 
-    // Filter by band
-    let filtered = allResources;
+    let rows = result.rows;
+    let total = result.count;
     if (band) {
-      filtered = allResources.filter(r => isResourceSuitableForBand(r.level, band));
+      const bandFiltered = rows.filter((r) => isResourceSuitableForBand(r.level, band));
+      total = bandFiltered.length;
+      rows = bandFiltered.slice(offset, offset + limit);
     }
 
     return {
       success: true,
-      resources: filtered.slice(0, limit),
-      total: filtered.length
+      resources: rows,
+      total,
+      page,
+      limit,
+      hasMore: page * limit < total,
     };
 
   } catch (error) {

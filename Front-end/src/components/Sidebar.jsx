@@ -9,6 +9,7 @@ import {
   faSpinner,
   faClock,
   faFolderOpen,
+  faChartLine,
 } from "@fortawesome/free-solid-svg-icons";
 import { faAirbnb } from "@fortawesome/free-brands-svg-icons";
 import "./Sidebar.css";
@@ -34,6 +35,9 @@ const Sidebar = () => {
         </li>
         <li>
           <Link to="/assistant" title="AI Assistant"><FontAwesomeIcon icon={faAirbnb} /> <span>AI Assistant</span></Link>
+        </li>
+        <li>
+          <Link to="/copilot" title="Study Copilot"><FontAwesomeIcon icon={faChartLine} /> <span>Study Copilot</span></Link>
         </li>
         
       

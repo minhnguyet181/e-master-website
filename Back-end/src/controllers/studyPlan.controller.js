@@ -1,6 +1,6 @@
 // src/controllers/studyPlan.controller.js
 const { validatePlanInput, buildAIPrompt } = require('../utils/studyPlanUtils');
-const { callOpenAIAPI } = require('../services/openai.service');
+const { callGemini } = require('../services/ai.service');
 const { handleResponse, handleError } = require('./base.controller');
 
 const generateStudyPlan = async (req, res) => {
@@ -13,7 +13,7 @@ const generateStudyPlan = async (req, res) => {
     const planPrompt = buildAIPrompt(req.body);
 
     // ===== CALL AI SERVICE =====
-    const planText = await callOpenAIAPI(planPrompt, { max_tokens: 1200 });
+    const planText = await callGemini(planPrompt, 1200);
 
     // Try to parse JSON result
     let plan;

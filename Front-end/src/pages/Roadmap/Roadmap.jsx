@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import '../Roadmap/Roadmap.css';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
+import api from '../../api/api';
 
 // --- ICONS ---
 // All icon components are defined here for simplicity.
@@ -48,70 +49,23 @@ const CheckIcon = () => (
 );
 
 
-// --- ROADMAP DATA (IELTS-focused) ---
-// Each milestone contains top-level highlights (items) and nested lessons (subLessons).
-const roadmapData = [
-  {
-    id: 1,
-    title: 'Foundation',
-    date: 'Now',
-    items: [
-      { title: 'Overview of IELTS format', skill: 'overview' },
-      { title: 'Set realistic band goals', skill: 'overview' }
-    ],
-    subLessons: [
-      { id: 'f-1', title: 'Introduction to IELTS (format & timing)', skill: 'overview', completed: true },
-      { id: 'f-2', title: 'Basic grammar & sentence structure', skill: 'writing', completed: false },
-      { id: 'f-3', title: 'Core vocabulary for daily topics', skill: 'speaking', completed: false },
-      { id: 'f-4', title: 'Pronunciation basics', skill: 'speaking', completed: false }
-    ]
-  },
-  {
-    id: 2,
-    title: 'Band 4–5: Building Foundations',
-    date: 'Short term',
-    items: [
-      { title: 'Listening strategies', skill: 'listening' },
-      { title: 'Basic speaking fluency', skill: 'speaking' }
-    ],
-    subLessons: [
-      { id: 'b45-1', title: 'Listening: identifying main ideas', skill: 'listening', completed: true },
-      { id: 'b45-2', title: 'Speaking: answering short questions', skill: 'speaking', completed: false },
-      { id: 'b45-3', title: 'Writing: task 1 basics', skill: 'writing', completed: false },
-      { id: 'b45-4', title: 'Reading: short texts & matching', skill: 'reading', completed: false }
-    ]
-  },
-  {
-    id: 3,
-    title: 'Band 6: Expand Accuracy',
-    date: 'Medium term',
-    items: [
-      { title: 'Complex sentence practice', skill: 'writing' },
-      { title: 'Band-targeted vocabulary', skill: 'reading' }
-    ],
-    subLessons: [
-      { id: 'b6-1', title: 'Speaking: structured Part 2 answers', skill: 'speaking', completed: false },
-      { id: 'b6-2', title: 'Writing: Task 2 opinion essays', skill: 'writing', completed: false },
-      { id: 'b6-3', title: 'Reading: skimming & scanning techniques', skill: 'reading', completed: false },
-      { id: 'b6-4', title: 'Listening: detail & inference', skill: 'listening', completed: false }
-    ]
-  },
-  {
-    id: 4,
-    title: 'Band 7+: Polished Performance',
-    date: 'Long term',
-    items: [
-      { title: 'Fluency & coherence mastery', skill: 'speaking' },
-      { title: 'Lexical resource refinement', skill: 'writing' }
-    ],
-    subLessons: [
-      { id: 'b7-1', title: 'Speaking: advanced discourse & idioms', skill: 'speaking', completed: false },
-      { id: 'b7-2', title: 'Writing: cohesive high-scoring essays', skill: 'writing', completed: false },
-      { id: 'b7-3', title: 'Listening: handling distractors', skill: 'listening', completed: false },
-      { id: 'b7-4', title: 'Reading: critical reading & paraphrase', skill: 'reading', completed: false }
-    ]
-  }
-];
+function mapLearningPathToRoadmapData(lp) {
+  const milestones = lp?.milestones || [];
+  return milestones.map((m, idx) => ({
+    id: idx + 1,
+    title: m.band || `Milestone ${idx + 1}`,
+    date: `~${m.estimated_weeks || 4} weeks`,
+    items: (m.focus_skills || []).slice(0, 2).map((s) => ({ title: `Focus: ${s}`, skill: s })),
+    subLessons: (m.resources || []).slice(0, 8).map((r) => ({
+      id: `m${idx}-r${r.id}`,
+      title: r.title,
+      skill: r.skill || 'general',
+      completed: false,
+      resource_id: r.id,
+    })),
+    __milestone_index: idx,
+  }));
+}
 
 // --- MILESTONE COMPONENT ---
 // Render milestone with IELTS skill icons for items and a full list of lessons.
@@ -177,16 +131,40 @@ const Milestone = ({ milestone, position, completedLessons }) => {
 };
 
 // --- ROADMAP COMPONENT ---
-const RoadmapComponent = ({ data = roadmapData }) => {
-  // Determine completed lessons from the data (demo). In a real app this comes from user profile/state.
-  const initialCompleted = React.useMemo(() => {
-    return data.flatMap(m => (m.subLessons || []).filter(s => s.completed).map(s => s.id));
-  }, [data]);
-  const [completedLessons, setCompletedLessons] = React.useState(initialCompleted);
+const RoadmapComponent = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [learningPath, setLearningPath] = useState(null);
+  const [learningPathId, setLearningPathId] = useState(null);
+  const [progress, setProgress] = useState(null);
+  const [completedLessons, setCompletedLessons] = useState([]);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const res = await api.learningPath.get();
+        const payload = res.data?.data || res.data;
+        const lp = payload?.learning_path?.learning_path || payload?.learning_path || payload?.learning_path?.ai_generated_plan || payload?.learning_path;
+        setLearningPath(payload?.learning_path || payload?.learning_path?.learning_path || payload?.learning_path?.ai_generated_plan || payload?.learning_path || null);
+        setLearningPathId(payload?.learning_path_id || payload?.learning_path?.learning_path_id || payload?.learning_path?.learning_path_id || null);
+        setProgress(payload?.progress || null);
+      } catch (e) {
+        setError(e.response?.data?.message || e.message || 'Failed to load learning path');
+        setLearningPath(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const roadmapData = useMemo(() => mapLearningPathToRoadmapData(learningPath), [learningPath]);
 
   // derive milestone status from completed lessons per milestone
   const processedData = useMemo(() => {
-    return data.map(milestone => {
+    return roadmapData.map(milestone => {
       const total = milestone.subLessons ? milestone.subLessons.length : 0;
       const doneCount = milestone.subLessons ? milestone.subLessons.filter(l => completedLessons.includes(l.id)).length : 0;
       let status = 'locked';
@@ -195,7 +173,7 @@ const RoadmapComponent = ({ data = roadmapData }) => {
       else status = 'locked';
       return { ...milestone, status };
     });
-  }, [data, completedLessons]);
+  }, [roadmapData, completedLessons]);
 
   // No expand/toggle state: lessons are always visible per user's request.
 
@@ -207,7 +185,16 @@ const RoadmapComponent = ({ data = roadmapData }) => {
         <main className="dashboard-main">
           <header className="app-header">
             <h1>Learning Roadmap</h1>
-            <p>Track your IELTS progress by milestone — lessons are shown for every milestone. Completed lessons are bold; locked lessons appear faded.</p>
+            {loading ? (
+              <p>Loading roadmap...</p>
+            ) : error ? (
+              <p style={{ color: '#d32f2f' }}>{error}</p>
+            ) : (
+              <p>
+                Current band: <strong>{learningPath?.current_band || '—'}</strong> → Target: <strong>{learningPath?.target_band || '—'}</strong>
+                {progress?.completion_rate != null ? ` • Completion: ${Math.round(Number(progress.completion_rate) * 100)}%` : ''}
+              </p>
+            )}
           </header>
 
           <div className="app-main">

@@ -1,8 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Resource.css';
 import ipaImage from '../../images copy/IPA.webp';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
+import api from '../../api/api';
+
+/** Render stored `content` (JSON bilingual or plain string). */
+function ResourceBody({ raw }) {
+  if (raw == null || raw === '') return <p className="lib-empty-body">Không có nội dung.</p>;
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && (parsed.en != null || parsed.vi != null)) {
+        return (
+          <div className="lib-bilingual">
+            {parsed.en != null && parsed.en !== '' && (
+              <section className="lib-lang-block">
+                <h4>English</h4>
+                <div className="lib-text-block">{parsed.en}</div>
+              </section>
+            )}
+            {parsed.vi != null && parsed.vi !== '' && (
+              <section className="lib-lang-block">
+                <h4>Tiếng Việt</h4>
+                <div className="lib-text-block">{parsed.vi}</div>
+              </section>
+            )}
+          </div>
+        );
+      }
+    } catch {
+      /* plain text */
+    }
+    return <div className="lib-text-block lib-text-plain">{raw}</div>;
+  }
+  return <pre className="lib-text-pre">{JSON.stringify(raw, null, 2)}</pre>;
+}
 
 // --- ICONS ---
 const ChevronDownIcon = ({ className }) => (
@@ -342,12 +375,87 @@ const PhonemeCard = ({ phoneme, categoryType }) => {
 
 const Resources = () => {
   const [openSections, setOpenSections] = useState({
+    recommended: true,
+    library: true,
     practice: true,
     pronunciation: false,
     grammar: true,
   });
 
   const [selectedArticle, setSelectedArticle] = useState(null);
+
+  const [libItems, setLibItems] = useState([]);
+  const [libLoading, setLibLoading] = useState(true);
+  const [libError, setLibError] = useState('');
+  const [detailRes, setDetailRes] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState('');
+
+  const [recLoading, setRecLoading] = useState(true);
+  const [recError, setRecError] = useState('');
+  const [recommended, setRecommended] = useState(null);
+
+  const loadRecommended = useCallback(async () => {
+    setRecLoading(true);
+    setRecError('');
+    try {
+      const { data } = await api.learningPath.recommendations();
+      if (data.success && data.data?.success) {
+        setRecommended(data.data);
+      } else if (data.success && data.data) {
+        setRecommended(data.data);
+      } else {
+        setRecError(data.message || 'Không tải được gợi ý theo lộ trình.');
+      }
+    } catch (e) {
+      setRecError(e.response?.data?.message || e.message || 'Lỗi khi tải gợi ý theo lộ trình.');
+    } finally {
+      setRecLoading(false);
+    }
+  }, []);
+
+  const loadLibrary = useCallback(async () => {
+    setLibLoading(true);
+    setLibError('');
+    try {
+      const { data } = await api.resources.listAll({ limit: 50, sort: 'newest', page: 1 });
+      if (data.success && Array.isArray(data.resources)) {
+        setLibItems(data.resources);
+      } else {
+        setLibError(data.error || 'Không tải được danh sách tài liệu.');
+      }
+    } catch (e) {
+      setLibError(e.response?.data?.message || e.message || 'Lỗi khi tải thư viện.');
+    } finally {
+      setLibLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadLibrary();
+    loadRecommended();
+  }, [loadLibrary, loadRecommended]);
+
+  const openResourceDetail = async (id) => {
+    setDetailRes(null);
+    setDetailError('');
+    setDetailLoading(true);
+    try {
+      const { data } = await api.resources.getById(id);
+      if (data.success && data.resource) setDetailRes(data.resource);
+      else setDetailError(data.error || 'Không tải được nội dung.');
+    } catch (e) {
+      setDetailError(e.response?.data?.message || e.message || 'Không mở được tài liệu.');
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
+  const closeDetail = () => {
+    setDetailRes(null);
+    setDetailLoading(false);
+    setDetailError('');
+  };
 
   const toggleSection = (section) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -372,6 +480,81 @@ const Resources = () => {
         <h1>Learning Resources</h1>
         <p>Your gateway to mastering English skills.</p>
       </header>
+
+      <Section
+        title="Gợi ý theo lộ trình của bạn"
+        icon={<span className="lib-section-emoji" aria-hidden>🎯</span>}
+        isOpen={openSections.recommended}
+        onToggle={() => toggleSection('recommended')}
+      >
+        {recLoading && <p className="lib-hint">Đang tải gợi ý theo lộ trình…</p>}
+        {recError && !recLoading && <p className="lib-error" role="alert">{recError}</p>}
+        {!recLoading && !recError && recommended?.milestone && (
+          <>
+            <p className="lib-hint">
+              Milestone hiện tại: <strong>{recommended.milestone.band || `#${(recommended.milestone_index || 0) + 1}`}</strong>
+            </p>
+            {Array.isArray(recommended.milestone.resources) && recommended.milestone.resources.length > 0 ? (
+              <ul className="lib-card-list">
+                {recommended.milestone.resources.map((r) => (
+                  <li key={r.id} className="lib-card">
+                    <div className="lib-card-main">
+                      <h4 className="lib-card-title">{r.title}</h4>
+                      {r.summary && <p className="lib-card-summary">{r.summary}</p>}
+                      <div className="lib-card-meta">
+                        {r.resource_type && <span className="lib-badge">{r.resource_type}</span>}
+                        {r.skill && <span className="lib-badge lib-badge-skill">{r.skill}</span>}
+                        {r.level && <span className="lib-badge">{r.level}</span>}
+                      </div>
+                    </div>
+                    <button type="button" className="lib-read-btn" onClick={() => openResourceDetail(r.id)}>
+                      Đọc
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="lib-hint">Chưa có tài liệu được gợi ý cho milestone này.</p>
+            )}
+          </>
+        )}
+      </Section>
+
+      <Section
+        title="Thư viện tài liệu"
+        icon={<span className="lib-section-emoji" aria-hidden>📚</span>}
+        isOpen={openSections.library}
+        onToggle={() => toggleSection('library')}
+      >
+        {libLoading && <p className="lib-hint">Đang tải tài liệu từ hệ thống…</p>}
+        {libError && !libLoading && (
+          <p className="lib-error" role="alert">{libError}</p>
+        )}
+        {!libLoading && !libError && libItems.length === 0 && (
+          <p className="lib-hint">Chưa có tài liệu nào trong thư viện. Admin có thể thêm từ mục Admin → Tài liệu / Tips.</p>
+        )}
+        {!libLoading && libItems.length > 0 && (
+          <ul className="lib-card-list">
+            {libItems.map((r) => (
+              <li key={r.id} className="lib-card">
+                <div className="lib-card-main">
+                  <h4 className="lib-card-title">{r.title}</h4>
+                  {r.summary && <p className="lib-card-summary">{r.summary}</p>}
+                  <div className="lib-card-meta">
+                    {r.resource_type && <span className="lib-badge">{r.resource_type}</span>}
+                    {r.skill && <span className="lib-badge lib-badge-skill">{r.skill}</span>}
+                    {r.exam_type && <span className="lib-badge lib-badge-exam">{r.exam_type}</span>}
+                    {r.is_featured && <span className="lib-badge lib-badge-star">⭐</span>}
+                  </div>
+                </div>
+                <button type="button" className="lib-read-btn" onClick={() => openResourceDetail(r.id)}>
+                  Đọc
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
       
       <Section
         title="Practice More Skills"
@@ -451,6 +634,35 @@ const Resources = () => {
         )}
       </Section>
           </div>
+
+          {(detailLoading || detailRes || detailError) && (
+            <div
+              className="lib-modal-overlay"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="lib-detail-title"
+              onClick={(e) => e.target === e.currentTarget && closeDetail()}
+            >
+              <div className="lib-modal" onClick={(e) => e.stopPropagation()}>
+                <button type="button" className="lib-modal-close" onClick={closeDetail} aria-label="Đóng">
+                  ×
+                </button>
+                {detailLoading && <p className="lib-hint">Đang mở tài liệu…</p>}
+                {!detailLoading && detailError && (
+                  <p className="lib-error" role="alert">{detailError}</p>
+                )}
+                {!detailLoading && detailRes && (
+                  <>
+                    <h2 id="lib-detail-title" className="lib-modal-title">{detailRes.title}</h2>
+                    {detailRes.summary && <p className="lib-modal-summary">{detailRes.summary}</p>}
+                    <div className="lib-modal-body">
+                      <ResourceBody raw={detailRes.content} />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>

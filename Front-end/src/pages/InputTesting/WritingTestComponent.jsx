@@ -1,8 +1,39 @@
 // src/components/WritingTestComponent.jsx (ví dụ)
 
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 const WritingTestComponent = ({ testContent, userAnswer, onAnswerChange, score, onSubmit }) => {
+    const resolveTaskLabel = (rawTaskType) => {
+        const raw = String(rawTaskType || "").trim();
+        if (!raw) return "Task 2";
+        if (/task\s*1/i.test(raw)) return "Task 1 Academic";
+        if (/task\s*2/i.test(raw)) return "Task 2";
+        return raw;
+    };
+
+    const taskLabel = resolveTaskLabel(testContent.task_type);
+
+    const imageCandidates = useMemo(() => {
+        const raw = testContent?.image_url;
+        if (!raw || typeof raw !== 'string') return [];
+        const trimmed = raw.trim();
+        if (!trimmed) return [];
+
+        const candidates = [trimmed];
+        if (trimmed.startsWith('image/')) {
+            candidates.push(`/data/${trimmed}`);
+        } else if (!trimmed.startsWith('/') && !/^https?:\/\//i.test(trimmed) && !trimmed.startsWith('data/')) {
+            candidates.push(`/data/image/${trimmed}`);
+        }
+        return Array.from(new Set(candidates));
+    }, [testContent?.image_url]);
+
+    const [imageIndex, setImageIndex] = useState(0);
+    const taskImageSrc = imageCandidates[imageIndex] || null;
+
+    useEffect(() => {
+        setImageIndex(0);
+    }, [testContent?.image_url]);
 
     
     // Đếm số từ
@@ -92,12 +123,21 @@ const WritingTestComponent = ({ testContent, userAnswer, onAnswerChange, score, 
 
             <div className="writing-prompt-box">
                 <h3 className="prompt-header">
-                    Đề bài (Task {testContent.task_type === 'task1' ? '1' : testContent.question_number || '2'})
+                    Đề bài ({taskLabel})
                 </h3>
                 {/* Task 1: hiển thị hình ảnh chart/graph */}
-                {testContent.image_url && (
+                {taskImageSrc && (
                     <div className="task1-image">
-                        <img src={testContent.image_url} alt="Task 1 chart" style={{ maxWidth: '100%', borderRadius: 8, marginBottom: 12 }} />
+                        <img
+                            src={taskImageSrc}
+                            alt="Task 1 chart"
+                            className="task1-image-img"
+                            onError={() => {
+                                if (imageIndex < imageCandidates.length - 1) {
+                                    setImageIndex((prev) => prev + 1);
+                                }
+                            }}
+                        />
                     </div>
                 )}
                 <div className="prompt-content">
@@ -109,7 +149,7 @@ const WritingTestComponent = ({ testContent, userAnswer, onAnswerChange, score, 
                 <h3 className="answer-header">Bài làm của bạn:</h3>
                 <textarea
                     className="writing-input"
-                    rows="20"
+                    rows="24"
                     placeholder="Bắt đầu viết bài luận của bạn tại đây..."
                     value={userAnswer}
                     onChange={(e) => onAnswerChange(e.target.value)}

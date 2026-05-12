@@ -14,6 +14,9 @@ const Dashboard = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [dailyPlan, setDailyPlan] = useState(null);
+  const [streak, setStreak] = useState({ current_streak: 0, best_streak: 0 });
+  const [lpSummary, setLpSummary] = useState(null);
   const [dashboardData, setDashboardData] = useState({
     overallProgress: 0,
     dailyStreak: 0,
@@ -47,35 +50,51 @@ const Dashboard = () => {
       setLoading(true);
       setError('');
       try {
-        // Fetch progress data
-        const response = await api.progress.getProgress();
-        const progressResult = response.data || response;
-        
-        if (progressResult && progressResult.data) {
-          setDashboardData({
-            overallProgress: progressResult.data.overallProgress || 0,
-            dailyStreak: progressResult.data.dailyStreak || 0,
-            skills: progressResult.data.skills || {
-              listening: 0,
-              reading: 0,
-              writing: 0,
-              speaking: 0
-            }
+        // Fetch daily plan + streak (authoritative for "Daily streak")
+        try {
+          const [planRes, streakRes] = await Promise.all([
+            api.dailyPlan.getToday(),
+            api.dailyPlan.getStreak(),
+          ]);
+          setDailyPlan(planRes.data?.data || planRes.data);
+          const s = streakRes.data?.data || streakRes.data;
+          setStreak({
+            current_streak: s?.current_streak || 0,
+            best_streak: s?.best_streak || 0,
           });
-          
-          // Set courses from progress data
-          if (progressResult.data.courses && Array.isArray(progressResult.data.courses)) {
-            setCourses(progressResult.data.courses);
-          }
-        } else {
-          // Fallback to default data if endpoint not ready
-          setDashboardData({
-            overallProgress: 0,
-            dailyStreak: 0,
-            skills: { listening: 0, reading: 0, writing: 0, speaking: 0 }
-          });
-          setCourses([]);
-          setError('Dashboard data unavailable. Make sure you are logged in.');
+        } catch (e) {
+          // daily plan is optional; keep dashboard usable
+          setDailyPlan(null);
+          setStreak({ current_streak: 0, best_streak: 0 });
+        }
+
+        // Fetch progress data (legacy shape in FE; backend currently returns weekly rows)
+        // Keep as best-effort: use weekly completion_rate as overallProgress approximation.
+        try {
+          const response = await api.progress.getProgress();
+          const progressRows = response.data?.data || response.data || [];
+          const first = Array.isArray(progressRows) ? progressRows[0] : null;
+          const overallProgress = first?.progress || 0;
+          setDashboardData((prev) => ({
+            ...prev,
+            overallProgress,
+            dailyStreak: streak?.current_streak || 0,
+          }));
+        } catch {
+          setDashboardData((prev) => ({ ...prev, overallProgress: 0, dailyStreak: streak?.current_streak || 0 }));
+        }
+
+        // Fetch learning path summary (next milestone)
+        try {
+          const lpRes = await api.learningPath.get();
+          const payload = lpRes.data?.data || lpRes.data;
+          const lp = payload?.learning_path?.learning_path || payload?.learning_path;
+          const milestones = lp?.milestones || [];
+          const idx = Number(payload?.progress?.current_milestone_index || 0);
+          const next = milestones[idx] || null;
+          setLpSummary({ next, idx, total: milestones.length });
+        } catch {
+          setLpSummary(null);
         }
       } catch (err) {
         console.error('Dashboard fetch error:', err);
@@ -103,6 +122,19 @@ const Dashboard = () => {
 
     fetchDashboardData();
   }, [navigate]);
+
+  const completedTaskIds = new Set(dailyPlan?.completed_task_ids || []);
+  const onCompleteDailyTask = async (task) => {
+    try {
+      const res = await api.dailyPlan.completeTask(task.id, dailyPlan?.plan_date);
+      setDailyPlan(res.data?.data || res.data);
+      const streakRes = await api.dailyPlan.getStreak();
+      const s = streakRes.data?.data || streakRes.data;
+      setStreak({ current_streak: s?.current_streak || 0, best_streak: s?.best_streak || 0 });
+    } catch (e) {
+      setError(e.response?.data?.message || e.message || 'Failed to complete task');
+    }
+  };
 
   const handleLoadMore = useCallback(() => {
     setPage(prev => prev + 1);
@@ -147,9 +179,72 @@ const Dashboard = () => {
             <div className="daily-streak-card">
               <div className="streak-icon">⚡</div>
               <h3>Daily streak</h3>
-              <span className="streak-number">{dashboardData.dailyStreak}</span>
+              <span className="streak-number">{streak.current_streak}</span>
+              <div style={{ marginTop: 6, color: '#6b7280', fontSize: 12 }}>
+                Best: {streak.best_streak}
+              </div>
             </div>
           </section>
+
+          {dailyPlan?.tasks && Array.isArray(dailyPlan.tasks) && (
+            <section className="daily-plan">
+              <div className="daily-plan-header">
+                <h2>Today’s plan</h2>
+                <span className="daily-plan-date">{dailyPlan.plan_date}</span>
+              </div>
+              <div className="daily-plan-list">
+                {dailyPlan.tasks.map((t) => {
+                  const done = completedTaskIds.has(t.id);
+                  return (
+                    <div key={t.id} className={`daily-task ${done ? 'daily-task--done' : ''}`}>
+                      <div className="daily-task-main">
+                        <div className="daily-task-title">{t.title}</div>
+                        <div className="daily-task-meta">
+                          {t.est_minutes ? `${t.est_minutes} min` : null}
+                          {t.skill ? ` • ${t.skill}` : null}
+                        </div>
+                        {t.note && <div className="daily-task-note">{t.note}</div>}
+                        {t.prompt_suggestion && (
+                          <div className="daily-task-note">
+                            Suggestion: <em>{t.prompt_suggestion}</em>
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        className="daily-task-btn"
+                        onClick={() => onCompleteDailyTask(t)}
+                        disabled={done}
+                      >
+                        {done ? 'Done' : 'Mark done'}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {lpSummary?.next && (
+            <section className="daily-plan">
+              <div className="daily-plan-header">
+                <h2>Next milestone</h2>
+                <span className="daily-plan-date">
+                  {lpSummary.idx + 1}/{lpSummary.total}
+                </span>
+              </div>
+              <div className="daily-task">
+                <div className="daily-task-main">
+                  <div className="daily-task-title">{lpSummary.next.band || 'Milestone'}</div>
+                  <div className="daily-task-meta">
+                    {(lpSummary.next.focus_skills || []).slice(0, 4).join(', ')}
+                  </div>
+                </div>
+                <button className="daily-task-btn" onClick={() => navigate('/roadmap')}>
+                  View roadmap
+                </button>
+              </div>
+            </section>
+          )}
           {/* Courses List */}
           <section className="courses-section">
             <div className="courses-list">

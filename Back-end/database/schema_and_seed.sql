@@ -528,7 +528,7 @@ CREATE TABLE `user_enrollments` (
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `onboarding_completed`, `current_band`, `band_target`)
 VALUES
   (1, 'demo_student', 'demo@emaster.local', '$2b$10$QeeOYUxosR9MJSyKrEc7GOAjc9JIiXt8O9PYiHvaXffTc4Z7hwIPK', 'student', 1, '5.5', '7.0'),
-  (2, 'admin_seed', 'admin@emaster.local', '$2b$10$QeeOYUxosR9MJSyKrEc7GOAjc9JIiXt8O9PYiHvaXffTc4Z7hwIPK', 'admin', 1, NULL, NULL);
+  (2, 'admin_seed', 'admin@gmail.com', '$2b$10$QeeOYUxosR9MJSyKrEc7GOAjc9JIiXt8O9PYiHvaXffTc4Z7hwIPK', 'admin', 1, NULL, NULL);
 
 INSERT INTO `programs` (`id`, `name`, `description`) VALUES
   (1, 'IELTS Academic Track', 'Lộ trình Academic: 4 kỹ năng + mock test'),

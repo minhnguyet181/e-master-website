@@ -3,10 +3,17 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/user.controller');
 const authenticate = require('./middlewares/auth.middleware');
+const { createRateLimiter, userOrIpKey } = require('./middlewares/rateLimit.middleware');
+
+const onboardingAiLimiter = createRateLimiter({
+  windowMs: 10 * 60 * 1000,
+  max: Number(process.env.ONBOARDING_AI_RATE_LIMIT_MAX || 10),
+  keyFn: userOrIpKey,
+});
 
 router.get('/user/profile', authenticate, UserController.getProfile);
 router.put('/user/update-profile', authenticate, UserController.updateProfile);
-router.post('/user/generate-plan', authenticate, UserController.generateLearningPlan);
+router.post('/user/generate-plan', authenticate, onboardingAiLimiter, UserController.generateLearningPlan);
 router.get('/user/recommended-resources', authenticate, UserController.getRecommendedResources);
 router.get('/user/courses', authenticate, UserController.getUserCourses);
 router.get('/user/courses/:id', authenticate, UserController.getUserCourseById);

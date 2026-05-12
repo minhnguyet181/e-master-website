@@ -3,6 +3,7 @@ const { handleResponse, handleError } = require('./base.controller');
 const { gradeTestAttempt } = require('../services/grading.service');
 const ProgressService = require('../services/progress.service');
 const { sendEvent } = require('../services/sse.service');
+const { isQueueEnabled, getQueues } = require('../services/queue.service');
 
 exports.getAll = async (req, res) => {
   try {
@@ -62,7 +63,36 @@ exports.gradeTest = async (req, res) => {
 
     if (!testId) return res.status(400).json({ message: 'testId is required' });
 
-    // Realtime: start
+    if (isQueueEnabled) {
+      const { gradingQueue } = getQueues() || {};
+      if (!gradingQueue) {
+        return res.status(503).json({ success: false, message: 'Grading queue unavailable' });
+      }
+
+      const job = await gradingQueue.add(
+        'grade-test-attempt',
+        {
+          userId,
+          testId,
+          answers,
+          rubricVer: req.body.rubric_ver || 'v1',
+          aiProvider: req.body.ai_provider || 'gemini',
+        },
+        {
+          removeOnComplete: { age: 24 * 3600, count: 1000 },
+          removeOnFail: { age: 7 * 24 * 3600, count: 1000 },
+        }
+      );
+
+      sendEvent(userId, 'grading_queued', { test_id: testId, job_id: job.id, ts: Date.now() });
+      return res.status(202).json({
+        success: true,
+        message: 'Grading has been queued',
+        job_id: job.id,
+      });
+    }
+
+    // Fallback synchronous grading when queue is disabled.
     sendEvent(userId, 'grading_started', { test_id: testId, ts: Date.now() });
 
     const { attempt, result, cacheHit } = await gradeTestAttempt({
@@ -92,5 +122,30 @@ exports.gradeTest = async (req, res) => {
     handleResponse(res, { attempt_id: attempt.id, cache_hit: cacheHit, result, progress }, 'Graded');
   } catch (err) {
     handleError(res, err);
+  }
+};
+
+exports.getGradeJobStatus = async (req, res) => {
+  try {
+    if (!isQueueEnabled) {
+      return res.status(400).json({ success: false, message: 'Queue mode is disabled. Set QUEUE_ENABLED=true.' });
+    }
+    const { gradingQueue } = getQueues() || {};
+    if (!gradingQueue) return res.status(503).json({ success: false, message: 'Grading queue unavailable' });
+
+    const job = await gradingQueue.getJob(req.params.jobId);
+    if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
+    const state = await job.getState();
+
+    return res.status(200).json({
+      success: true,
+      job_id: job.id,
+      state,
+      progress: job.progress || null,
+      result: job.returnvalue || null,
+      failed_reason: job.failedReason || null,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
 };

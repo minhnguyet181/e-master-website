@@ -9,6 +9,48 @@ import WritingTestComponent from "./WritingTestComponent";
 import ReadingTestLayout from "./ReadingTestLayout";
 import ListeningTestLayout from "./ListeningTestLayout";
 
+const normalizeSectionImageUrl = (rawUrl) => {
+  if (!rawUrl || typeof rawUrl !== "string") return null;
+  const trimmed = rawUrl.trim();
+  if (!trimmed) return null;
+
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("data:")) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith("/")) return trimmed;
+  if (trimmed.startsWith("image/")) return `/data/${trimmed}`;
+  if (trimmed.startsWith("data/")) return `/${trimmed}`;
+  return trimmed;
+};
+
+const flattenQuestionCount = (testData) => {
+  if (!testData) return 0;
+  const fromSections = (testData.sections || []).reduce(
+    (sum, s) => sum + ((s.questions || []).length),
+    0
+  );
+  const topLevel = Array.isArray(testData.questions) ? testData.questions.length : 0;
+  return Math.max(fromSections, topLevel);
+};
+
+const withListeningAnswerKeys = (testData, sourceTestId) => {
+  if (!testData || testData.test_type !== "listening") return testData;
+  const sections = (testData.sections || []).map((section, sIdx) => {
+    const questions = (section.questions || []).map((q, qIdx) => ({
+      ...q,
+      __sourceTestId: sourceTestId,
+      __answerKey: q.public_id || `${sourceTestId}-${sIdx + 1}-${q.question_no || qIdx + 1}-${qIdx}`,
+    }));
+    return {
+      ...section,
+      __sourceTestId: sourceTestId,
+      questions,
+    };
+  });
+  return { ...testData, sections };
+};
+
 const InputTesting = () => {
   const navigate = useNavigate();
   const [selectedSkill, setSelectedSkill] = useState(null);
@@ -18,8 +60,48 @@ const InputTesting = () => {
   const [score, setScore] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [gradingJob, setGradingJob] = useState(null);
   const [visibleExtra, setVisibleExtra] = useState(6);
   const [testList, setTestList] = useState([]);
+
+  const gradeTestWithQueueSupport = async ({ testId, answers }) => {
+    const res = await api.test.gradeTest({ testId, answers });
+
+    // Queue mode: backend returns 202 { success, job_id }
+    if (res.status === 202 && res.data?.job_id) {
+      const jobId = res.data.job_id;
+      setGradingJob({ jobId, state: "queued" });
+
+      const startedAt = Date.now();
+      const timeoutMs = 5 * 60 * 1000; // 5 minutes
+
+      // Simple polling loop (no SSE on FE yet)
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        if (Date.now() - startedAt > timeoutMs) {
+          throw new Error("Grading is taking too long. Please try again later.");
+        }
+
+        await new Promise((r) => setTimeout(r, 1500));
+        const st = await api.test.getGradeJobStatus(jobId);
+        const state = st.data?.state;
+        setGradingJob({ jobId, state });
+
+        if (state === "completed") {
+          setGradingJob(null);
+          return st.data?.result;
+        }
+        if (state === "failed") {
+          setGradingJob(null);
+          const reason = st.data?.failed_reason || "Grading job failed";
+          throw new Error(reason);
+        }
+      }
+    }
+
+    // Synchronous mode: backend returns handleResponse(...) with payload in res.data.data
+    return res.data?.data || res.data;
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -84,7 +166,48 @@ const InputTesting = () => {
     try {
       const res = await api.test.getTest(id);
       // Backend returns: { success: true, data: { id, name, test_type, sections: [...], questions: [...] } }
-      const testData = res.data?.data || res.data;
+      let testData = res.data?.data || res.data;
+
+      if (testData?.test_type === "listening") {
+        const selectedId = Number(id);
+        const sortedListeningIds = testList
+          .filter((t) => t.test_type === "listening")
+          .map((t) => Number(t.id))
+          .filter((n) => Number.isFinite(n))
+          .sort((a, b) => a - b);
+        const currentIndex = sortedListeningIds.indexOf(selectedId);
+
+        let mergedSections = [
+          ...(withListeningAnswerKeys(testData, selectedId).sections || []),
+        ];
+        const partIds = [selectedId];
+        let totalQuestions = flattenQuestionCount(testData);
+
+        if (currentIndex !== -1 && totalQuestions < 40) {
+          for (let i = currentIndex + 1; i < sortedListeningIds.length && totalQuestions < 40; i += 1) {
+            const partId = sortedListeningIds[i];
+            const partRes = await api.test.getTest(partId);
+            const partDataRaw = partRes.data?.data || partRes.data;
+            if (partDataRaw?.test_type !== "listening") continue;
+
+            const partData = withListeningAnswerKeys(partDataRaw, partId);
+            mergedSections = [...mergedSections, ...(partData.sections || [])];
+            partIds.push(partId);
+            totalQuestions += flattenQuestionCount(partData);
+          }
+        }
+
+        testData = {
+          ...testData,
+          sections: mergedSections.map((s, idx) => ({
+            ...s,
+            section_no: idx + 1,
+            title: s.title || `Section ${idx + 1}`,
+          })),
+          __compositePartIds: partIds,
+        };
+      }
+
       setTestContent(testData);
     } catch (err) {
       console.error("❌ Error loading test:", err);
@@ -152,6 +275,7 @@ const InputTesting = () => {
 
     setLoading(true);
     setError("");
+    setGradingJob(null);
 
     try {
       // Normalize answers per test type
@@ -162,10 +286,44 @@ const InputTesting = () => {
       } else if (testContent.test_type === "speaking") {
         const text = typeof userAnswers === "string" ? userAnswers : userAnswers.transcript || userAnswers.text || "";
         answers = { transcript: text };
+      } else if (
+        testContent.test_type === "listening" &&
+        Array.isArray(testContent.__compositePartIds) &&
+        testContent.__compositePartIds.length > 1
+      ) {
+        let correct = 0;
+        let total = 0;
+        const detail = [];
+
+        for (const partId of testContent.__compositePartIds) {
+          const partAnswers = {};
+          (testContent.sections || []).forEach((section) => {
+            (section.questions || []).forEach((q) => {
+              if (q.__sourceTestId !== partId) return;
+              const key = q.__answerKey || q.public_id || String(q.question_no);
+              const value = userAnswers[key];
+              if (value !== undefined && value !== null && value !== "") {
+                partAnswers[String(q.question_no)] = value;
+              }
+            });
+          });
+
+          const partPayload = await gradeTestWithQueueSupport({ testId: partId, answers: partAnswers });
+          const partResult = partPayload?.result || partPayload;
+          correct += Number(partResult.correct || 0);
+          total += Number(partResult.total || 0);
+          if (Array.isArray(partResult.detail)) {
+            detail.push(...partResult.detail.map((d) => ({ ...d, source_test_id: partId })));
+          }
+        }
+
+        const compositeScore = total > 0 ? correct / total : 0;
+        setScore({ correct, total, score: compositeScore, detail, composite: true });
+        return;
       }
 
-      const res = await api.test.gradeTest({ testId, answers });
-      const result = res.data?.data?.result || res.data?.data || res.data;
+      const payload = await gradeTestWithQueueSupport({ testId, answers });
+      const result = payload?.result || payload;
 
       if (result.correct !== undefined && result.total !== undefined) {
         setScore({ correct: result.correct, total: result.total, score: result.score, ...result });
@@ -176,7 +334,7 @@ const InputTesting = () => {
       }
     } catch (err) {
       console.error("❌ Error grading test:", err);
-      setError(err.response?.data?.message || "Cannot grade test");
+      setError(err.response?.data?.message || err.message || "Cannot grade test");
     } finally {
       setLoading(false);
     }
@@ -206,7 +364,8 @@ const InputTesting = () => {
         testContent.description ||
         "";
       // Lấy image nếu là Task 1
-      const taskImage = firstSection?.image_url || firstSection?.media?.image || null;
+      const taskImageRaw = firstSection?.image_url || firstSection?.media?.image || null;
+      const taskImage = normalizeSectionImageUrl(taskImageRaw);
       const userAnswer =
         typeof userAnswers === "string"
           ? userAnswers
@@ -216,12 +375,15 @@ const InputTesting = () => {
         <WritingTestComponent
           testContent={{
             name: testContent.name,
-            task_type: testContent.task_type, // task1 | task2
+            task_type:
+              firstSection?.content?.task_type ||
+              firstSection?.title ||
+              testContent.task_type ||
+              null,
             duration_minutes: testContent.duration_minutes,
             points: firstQuestion?.points || 250,
             content: typeof writingPrompt === "object" ? JSON.stringify(writingPrompt) : writingPrompt,
             image_url: taskImage,
-            question_number: testContent.task_type || firstSection?.title || "2",
             hint: firstQuestion?.metadata?.sample_answer || null,
             info: { name: testContent.name },
           }}
@@ -364,7 +526,9 @@ const InputTesting = () => {
         <Navbar />
         <div className="main-layout">
           <Sidebar />
-          <main className="test-content">
+          <main
+            className={`test-content ${testContent.test_type === "writing" ? "test-content--writing" : ""}`}
+          >
             <div className="exam-header">
               <button
                 className="back-btn"
@@ -382,6 +546,11 @@ const InputTesting = () => {
               </h2>
               {error && <p className="error">{error}</p>}
               {loading && !score && <p>Loading...</p>}
+              {gradingJob?.jobId && (
+                <p style={{ marginTop: 6, color: "#6b7280" }}>
+                  AI grading: {gradingJob.state || "queued"} (job #{gradingJob.jobId})
+                </p>
+              )}
             </div>
 
             {renderTestContent()}
