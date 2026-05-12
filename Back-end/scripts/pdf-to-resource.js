@@ -23,6 +23,7 @@ const path = require('path');
 const pdfParse = require('pdf-parse');
 const axios = require('axios');
 const { validateResourceJSON, RESOURCE_TYPES, SKILLS, EXAM_TYPES } = require('../src/utils/resource-schema');
+const { geminiGenerateContentUrl } = require('../src/utils/geminiApi');
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -64,7 +65,7 @@ async function callGemini(prompt, maxTokens = 8192) {
   const key = normalizeGeminiKey(process.env.GEMINI_API_KEY);
   if (!key) throw new Error('GEMINI_API_KEY not set in .env');
   const model = (process.env.GEMINI_MODEL || 'gemini-1.5-flash').trim();
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+  const url = geminiGenerateContentUrl(model, key);
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {

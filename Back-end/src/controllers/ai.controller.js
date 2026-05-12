@@ -1,5 +1,6 @@
 // src/controllers/ai.controller.js
 const AIService = require('../services/ai.service');
+const { getGeminiApiVersion } = require('../utils/geminiApi');
 const { handleResponse, handleError } = require('./base.controller');
 
 function safeKeyMeta(raw) {
@@ -26,6 +27,7 @@ exports.getAIConfig = async (req, res) => {
         gemini: {
           api_key: keyMeta,
           model,
+          api_version: getGeminiApiVersion(),
         },
         huggingface: {
           configured: hfConfigured,

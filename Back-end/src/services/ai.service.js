@@ -4,6 +4,7 @@ require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 const axios = require('axios');
 const AICache = require('../models/aiCache.model');
 const { hashJsonStable } = require('../utils/hashUtils');
+const { geminiGenerateContentUrl } = require('../utils/geminiApi');
 
 /** Chuẩn hóa key: trim, bỏ BOM UTF-8, bỏ ngoặc, không dùng URL làm key; sửa typo thừa "y" trước AIza */
 function normalizeGeminiApiKey(raw) {
@@ -30,7 +31,7 @@ function normalizeGeminiApiKey(raw) {
 
 const GEMINI_KEY = normalizeGeminiApiKey(process.env.GEMINI_API_KEY);
 const HF_TOKEN = process.env.HF_TOKEN || '';
-/** Model: gemini-1.5-flash ổn định với API key thường; đổi qua GEMINI_MODEL nếu cần */
+/** Model id (GEMINI_MODEL); API path version = GEMINI_API_VERSION (mặc định v1). */
 const GEMINI_MODEL = (process.env.GEMINI_MODEL || 'gemini-1.5-flash').trim();
 const AI_CACHE_TTL_MINUTES = Number(process.env.AI_CACHE_TTL_MINUTES || 60);
 
@@ -104,7 +105,7 @@ async function callGemini(prompt, maxTokens = 800, retries = 3) {
     throw new Error('Prompt cannot be empty');
   }
   
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(GEMINI_KEY)}`;
+  const url = geminiGenerateContentUrl(GEMINI_MODEL, GEMINI_KEY);
   const body = {
     contents: [
       {

@@ -10,6 +10,7 @@ const routes = require('./src/routes');
 const { applyTestV2Associations } = require('./src/models/testV2.associations');
 const { isQueueEnabled, registerWorkers, getQueues } = require('./src/services/queue.service');
 const { processGradingJob, processBookImportJob } = require('./src/services/jobProcessor.service');
+const { getGeminiApiVersion } = require('./src/utils/geminiApi');
 
 const app = express();
 
@@ -49,20 +50,17 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/e-master', routes);
-
-// Health check endpoint for Docker/load balancer
-app.get('/health', async (req, res) => {
+// Health (đăng ký TRƯỚC app.use('/e-master', …) để /e-master/health không bị nuốt bởi router)
+async function healthHandler(req, res) {
   try {
     await sequelize.authenticate();
     return res.status(200).json({ status: 'ok', db: 'ok' });
   } catch (e) {
     return res.status(500).json({ status: 'degraded', db: 'fail', message: e.message });
   }
-});
+}
 
-// AI env-only health (does not call provider)
-app.get('/health/ai', (req, res) => {
+function healthAiHandler(req, res) {
   const key = String(process.env.GEMINI_API_KEY || '').trim().replace(/^\uFEFF/, '');
   const model = String(process.env.GEMINI_MODEL || 'gemini-1.5-flash').trim();
   return res.status(200).json({
@@ -70,8 +68,16 @@ app.get('/health/ai', (req, res) => {
     provider: 'gemini',
     gemini_api_key_configured: !!key,
     gemini_model: model,
+    gemini_api_version: getGeminiApiVersion(),
   });
-});
+}
+
+app.get('/health', healthHandler);
+app.get('/health/ai', healthAiHandler);
+app.get('/e-master/health', healthHandler);
+app.get('/e-master/health/ai', healthAiHandler);
+
+app.use('/e-master', routes);
 
 // Apply associations once at boot (doesn't hit DB)
 applyTestV2Associations();

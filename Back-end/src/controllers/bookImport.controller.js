@@ -28,6 +28,7 @@ const TestSection = require('../models/testSection.model');
 const TestQuestion = require('../models/testQuestion.model');
 const { applyTestV2Associations } = require('../models/testV2.associations');
 const { isQueueEnabled, getQueues } = require('../services/queue.service');
+const { geminiGenerateContentUrl } = require('../utils/geminiApi');
 const NO_AI_IMPORT = ['1', 'true', 'yes', 'on'].includes(String(process.env.NO_AI_IMPORT || '').toLowerCase());
 
 // ── AI helpers ────────────────────────────────────────────────────────────────
@@ -62,7 +63,7 @@ async function callGemini(prompt) {
   const key = normalizeGeminiKey(process.env.GEMINI_API_KEY);
   if (!key) throw new Error('GEMINI_API_KEY not set');
   const model = (process.env.GEMINI_MODEL || 'gemini-1.5-flash').trim();
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+  const url = geminiGenerateContentUrl(model, key);
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
