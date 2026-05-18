@@ -78,6 +78,9 @@ jobs:
 
       # ── Frontend image ──
       - name: Build & push frontend
+        env:
+          # Same-origin qua nginx; override secret nếu cần URL tuyệt đối
+          REACT_APP_BACKEND_URL: ${{ secrets.REACT_APP_BACKEND_URL || '/e-master' }}
         uses: docker/build-push-action@v5
         with:
           context: ./Front-end
@@ -86,7 +89,7 @@ jobs:
             ${{ env.DOCKER_REGISTRY }}/emaster-frontend:${{ env.IMAGE_TAG }}
             ${{ env.DOCKER_REGISTRY }}/emaster-frontend:latest
           build-args: |
-            REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }}
+            REACT_APP_BACKEND_URL=${{ env.REACT_APP_BACKEND_URL }}
             REACT_APP_GOOGLE_CLIENT_ID=${{ secrets.REACT_APP_GOOGLE_CLIENT_ID }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

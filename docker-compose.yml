@@ -54,9 +54,8 @@ services:
       context: ./Front-end
       dockerfile: Dockerfile
       args:
-        # Dev Docker mặc định dùng backend local container qua host port 1818.
-        # Production thì truyền REACT_APP_BACKEND_URL=https://e-master.id.vn/e-master.
-        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-http://localhost:1818/e-master}
+        # Same-origin /e-master khi chạy sau nginx (prod). Dev local: http://localhost:1818/e-master
+        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-/e-master}
         REACT_APP_GOOGLE_CLIENT_ID: ${REACT_APP_GOOGLE_CLIENT_ID:-}
     container_name: emaster-frontend
     restart: unless-stopped
@@ -67,6 +66,12 @@ services:
         condition: service_healthy
     networks:
       - emaster-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/e-master/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
 volumes:
   mysql_data:

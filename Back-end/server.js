@@ -17,6 +17,7 @@ const app = express();
 const corsAllowed = new Set(
   [
     process.env.FRONTEND_URL,
+    'https://e-master.id.vn',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:3001',
@@ -50,7 +51,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health (đăng ký TRƯỚC app.use('/e-master', …) để /e-master/health không bị nuốt bởi router)
+// Health — path gốc /health; nginx map /e-master/health → /health khi qua frontend container
 async function healthHandler(req, res) {
   try {
     await sequelize.authenticate();
@@ -74,8 +75,6 @@ function healthAiHandler(req, res) {
 
 app.get('/health', healthHandler);
 app.get('/health/ai', healthAiHandler);
-app.get('/e-master/health', healthHandler);
-app.get('/e-master/health/ai', healthAiHandler);
 
 app.use('/e-master', routes);
 

@@ -18,8 +18,8 @@ npm run db:migrate
 ```
 
 ### Health checks
-- `GET /health` (includes DB status)
-- `GET /health/ai` (env-only AI config check)
+- Backend container: `GET /health`, `GET /health/ai`
+- Qua frontend nginx (production): `GET /e-master/health` → proxy tới `/health`
 
 ### Smoke test
 From `Back-end/`:
