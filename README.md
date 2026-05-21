@@ -1,32 +1,64 @@
 # e-master-website
-Website for self-study English
 
-## Production MVP checklist (managed services)
+Ứng dụng tự học tiếng Anh — React + Express + MySQL.
 
-### Backend env
-- **DB**: `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_PORT`, `DB_NAME`
-- **Auth**: `JWT_SECRET`, `JWT_EXPIRES_IN`
-- **AI (Gemini)**: `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-1.5-flash`
-- **Optional**: `AI_CACHE_TTL_MINUTES`, `AI_RATE_LIMIT_MAX`, `ONBOARDING_AI_RATE_LIMIT_MAX`, `GRADING_RATE_LIMIT_MAX`
-- **CORS**: `FRONTEND_URL`
+## Cấu trúc
 
-### Migrations
-Run in `Back-end/`:
+```
+├── Back-end/          API (Express, Sequelize)
+├── Front-end/         React + nginx (production)
+├── deploy/            Script & env production (server)
+├── docker-compose.yml       Dev / build local
+├── docker-compose.prod.yml  Production (3 container)
+└── .github/workflows/       CI build image + deploy
+```
+
+## Dev local (Docker)
+
+```bash
+cp .env.example .env
+cp Back-end/.env.example Back-end/.env
+# Chỉnh Back-end/.env — DB_PASS khớp .env
+
+docker compose up -d --build
+# FE: http://localhost:3000  API: http://localhost:1818/e-master
+```
+
+Hot-reload FE:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
+
+## Production
+
+Xem [deploy/README.md](deploy/README.md) — server `161.248.147.104`, domain [https://e-master.id.vn](https://e-master.id.vn).
+
+```bash
+./deploy/deploy.sh
+./deploy/deploy.sh backend   # cập nhật API, không đổi FE image
+```
+
+## Env quan trọng
+
+| Biến | Nơi đặt | Ghi chú |
+|------|---------|---------|
+| `DB_PASS`, `DB_NAME` | `.env` (dev) / `deploy/env/compose.env` (prod) | Khớp MySQL root |
+| `JWT_SECRET` | `Back-end/.env` / `deploy/env/backend.env` | Bắt buộc production |
+| `GEMINI_API_KEY` | backend env | AI grading/chat |
+| `FRONTEND_URL` | backend env | CORS — `https://e-master.id.vn` |
+| `REACT_APP_BACKEND_URL` | build-arg FE | Prod: `/e-master` (same-origin) |
+| `REACT_APP_GOOGLE_CLIENT_ID` | CI secret / build-arg | OAuth |
+
+## Migrations
+
+Chạy tự động khi backend container start (`npm run db:migrate`). Thủ công trong `Back-end/`:
 
 ```bash
 npm run db:migrate
 ```
 
-### Health checks
-- Backend container: `GET /health`, `GET /health/ai`
-- Qua frontend nginx (production): `GET /e-master/health` → proxy tới `/health`
+## Health
 
-### Smoke test
-From `Back-end/`:
-
-```bash
-export BACKEND_URL="http://localhost:1818/e-master"
-export USER_EMAIL="your_user@example.com"
-export USER_PASSWORD="your_password"
-bash scripts/smoke-test.sh
-```
+- Backend: `GET /health`
+- Qua nginx: `GET /e-master/health`

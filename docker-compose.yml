@@ -1,11 +1,18 @@
+# Local / CI build — 3 service: mysql + backend + frontend
+#   cp .env.example .env && cp Back-end/.env.example Back-end/.env
+#   docker compose up -d --build
+#
+# Hot-reload FE: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+name: emaster
+
 services:
-  # ── MySQL ──────────────────────────────────────────────────────
   mysql:
     image: mysql:8.0
     container_name: emaster-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASS:-moon123}
+      MYSQL_ROOT_PASSWORD: ${DB_PASS:?Set DB_PASS in .env}
       MYSQL_DATABASE: ${DB_NAME:-e-master}
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
@@ -15,7 +22,7 @@ services:
     networks:
       - emaster-net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASS:-moon123}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASS}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,16 +32,15 @@ services:
     build:
       context: ./Back-end
       dockerfile: Dockerfile
+    image: emaster-backend:local
     container_name: emaster-backend
     restart: unless-stopped
     env_file:
       - ./Back-end/.env
     environment:
-      # Trong network Docker, MySQL service luôn là cổng 3306 (3307 chỉ là map ra máy host)
       DB_HOST: mysql
-      DB_PORT: 3306
-      NO_AI_IMPORT: ${NO_AI_IMPORT:-true}
-      RESOURCE_PARSE_USE_AI: ${RESOURCE_PARSE_USE_AI:-false}
+      DB_PORT: "3306"
+      NODE_ENV: development
     ports:
       - "1818:1818"
     depends_on:
@@ -54,9 +60,9 @@ services:
       context: ./Front-end
       dockerfile: Dockerfile
       args:
-        # Same-origin /e-master khi chạy sau nginx (prod). Dev local: http://localhost:1818/e-master
         REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-/e-master}
         REACT_APP_GOOGLE_CLIENT_ID: ${REACT_APP_GOOGLE_CLIENT_ID:-}
+    image: emaster-frontend:local
     container_name: emaster-frontend
     restart: unless-stopped
     ports:
@@ -75,8 +81,8 @@ services:
 
 volumes:
   mysql_data:
-    driver: local
+    name: emaster_mysql_data
 
 networks:
   emaster-net:
-    driver: bridge
+    name: emaster-net

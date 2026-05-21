@@ -1,0 +1,20 @@
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+Back-end/.env
+Front-end/.env
+deploy/env/backend.env
+deploy/env/compose.env
+
+# Dependencies & build artifacts
+node_modules/
+Back-end/node_modules/
+Front-end/node_modules/
+Front-end/build/
+
+# OS / IDE
+.DS_Store
+*.log
+.idea/
+.vscode/
