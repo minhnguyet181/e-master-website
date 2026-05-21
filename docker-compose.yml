@@ -8,7 +8,7 @@ name: emaster
 
 services:
   mysql:
-    image: mysql:8.0
+    image: ${MYSQL_IMAGE:-mysql:8.0}
     container_name: emaster-mysql
     restart: unless-stopped
     environment:

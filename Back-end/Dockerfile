@@ -15,13 +15,16 @@ RUN apk add --no-cache wget
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+RUN chmod +x docker-entrypoint.sh
+
 # Don't run as root
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup \
+  && chown -R appuser:appgroup /app
 USER appuser
 
 EXPOSE 1818
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=5 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=6 \
   CMD wget -qO- http://127.0.0.1:1818/health || exit 1
 
-CMD ["sh", "-c", "npm run db:migrate && node server.js"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

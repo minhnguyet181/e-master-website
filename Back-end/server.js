@@ -111,7 +111,8 @@ const startServer = async () => {
 
     app.listen(1818, () => console.log('🚀 Server running on port 1818'));
   } catch (err) {
-    console.error('❌ DB connection failed:', err);
+    console.error('❌ DB connection failed:', err.message || err);
+    process.exit(1);
   }
 };
 

@@ -35,6 +35,10 @@ cp deploy/env/backend.env.example deploy/env/backend.env
 
 chmod +x deploy/deploy.sh
 ./deploy/deploy.sh
+
+# Dừng stack (giữ volume DB): ./deploy/deploy.sh down
+# Script tự gỡ container tên emaster-* (kể cả lần chạy compose project cũ gây conflict)
+# Không chạy docker-compose down trực tiếp — thiếu --env-file deploy/env/compose.env
 ```
 
 Đăng nhập GHCR (nếu image private):
@@ -45,7 +49,7 @@ echo "$GITHUB_TOKEN" | docker login ghcr.io -u USERNAME --password-stdin
 
 ## TLS (domain)
 
-Container frontend lắng `:80`. TLS trên host:
+Container frontend map `8080:80` (tránh trùng cổng 80 với nginx host). TLS trên host:
 
 ```bash
 sudo cp deploy/nginx/host-ssl.example.conf /etc/nginx/sites-available/e-master.id.vn
@@ -74,6 +78,53 @@ CI chỉ build/push `emaster-frontend` khi có thay đổi trong `Front-end/`.
 | `REACT_APP_BACKEND_URL` | tùy chọn, mặc định `/e-master` |
 
 Workflow `main`: build image → SSH `./deploy/deploy.sh` hoặc `backend` nếu không đổi FE.
+
+## MySQL pull lỗi (Docker Hub timeout)
+
+Backend/FE từ `ghcr.io` OK nhưng `mysql:8.0` lỗi `TLS handshake timeout` → server không ổn định tới `registry-1.docker.io`.
+
+**Cách 1 — Thử lại:**
+
+```bash
+docker pull mysql:8.0
+./deploy/deploy.sh
+```
+
+**Cách 2 — Mirror** (thêm vào `deploy/env/compose.env`):
+
+```env
+MYSQL_IMAGE=docker.m.daocloud.io/library/mysql:8.0
+```
+
+```bash
+docker pull docker.m.daocloud.io/library/mysql:8.0
+./deploy/deploy.sh
+```
+
+**Cách 3 — Copy image từ máy khác:** `docker save mysql:8.0 | ssh root@161.248.147.104 docker load`
+
+## Backend unhealthy
+
+```bash
+chmod +x deploy/diagnose.sh
+./deploy/diagnose.sh
+# hoặc:
+docker logs emaster-backend --tail 100
+```
+
+| Log / triệu chứng | Cách xử lý |
+|-------------------|------------|
+| `Access denied for user 'root'` | `DB_PASS` trong `backend.env` ≠ mật khẩu MySQL thật (volume cũ). Sửa `backend.env` khớp `compose.env`, hoặc reset volume (mất data): `docker volume rm emaster_mysql_data` rồi deploy lại |
+| `DB_PASS= moon123` (có space) | Sửa thành `DB_PASS=moon123` cả 2 file env |
+| `Table 'users' already exists` | Migrate dở — `docker exec emaster-backend npm run db:migrate` xem lỗi; có thể cần sửa `SequelizeMeta` hoặc DB sạch lần đầu |
+| `MIGRATE FAILED` | Xem full log migrate phía trên |
+
+Sau sửa env (không cần build lại image):
+
+```bash
+docker rm -f emaster-backend
+docker-compose --env-file deploy/env/compose.env -f docker-compose.prod.yml up -d backend
+```
 
 ## Kiểm tra
 
