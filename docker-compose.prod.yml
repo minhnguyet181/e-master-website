@@ -1,22 +1,84 @@
-# Production override — dùng prebuilt images từ registry
-# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# Production — server 161.248.147.104 / https://e-master.id.vn
+# Chỉ 3 container: mysql, backend, frontend (không Redis khi QUEUE_ENABLED=false)
+#
+# Lần đầu trên server:
+#   cp deploy/env/compose.env.example deploy/env/compose.env
+#   cp deploy/env/backend.env.example deploy/env/backend.env
+#   # Sửa mật khẩu, JWT_SECRET, GEMINI_API_KEY — DB_PASS khớp cả hai file
+#   ./deploy/deploy.sh
+#
+# Cập nhật chỉ API (không pull/build FE):
+#   ./deploy/deploy.sh backend
+
+name: emaster
 
 services:
   mysql:
-    ports: []   # không expose ra ngoài trong prod
+    image: mysql:8.0
+    container_name: emaster-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS:?Set DB_PASS in deploy/env/compose.env}
+      MYSQL_DATABASE: ${DB_NAME:-e-master}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - emaster-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASS}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   backend:
-    image: ${DOCKER_REGISTRY}/emaster-backend:${IMAGE_TAG:-latest}
-    build: null
+    image: ${DOCKER_REGISTRY:?Set DOCKER_REGISTRY}/emaster-backend:${IMAGE_TAG:-latest}
+    container_name: emaster-backend
+    restart: unless-stopped
+    env_file:
+      - ./deploy/env/backend.env
     environment:
-      NODE_ENV: production
       DB_HOST: mysql
+      DB_PORT: "3306"
+      NODE_ENV: production
       FRONTEND_URL: ${FRONTEND_URL:-https://e-master.id.vn}
-    ports: []
+      NO_AI_IMPORT: ${NO_AI_IMPORT:-true}
+      RESOURCE_PARSE_USE_AI: ${RESOURCE_PARSE_USE_AI:-false}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - emaster-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:1818/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
 
   frontend:
     image: ${DOCKER_REGISTRY}/emaster-frontend:${IMAGE_TAG:-latest}
-    build: null
+    container_name: emaster-frontend
+    restart: unless-stopped
     ports:
-      # TLS terminate tại reverse proxy ngoài container (xem Front-end/nginx.conf)
-      - "80:80"
+      - "${HTTP_PORT:-80}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - emaster-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/e-master/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  mysql_data:
+    name: emaster_mysql_data
+
+networks:
+  emaster-net:
+    name: emaster-net

@@ -27,4 +27,5 @@ volumes:
 
 networks:
   emaster-net:
-    external: false
+    name: emaster-net
+    external: true

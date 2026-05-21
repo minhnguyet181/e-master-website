@@ -11,9 +11,23 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  # ────────────────────────────────────────────────
-  # JOB 1: Lint & basic checks
-  # ────────────────────────────────────────────────
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'Front-end/**'
+              - 'docker-compose.prod.yml'
+              - 'Front-end/nginx.conf'
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -37,24 +51,18 @@ jobs:
         run: npm ci
         working-directory: Front-end
 
-  # ────────────────────────────────────────────────
-  # JOB 2: Build Docker images
-  # ────────────────────────────────────────────────
-  build:
-    name: Build Images
+  build-backend:
+    name: Build Backend Image
     runs-on: ubuntu-latest
     needs: lint
-    # Only build on push (not PRs)
     if: github.event_name == 'push'
-
     permissions:
       contents: read
-      packages: write   # needed to push to ghcr.io
-
+      packages: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -64,7 +72,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # ── Backend image ──
       - name: Build & push backend
         uses: docker/build-push-action@v5
         with:
@@ -73,14 +80,31 @@ jobs:
           tags: |
             ${{ env.DOCKER_REGISTRY }}/emaster-backend:${{ env.IMAGE_TAG }}
             ${{ env.DOCKER_REGISTRY }}/emaster-backend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
 
-      # ── Frontend image ──
+  build-frontend:
+    name: Build Frontend Image
+    runs-on: ubuntu-latest
+    needs: [lint, changes]
+    if: github.event_name == 'push' && needs.changes.outputs.frontend == 'true'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build & push frontend
-        env:
-          # Same-origin qua nginx; override secret nếu cần URL tuyệt đối
-          REACT_APP_BACKEND_URL: ${{ secrets.REACT_APP_BACKEND_URL || '/e-master' }}
         uses: docker/build-push-action@v5
         with:
           context: ./Front-end
@@ -89,39 +113,42 @@ jobs:
             ${{ env.DOCKER_REGISTRY }}/emaster-frontend:${{ env.IMAGE_TAG }}
             ${{ env.DOCKER_REGISTRY }}/emaster-frontend:latest
           build-args: |
-            REACT_APP_BACKEND_URL=${{ env.REACT_APP_BACKEND_URL }}
+            REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL || '/e-master' }}
             REACT_APP_GOOGLE_CLIENT_ID=${{ secrets.REACT_APP_GOOGLE_CLIENT_ID }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
 
-  # ────────────────────────────────────────────────
-  # JOB 3: Deploy to production (chỉ khi push lên main)
-  # ────────────────────────────────────────────────
-  # deploy:
-  #   name: Deploy
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-  #   environment: production
-
-  #   steps:
-  #     - name: Deploy via SSH
-  #       uses: appleboy/ssh-action@v1
-  #       with:
-  #         host: ${{ secrets.DEPLOY_HOST }}
-  #         username: ${{ secrets.DEPLOY_USER }}
-  #         key: ${{ secrets.DEPLOY_SSH_KEY }}
-  #         script: |
-  #           cd /opt/emaster
-
-  #           # Pull latest images
-  #           export DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
-  #           export IMAGE_TAG=${{ env.IMAGE_TAG }}
-
-  #           docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
-
-  #           # Rolling restart (zero downtime)
-  #           docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-build
-
-  #           # Cleanup old images
-  #           docker image prune -f
+  deploy:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend, changes]
+    if: |
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      always() && !cancelled() &&
+      needs.build-backend.result == 'success' &&
+      (needs.build-frontend.result == 'success' || needs.build-frontend.result == 'skipped')
+    environment: production
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd /opt/emaster
+            git pull --ff-only
+            REGISTRY="${{ env.DOCKER_REGISTRY }}"
+            TAG="${{ env.IMAGE_TAG }}"
+            COMPOSE_ENV="deploy/env/compose.env"
+            touch "$COMPOSE_ENV"
+            grep -q '^IMAGE_TAG=' "$COMPOSE_ENV" && sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${TAG}/" "$COMPOSE_ENV" || echo "IMAGE_TAG=${TAG}" >> "$COMPOSE_ENV"
+            grep -q '^DOCKER_REGISTRY=' "$COMPOSE_ENV" && sed -i "s|^DOCKER_REGISTRY=.*|DOCKER_REGISTRY=${REGISTRY}|" "$COMPOSE_ENV" || echo "DOCKER_REGISTRY=${REGISTRY}" >> "$COMPOSE_ENV"
+            if [ "${{ needs.changes.outputs.frontend }}" = "true" ]; then
+              ./deploy/deploy.sh
+            else
+              ./deploy/deploy.sh backend
+            fi
+            docker image prune -f
