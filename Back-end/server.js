@@ -75,6 +75,9 @@ function healthAiHandler(req, res) {
 
 app.get('/health', healthHandler);
 app.get('/health/ai', healthAiHandler);
+// Khi proxy gửi nguyên path /e-master/health tới backend (không strip prefix)
+app.get('/e-master/health', healthHandler);
+app.get('/e-master/health/ai', healthAiHandler);
 
 app.use('/e-master', routes);
 

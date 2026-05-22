@@ -47,9 +47,42 @@ chmod +x deploy/deploy.sh
 echo "$GITHUB_TOKEN" | docker login ghcr.io -u USERNAME --password-stdin
 ```
 
+## Domain https://e-master.id.vn (thay site portfolio cũ)
+
+[https://e-master.id.vn/](https://e-master.id.vn/) hiện vẫn là **site portfolio P.A Việt Nam** (host nginx/PHP), **không** phải container Docker.
+
+**Trên server:**
+
+```bash
+# 1) Xem site nào đang chiếm domain
+sudo ls -la /etc/nginx/sites-enabled/
+sudo grep -r "e-master.id.vn" /etc/nginx/ /etc/apache2/ 2>/dev/null
+
+# 2) Tắt site portfolio cũ (tên file có thể khác)
+sudo rm -f /etc/nginx/sites-enabled/<file-site-cũ>.conf
+
+# 3) Bật proxy tới Docker FE (đang listen :80)
+sudo cp /opt/emaster/e-master-website/deploy/nginx/host-ssl.example.conf \
+  /etc/nginx/sites-available/e-master.id.vn
+sudo ln -sf /etc/nginx/sites-available/e-master.id.vn /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+sudo certbot --nginx -d e-master.id.vn -d www.e-master.id.vn
+```
+
+**Lưu ý cổng 80:** Docker FE và nginx host **không thể cùng listen :80**. Hiện Docker đang `:80` → host nginx chỉ cần **443** proxy về `127.0.0.1:80`, block `listen 80` redirect do certbot xử lý hoặc tạm tắt redirect nếu conflict.
+
+Nếu `nginx -t` báo port 80 in use: đổi `HTTP_PORT=8080` trong `deploy/env/compose.env`, `./deploy/deploy.sh frontend`, sửa `proxy_pass http://127.0.0.1:8080`.
+
+Kiểm tra:
+
+```bash
+curl -sS http://127.0.0.1/e-master/health
+curl -sS https://e-master.id.vn/e-master/health
+```
+
 ## TLS (domain)
 
-Container frontend map `8080:80` (tránh trùng cổng 80 với nginx host). TLS trên host:
+Container frontend map `8080:80` hoặc `80:80` tùy `HTTP_PORT`. TLS trên host:
 
 ```bash
 sudo cp deploy/nginx/host-ssl.example.conf /etc/nginx/sites-available/e-master.id.vn
