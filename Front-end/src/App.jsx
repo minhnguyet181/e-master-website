@@ -8,9 +8,13 @@ import './index.css'; // Hoặc file CSS toàn cục khác nếu có
 function App() {
   return (
     <BrowserRouter>
-      <AppRoutes />
+      {/* Full‑screen wrapper – removes inner glass frame */}
+      <div className="full-screen">
+        <AppRoutes />
+      </div>
     </BrowserRouter>
   );
 }
+
 
 export default App;

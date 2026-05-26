@@ -1,10 +1,83 @@
-body {
+/* -------------------------------------------------
+   Global styles – clean, full-screen learning portal
+   ------------------------------------------------- */
+html, body, #root {
+  height: 100%;
   margin: 0;
-  font-family: "Poppins", sans-serif;
+  padding: 0;
+}
+
+/* Modern, readable typography – perfect for English learning */
+body {
+  font-family: "Inter", "Poppins", sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #212529;
+  background: #f5f7fa;               /* soft neutral background */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Code blocks – keep the original mono-font */
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas,
+    "Courier New", monospace;
 }
+
+/* -------------------------------------------------
+   Full-screen wrapper – removes any inner “glass” frame
+   ------------------------------------------------- */
+.full-screen {
+  min-height: 100vh;               /* occupy the whole viewport */
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;              /* clean white canvas */
+  overflow-x: hidden;
+}
+
+/* Utility: center contents vertically/horizontally when needed */
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* -------------------------------------------------
+   Accent & button palette (English-learning vibe)
+   ------------------------------------------------- */
+:root {
+  --primary:   #0066ff;   /* bright, friendly blue */
+  --primary-dark: #004bb5;
+  --secondary:#ff9800;   /* orange for calls-to-action */
+  --background:#f5f7fa;
+  --border:#e0e0e0;
+}
+
+button,
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+button.primary,
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+button.primary:hover,
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+/* -------------------------------------------------
+   Responsive tweaks – keep layout fluid on mobiles
+   ------------------------------------------------- */
+@media (max-width: 768px) {
+  .full-screen {
+    padding: 0.5rem;
+  }
+}
