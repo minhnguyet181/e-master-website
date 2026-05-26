@@ -16,6 +16,7 @@ RUN npm run build
 
 # ── Stage 2: serve with nginx ───────────────────────────────────
 FROM nginx:alpine AS runtime
+RUN apk add --no-cache wget
 COPY --from=builder /app/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
